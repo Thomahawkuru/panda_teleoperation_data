@@ -24,10 +24,11 @@ def csv(path, participant, filename, header):
 
 def times(path,participant):
     trialpath = path + '{}/'.format(participant) 
-    folders = os.listdir(trialpath)
+    files = os.listdir(trialpath)
     time = 0.0;
     
-    for name in folders:
+    for name in files:
+        name = name.replace('.txt', '')
         check = name.replace('.', '', 1).isdigit()
         if check == True:
             time = float(name)
@@ -38,10 +39,10 @@ def times(path,participant):
 
 def handedness(path,participant):
     trialpath = path + '{}/'.format(participant) 
-    folders = os.listdir(trialpath)
+    files = os.listdir(trialpath)
     hand = ''
     
-    for name in folders:
+    for name in files:
         if name[0] == 'L':
             hand = 'L'
             break
