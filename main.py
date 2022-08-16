@@ -24,57 +24,70 @@ columns_R       = ['RPos_X', 'RPos_Y', 'RPos_Z']
 columns_L       = ['LPos_X', 'LPos_Y', 'LPos_Z']
 
 exp_header      = [ "f", "dt", "t", "start", "grip" ];
-gaze_header     = [ "f", "dt", "t", "status", "GazeX", "GazeY", "GazeZ", "GazePosition", "FocusDistance", "FocusStability", "StatusL", "LeftX", "LeftY", "LeftZ", "PositionL", "PupilL", "StatusR", "RightX", "RightY", "RightZ", "PositionR", "PupilR"];
-hand_header     = [ "f", "dt", "t", "LPos_X", "LPos_Y", "LPos_Z", "LRot_X", "LRot_Y", "LRot_Z", "LRot_W", "LGrab", "LPinch", "RPos_X", "RPos_Y", "RPos_Z", "RRot_X", "RRot_Y", "RRot_Z", "RRot_W", "RGrab", "RPinch" ];
-hmd_header      = [ "f", "dt", "t", "Pos_X", "Pos_Y", "Pos_Z", "Rot_X", "Rot_Y", "Rot_Z"];
-panda_header    = [ "f", "dt", "t", "Pos_X", "Pos_Y", "Pos_Z", "Rot_X", "Rot_Y", "Rot_Z", "Rot_W", "Gripper" ];
+gaze_header     = [ "f", "dt", "t", "status", "gazeX", "gazeY", "gazeZ", "gazeposition", "focusdistance", "focusstability", "statusL", "LeftX", "LeftY", "LeftZ", "posL", "pupilL", "statusR", "RightX", "RightY", "RightZ", "positionR", "pupilR"];
+hand_header     = [ "f", "dt", "t", "LposX", "LposY", "LposZ", "LrotX", "LrotY", "LrotZ", "LrotW", "Lgrab", "Lpinch", "RposX", "RPosY", "RposZ", "RrotX", "RrotY", "RrotZ", "RrotW", "Rgrab", "Rpinch"];
+hand_hdr_short  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grab", "pinch"];
+hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ"];
+panda_header    = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "gripper" ];
     
 
-#%% Import data --------------------------------------------------------------------------------------------------
+#%% Read data ----------------------------------------------------------------------------------------------------------------------
 exp_data         = {}
 gaze_data        = {}
 hand_data        = {}
 hmd_data         = {}
 panda_data       = {}
+time             = {}   
 completion_times = {}
 handedness       = {}
+
 
 for p in range(1, participants + 1):
     print(), print(), print('Reading data for participant {}'.format(p))    
     
-    exp_data[p]           = readers.csv(datapath, p, 'Experiment.csv', exp_header)
-    gaze_data[p]          = readers.csv(datapath, p, 'Gaze.csv', gaze_header)
-    hand_data[p]          = readers.csv(datapath, p, 'Hand.csv', hand_header)
-    hmd_data[p]           = readers.csv(datapath, p, 'HMD.csv', hmd_header)
-    panda_data[p]         = readers.csv(datapath, p, 'Panda.csv' , panda_header)
+    exp_data[p]         = readers.csv(datapath, p, 'Experiment.csv', exp_header)
+    gaze_data[p]        = readers.csv(datapath, p, 'Gaze.csv', gaze_header)
+    hand_data[p]        = readers.csv(datapath, p, 'Hand.csv', hand_header)
+    hmd_data[p]         = readers.csv(datapath, p, 'HMD.csv', hmd_header)
+    panda_data[p]       = readers.csv(datapath, p, 'Panda.csv' , panda_header)
     
-    completion_times[p]   = readers.times(datapath, p)
-    handedness[p]         = readers.handedness(datapath,p)
-    
-#%%plot data
+    time[p]             = hand_data[p].t
+    completion_times[p] = readers.times(datapath, p)
+    handedness[p]       = readers.handedness(datapath,p)
+
+#organize data based on handedness    
+    if handedness[p] == 'R':
+        hand_data[p].drop(list(hand_data[p].filter(regex = 'L')), axis=1, inplace=True)
+        hand_data[p].columns = hand_hdr_short
+        
+    elif handedness[p] == 'L':
+        hand_data[p].drop(list(hand_data[p].filter(regex = 'R')), axis=1, inplace=True)
+        hand_data[p].columns = hand_hdr_short
+
+#%% Calculate data
+print('Calculating velocity...')
+input_velocity = {}
+for p in range(1, participants + 1):
+        input_velocity[p] = calculators.velocity(hand_data[p], ['posX', 'posY', 'posZ'])
+
+print('Calculating ...')
+
+
+#%% plot data
+# completion time histogram
 data = np.array(list(completion_times.items()))
 fig1 = ff.create_distplot([data[:,1]], ['completion times [s]'])
-plot(fig1)
+plot(fig1, filename='plots/fig1.html')
 
-#%% Velocity
-input_velocity = {}
-
+# velocity
+fig2 = go.Figure()
 for p in range(1, participants + 1):
-    if handedness[p] == 'R':
-        input_velocity[p] = calculators.velocity(hand_data[p], columns_R)
-    elif handedness[p] == 'L':
-        input_velocity[p] = calculators.velocity(hand_data[p], columns_L)
+   fig2.add_trace(go.Scatter(x=hand_data[p].t, y=input_velocity[p], name=str(p), mode="lines"))
     
-#%% plot data
-fig1 = go.Figure()
-
-for p in range(1, participants + 1):
-   fig1.add_trace(go.Scatter(x=hand_data[p].t, y=input_velocity[p], name=str(p), mode="lines"))
+plot(fig2, filename='plots/fig2.html')
     
-plot(fig1)
-    
-    
-#plt.plot(hand_data[1].LPos_X, hand_data[1].LPos_Z) 
-#fig2 = px.line_3d(hand_data[1], x='LPos_Z', y='LPos_X', z='LPos_Y', title = 'Hand input')
-#plot(fig2)
+#plot input path    
+plt.plot(time[2], hand_data[2].rotW) 
+fig3 = px.line_3d(hand_data[1], x='posZ', y='posX', z='posY', title = 'Hand input')
+plot(fig3, filename='plots/fig3.html')
 #input_paths         = calcualtors.input_paths(timestamps, hand_data)
