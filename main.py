@@ -79,14 +79,15 @@ data = np.array(list(completion_times.items()))
 fig1 = ff.create_distplot([data[:,1]], ['completion times [s]'])
 plot(fig1, filename='plots/fig1.html')
 
-# velocity
+#%% Plot velocity
 fig2 = go.Figure()
 for p in range(1, participants + 1):
-   fig2.add_trace(go.Scatter(x=hand_data[p].t, y=input_velocity[p], name=str(p), mode="lines"))
+    fig2.add_trace(go.Scatter(x=time[p], y=input_velocity[p], name='velocity', mode="lines"))
+    fig2.add_trace(go.Scatter(x=time[p], y=hand_data[p].pinch/10, name='pinch', mode='lines'))    
+    plot(fig2, filename='plots/fig2.html')
     
-plot(fig2, filename='plots/fig2.html')
     
-#plot input path    
+#%% plot input path    
 plt.plot(time[2], hand_data[2].rotW) 
 fig3 = px.line_3d(hand_data[1], x='posZ', y='posX', z='posY', title = 'Hand input')
 plot(fig3, filename='plots/fig3.html')
