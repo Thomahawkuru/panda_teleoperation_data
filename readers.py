@@ -11,45 +11,24 @@ import math
 import functions
 import numpy as np
 
+def handedness(path,participant):
+    participant_folder = [i for i in os.listdir(path) if i.startswith(str(participant))]
+    hand = participant_folder[0][2]
+        
+    return hand
 
-def csv(path, participant, filename, header):
+def csv(path, participant, condition, filename, header):
     # read data file
-    trialpath = path + '{}/'.format(participant) 
-    file = [i for i in os.listdir(trialpath) if os.path.isfile(os.path.join(trialpath, i)) and \
-            filename in i]
+  
+    participant_folder = [i for i in os.listdir(path) if i.startswith(str(participant))]
+    participant_path = path + '{}\\'.format(participant_folder[0])   
     
-    csvdata = pandas.read_csv(trialpath + file[0], delimiter=",", header=None, names=header)
+    trial_folder = [i for i in os.listdir(participant_path) if i.startswith(str(condition + '_'))]
+    trial_path = participant_path + '{}\\'.format(trial_folder[0]) 
+    
+    file = [i for i in os.listdir(trial_path) if os.path.isfile(os.path.join(trial_path, i)) and filename in i]
+    
+    csvdata = pandas.read_csv(trial_path + file[0], delimiter=",", header=0, names=header)
 
     return csvdata
-
-def times(path,participant):
-    trialpath = path + '{}/'.format(participant) 
-    files = os.listdir(trialpath)
-    time = 0.0;
-    
-    for name in files:
-        name = name.replace('.txt', '')
-        check = name.replace('.', '', 1).isdigit()
-        if check == True:
-            time = float(name)
-            break
-    
-    print(time)
-    return time
-
-def handedness(path,participant):
-    trialpath = path + '{}/'.format(participant) 
-    files = os.listdir(trialpath)
-    hand = ''
-    
-    for name in files:
-        if name[0] == 'L':
-            hand = 'L'
-            break
-        elif name[0] == 'R':
-            hand = 'R'
-            break
-        
-    print(hand)
-    return hand
 
