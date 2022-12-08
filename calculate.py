@@ -19,6 +19,7 @@ for p in Participants:
     for c in Conditions:
         print(), print('Condition {}'.format(c))
         for t in Trials:
-                fps = (data[p][c][t]['Experiment'].fps)
-                print(fps)
+            fps = (data[p][c][t]['Experiment'])
+            print('Trial {}'.format(t), fps)
+
 # %%

@@ -13,12 +13,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
 import numpy as np
+import pandas as pd
 import pickle
 import dill
 import readers
 import calculators
 
-#%% define variables --------------------------------------------------------------------------------------------------
+# define variables --------------------------------------------------------------------------------------------------
 datapath        = os.getcwd() + "\\data\\Experiment\\"        # full path to read recorded data
 savepath        = os.getcwd() + "\\save\\"        # full path to save calculated data
 
@@ -41,28 +42,32 @@ conditions = dict(zip(Conditions, [trials]*len(Conditions)))
 data = dict(zip(Participants, [conditions]*len(Participants)))    
 
 #%% Read data ----------------------------------------------------------------------------------------------------------------------
-for p in Participants:
-    exp_data         = {}
-    gaze_data        = {}
-    hand_data        = {}
-    hmd_data         = {}
-    gripper_data     = {}
-    robot_data       = {}
-    time             = {} 
-    
+for p in Participants: 
     print(), print(), print('Reading data for participant {}'.format(p))    
     
-    for c in Conditions:     
-        
+    for c in Conditions:        
         print(), print('Condition {}'.format(c))
         if c == "A": 
             continue
-        for t in Trials:    
-            print('Trial {}'.format(t))
+
+        for t in Trials:           
             for f,h in zip(Files, Headers):
-                data[p][c][t][f] = readers.csv(datapath, p, c, t, f + '.csv', h)
+                data[p][c][t].update({f: readers.csv(datapath, p, c, t, f + '.csv', h)})
+            
+            print('Trial {}'.format(t), np.mean(data[p][c][t]['Experiment'].fps))
+        
+        print([np.mean(data[p][c][key]['Experiment'].fps) for key in Trials])
 
 #%% save imported data
 dill.dump_session('data_raw.pkl')
+
+# %%
+for p in Participants:
+    print(), print(), print('Calculating data for participant {}'.format(p))
+    for c in Conditions:
+        print(), print('Condition {}'.format(c))
+        for t in Trials:
+            fps = np.mean((data[p][c][t]['Experiment'].fps))
+            print('Trial {}'.format(t), fps)
 
 # %%
