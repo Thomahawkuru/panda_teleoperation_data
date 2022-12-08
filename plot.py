@@ -17,8 +17,7 @@ dill.load_session('data_raw.pkl')
 for p in Participants:
     for c in Conditions:
         for t in Trials:
-            for f in Files:
-                plt.plot(data[p][c][t]['Hand'].posZ) 
-                fig3 = px.line_3d(data[p][c][t]['Hand'], x='posZ', y='posX', z='posY', title = 'Hand input')
-                plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
+            plt.plot(data[p][c][t]['Hand'].posZ) 
+            fig3 = px.line_3d(data[p][c][t]['Hand'], x='posZ', y='posX', z='posY', title = 'Hand input')
+            plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
 # %%

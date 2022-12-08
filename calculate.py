@@ -11,12 +11,14 @@ import dill
 import readers
 import calculators
 
-#%% plot data    
 dill.load_session('data_raw.pkl')
 
+#%% plot data   
 for p in Participants:
+    print(), print(), print('Calculating data for participant {}'.format(p))
     for c in Conditions:
+        print(), print('Condition {}'.format(c))
         for t in Trials:
-            for f in Files:
-                print('calculating')
+                fps = (data[p][c][t]['Experiment'].fps)
+                print(fps)
 # %%
