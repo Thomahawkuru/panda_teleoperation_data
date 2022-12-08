@@ -18,8 +18,6 @@ def csv(path, participant, condition, trial, filename, header):
     
     trial_folder = [i for i in os.listdir(participant_path) if i.startswith(str(condition + '_'))]
     trial_path = participant_path + '{}\\'.format(trial_folder[trial-1]) 
-
-
     
     file = [i for i in os.listdir(trial_path) if os.path.isfile(os.path.join(trial_path, i)) and filename in i]
     
