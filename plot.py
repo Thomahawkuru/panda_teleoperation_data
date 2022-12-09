@@ -8,8 +8,7 @@ import plotly.figure_factory as ff
 import numpy as np
 import pickle
 import dill
-import readers
-import calculators
+import functions
 
 #%% plot data    
 dill.load_session('data_calculated.pkl')
@@ -22,4 +21,5 @@ for p in Participants:
             plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
 
 # %%
+print(), print('Dumping plotted data to file...')
 dill.dump_session('data_plotted.pkl')

@@ -7,14 +7,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
-# video extensions
+# file extensions
+*.so 
 *.svo
-
-# plot extensions
 *.html
+*.pkl
 
 # Distribution / packaging
 .Python

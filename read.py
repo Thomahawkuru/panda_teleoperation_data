@@ -16,8 +16,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import dill
-import readers
-import calculators
+import functions
 
 # define variables --------------------------------------------------------------------------------------------------
 datapath        = os.getcwd() + "\\data\\Experiment\\"        # full path to read recorded data
@@ -47,9 +46,10 @@ for p in Participants:
 
         for t in Trials:           
             for f,h in zip(Files, Headers):
-                data[p][c][t].update({f: readers.csv(datapath, p, c, t, f + '.csv', h)})
+                data[p][c][t].update({f: functions.read_csv(datapath, p, c, t, f + '.csv', h)})
             
 #%% save imported data
+print(), print('Dumping raw data to file...')
 dill.dump_session('data_raw.pkl')
 
 # %%

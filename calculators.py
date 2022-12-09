@@ -6,22 +6,17 @@ Created on Thu Jan 20 11:14:53 2022
 """
 
 import numpy as np
+import pandas as pd
 
-def timestamps(experiment_data, savepath, participant, trail):
-    spawns = max(experiment_data.TrailNumber) 
-    
-   
-    #determine timestamps
-    for i in range(2,len(experiment_data.Time)-1):
-        i = 1
-        
-        
-    return spawns
+def fps(data, p, c, t):
+    fps = np.mean(data[p][c][t]['Experiment'].fps)
 
-def velocity(data, columns):
+    return fps
+
+def velocity(data, p, c, t, file):
     
     v = [0.0]
-    data_3D = data[columns]
+    data_3D = data[p][c][t][file][["posX", "posY", "posZ"]]
     
     for i in range(1,len(data_3D.iloc[:, 0])):
         dx = data_3D.iloc[i,0]-data_3D.iloc[i-1,0]
