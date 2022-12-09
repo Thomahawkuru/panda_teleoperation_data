@@ -15,7 +15,7 @@ import calculators
 dill.load_session('data_raw.pkl')
 
 for p in Participants:
-    for c in Conditions:
+    for c in Conditions[1:]:
         for t in Trials:
             plt.plot(data[p][c][t]['Hand'].posZ) 
             fig3 = px.line_3d(data[p][c][t]['Hand'], x='posZ', y='posX', z='posY', title = 'Hand input')
