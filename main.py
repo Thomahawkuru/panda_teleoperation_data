@@ -30,7 +30,7 @@ hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rot
 gripper_header  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grip_pos", "grip_vel", "grip_eff" ]
 robot_header    = [ "f", "dt", "t", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "fx", "fy", "fz" ]
 
-Participants    = [1, 2]                            # number of participants
+Participants    = [1]                            # number of participants
 Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
 Trials          = [1, 2, 3]
 Files           = ['Experiment', 'Gaze', 'Hand', 'HMD', 'Gripper', 'Robot']
@@ -42,17 +42,13 @@ data = {Participant: {Condition: {Trial: {File: {} for File in Files} for Trial 
 for p in Participants: 
     print(), print(), print('Reading data for participant {}'.format(p))    
     
-    for c in Conditions:        
+    for c in Conditions[1:]:        
         print(), print('Condition {}'.format(c))
-        if c == "A": 
-            continue
 
         for t in Trials:           
             for f,h in zip(Files, Headers):
                 data[p][c][t].update({f: readers.csv(datapath, p, c, t, f + '.csv', h)})
             
-            print('Trial {}'.format(t), np.mean(data[p][c][t]['Experiment'].fps))
-
 #%% save imported data
 dill.dump_session('data_raw.pkl')
 

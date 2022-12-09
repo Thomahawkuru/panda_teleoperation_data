@@ -16,10 +16,12 @@ dill.load_session('data_raw.pkl')
 #%% plot data   
 for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))
-    for c in Conditions:
+    for c in Conditions[1:]:
         print(), print('Condition {}'.format(c))
         for t in Trials:
-            fps = (data[p][c][t]['Experiment'])
+            fps = np.mean(data[p][c][t]['Experiment'].fps)
             print('Trial {}'.format(t), fps)
+            data[p][c][t]['FPS'] = fps
 
 # %%
+dill.dump_session('data_calculated.pkl')

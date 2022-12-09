@@ -12,7 +12,7 @@ import readers
 import calculators
 
 #%% plot data    
-dill.load_session('data_raw.pkl')
+dill.load_session('data_calculated.pkl')
 
 for p in Participants:
     for c in Conditions[1:]:
@@ -20,4 +20,6 @@ for p in Participants:
             plt.plot(data[p][c][t]['Hand'].posZ) 
             fig3 = px.line_3d(data[p][c][t]['Hand'], x='posZ', y='posX', z='posY', title = 'Hand input')
             plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
+
 # %%
+dill.dump_session('data_plotted.pkl')
