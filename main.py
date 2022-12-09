@@ -30,16 +30,13 @@ hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rot
 gripper_header  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grip_pos", "grip_vel", "grip_eff" ]
 robot_header    = [ "f", "dt", "t", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "fx", "fy", "fz" ]
 
-Participants    = [1,2]                            # number of participants
+Participants    = [1, 2]                            # number of participants
 Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
 Trials          = [1, 2, 3]
 Files           = ['Experiment', 'Gaze', 'Hand', 'HMD', 'Gripper', 'Robot']
 Headers         = [exp_header, gaze_header, hand_header, hmd_header, gripper_header, robot_header]
 
-files = dict(zip(Files, [None]*len(Files)))
-trials = dict(zip(Trials, [files]*len(Trials)))
-conditions = dict(zip(Conditions, [trials]*len(Conditions))) 
-data = dict(zip(Participants, [conditions]*len(Participants)))    
+data = {Participant: {Condition: {Trial: {File: {} for File in Files} for Trial in Trials} for Condition in Conditions} for Participant in Participants}
 
 #%% Read data ----------------------------------------------------------------------------------------------------------------------
 for p in Participants: 
@@ -55,8 +52,6 @@ for p in Participants:
                 data[p][c][t].update({f: readers.csv(datapath, p, c, t, f + '.csv', h)})
             
             print('Trial {}'.format(t), np.mean(data[p][c][t]['Experiment'].fps))
-        
-        print([np.mean(data[p][c][key]['Experiment'].fps) for key in Trials])
 
 #%% save imported data
 dill.dump_session('data_raw.pkl')
@@ -64,7 +59,7 @@ dill.dump_session('data_raw.pkl')
 # %%
 for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))
-    for c in Conditions:
+    for c in Conditions[1:]:
         print(), print('Condition {}'.format(c))
         for t in Trials:
             fps = np.mean((data[p][c][t]['Experiment'].fps))
