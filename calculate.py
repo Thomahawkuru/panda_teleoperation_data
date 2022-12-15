@@ -22,9 +22,11 @@ for p in Participants:
             data[p][c][t]['FPS'] = calculators.fps(data, p, c, t)
             print('FPS: {}'.format(data[p][c][t]['FPS']))
             
-            data[p][c][t]['Time'] = calculators.time(data, p, c, t)
-            print('Time: {}'.format(np.max(data[p][c][t]['Time'])))     
+            data[p][c][t]['Duration'] = calculators.duration(data, p, c, t)
+            print('Duration: {}'.format(data[p][c][t]['Duration']))
             
+            data[p][c][t]['Time'] = calculators.time(data, p, c, t)
+           
             data[p][c][t]['Velocity'] = calculators.velocity(data, p, c, t, 'Hand')
             print('Velocity: {}'.format(np.max(data[p][c][t]['Velocity'])))            
             

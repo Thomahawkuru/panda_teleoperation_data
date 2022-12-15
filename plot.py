@@ -10,9 +10,22 @@ import pickle
 import dill
 import functions
 
-#%% plot data    
 dill.load_session('data_calculated.pkl')
 
+#%% plot data    
+fpss =[]
+times = []
+
+for p in Participants:
+    for c in Conditions[1:]:
+        for t in Trials:
+            fpss.append(data[p][c][t]['FPS'])
+            times.append(data[p][c][t]['Duration'])
+            
+
+plt.boxplot([fpss,times])
+
+#%%
 for p in Participants:
     for c in Conditions[1:]:
         for t in Trials:

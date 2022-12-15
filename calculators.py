@@ -13,11 +13,17 @@ def fps(data, p, c, t):
     fps = np.mean(data[p][c][t]['Experiment'].fps)
 
     return fps
-def time(data, p, c, t):
-    time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])
-    time_rect = time - np.min(time)
 
-    return time_rect
+def duration(data, p, c, t):
+    time_raw = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start]
+    duration = np.max(time_raw - np.min(time_raw))
+
+    return duration
+
+def time(data, p, c, t):
+    time_crop = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])
+    
+    return time_crop
 
 def velocity(data, p, c, t, file):
     
