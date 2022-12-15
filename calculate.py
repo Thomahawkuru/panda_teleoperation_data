@@ -19,17 +19,21 @@ for p in Participants:
         for t in Trials:
             print('Trial {}'.format(t))
             
-            data[p][c][t]['FPS'] = calculators.fps(data, p, c, t)
-            print('FPS: {}'.format(data[p][c][t]['FPS']))
+            data[p][c][t]['fps'] = calculators.fps(data, p, c, t)
+            print('FPS: {}'.format(data[p][c][t]['fps']))
             
-            data[p][c][t]['Duration'] = calculators.duration(data, p, c, t)
-            print('Duration: {}'.format(data[p][c][t]['Duration']))
+            data[p][c][t]['duration'] = calculators.duration(data, p, c, t)
+            print('Duration: {}'.format(data[p][c][t]['duration']))
             
-            data[p][c][t]['Time'] = calculators.time(data, p, c, t)
+            data[p][c][t]['time'] = calculators.time(data, p, c, t)
            
-            data[p][c][t]['Velocity'] = calculators.velocity(data, p, c, t, 'Hand')
-            print('Velocity: {}'.format(np.max(data[p][c][t]['Velocity'])))            
+            data[p][c][t]['velocity'] = calculators.velocity(data, p, c, t, 'Hand')
+            print('Velocity: {}'.format(np.max(data[p][c][t]['velocity'])))            
             
+            data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t)
+            print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
+            print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
+
             print()
 
 # %%

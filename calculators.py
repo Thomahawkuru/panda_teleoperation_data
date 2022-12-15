@@ -5,8 +5,10 @@ Created on Thu Jan 20 11:14:53 2022
 @author: Thomas
 """
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy import signal
 import functions
 
 def fps(data, p, c, t):
@@ -26,9 +28,7 @@ def time(data, p, c, t):
     return time_crop
 
 def velocity(data, p, c, t, file):
-    
     v = [0.0]
-    # crop data
     data_3D = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]
 
     for i in range(1,len(data_3D.iloc[:, 0])):
@@ -41,3 +41,21 @@ def velocity(data, p, c, t, file):
     velocity = functions.crop_data(pd.DataFrame(v), data[p][c][t]['Experiment']).to_numpy()
 
     return velocity
+
+def grabs(data, p, c, t):
+    grabs = {}
+    grab_data = -data[p][c][t]['Gripper']["grip_pos"]
+    grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
+
+    peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
+    peaks_fail, _   = signal.find_peaks(grab_crop, height = -0.02, prominence=0.005,distance=50)
+
+    #plt.plot(grab_crop)
+    #plt.plot(peaks_succes,grab_crop[peaks_succes],'gx')
+    #plt.plot(peaks_fail, grab_crop[peaks_fail],'rx')
+    #plt.show()
+
+    grabs['succes'] = len(peaks_succes)
+    grabs['fail'] = len(peaks_fail)
+
+    return grabs

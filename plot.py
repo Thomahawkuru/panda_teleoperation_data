@@ -12,7 +12,7 @@ import functions
 
 dill.load_session('data_calculated.pkl')
 
-#%% plot data    
+#%% plot sanity check data    
 fpss =[]
 times = []
 

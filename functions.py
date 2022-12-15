@@ -25,7 +25,7 @@ def read_csv(path, participant, condition, trial, filename, header):
 
 def crop_data(data_to_crop, check):
     
-    data_cropped = data_to_crop[check.start]
+    data_cropped = data_to_crop.loc[check.start]
 
     track_check = filter_check(check.Tracked[check.start])
     data_tracked = data_cropped[track_check]
