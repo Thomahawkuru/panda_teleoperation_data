@@ -7,8 +7,6 @@ Created on Thu Jan 20 11:14:53 2022
 
 import os
 import pandas
-import math
-import functions
 import numpy as np
 
 def read_csv(path, participant, condition, trial, filename, header):
@@ -25,3 +23,30 @@ def read_csv(path, participant, condition, trial, filename, header):
 
     return csvdata
 
+def crop_data(data_to_crop, check):
+    
+    data_cropped = data_to_crop[check.start]
+
+    track_check = filter_check(check.Tracked[check.start])
+    data_tracked = data_cropped[track_check]
+
+    control_check1 = filter_check(check.Controlling[check.start])
+    control_check2 = control_check1[track_check]
+    data_controlled = data_tracked[control_check2]
+
+    return data_controlled
+
+def filter_check(check):
+    loc =  []
+
+    for i in range(1,len(check)-1):
+        if check.iloc[i] != check.iloc[i+1]:
+            if check.iloc[i] == True:
+                loc.append(i)
+        if check.iloc[i] != check.iloc[i-1]:
+            if check.iloc[i] == True:
+                loc.append(i)
+
+    check.iloc[loc] = False
+
+    return check
