@@ -22,6 +22,14 @@ def duration(data, p, c, t):
 
     return duration
 
+def track_error(data, p, c, t):
+    checks = -data[p][c][t]['Experiment']["Controlling"][data[p][c][t]['Experiment'].start]
+    peaks, _ = signal.find_peaks(checks)
+
+    errors = len(peaks)
+
+    return errors
+
 def time(data, p, c, t):
     time_crop = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])
     

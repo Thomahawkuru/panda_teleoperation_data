@@ -25,6 +25,9 @@ for p in Participants:
             data[p][c][t]['duration'] = calculators.duration(data, p, c, t)
             print('Duration: {}'.format(data[p][c][t]['duration']))
             
+            data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)
+            print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
+
             data[p][c][t]['time'] = calculators.time(data, p, c, t)
            
             data[p][c][t]['velocity'] = calculators.velocity(data, p, c, t, 'Hand')
