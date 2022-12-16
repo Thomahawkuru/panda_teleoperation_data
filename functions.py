@@ -36,7 +36,7 @@ def crop_data(data_to_crop, check):
 
     return data_controlled
 
-def filter_check(check):
+def filter_check(check): #removes data points just befor and just after a tracking error
     loc =  []
 
     for i in range(1,len(check)-1):

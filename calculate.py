@@ -28,7 +28,7 @@ for p in Participants:
             data[p][c][t]['time'] = calculators.time(data, p, c, t)
            
             data[p][c][t]['velocity'] = calculators.velocity(data, p, c, t, 'Hand')
-            print('Velocity: {}'.format(np.max(data[p][c][t]['velocity'])))            
+            print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
             
             data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t)
             print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
