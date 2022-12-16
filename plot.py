@@ -12,7 +12,7 @@ dill.load_session('data_calculated.pkl')
 fpss = []
 times = []
 
-for c in Participants:
+for p in Participants:
     for c in Conditions[1:]:
         for t in Trials:
             fpss.append(data[p][c][t]['fps'])
