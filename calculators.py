@@ -72,6 +72,6 @@ def input_depth(data, p, c, t):
     input_z = functions.crop_data(data[p][c][t]['Hand']['posZ'], data[p][c][t]['Experiment'])
     pdf_z, std_z = functions.pdf(input_z)
 
-    depth = 6*std_z
+    depth = max(input_z)-min(input_z)
 
     return depth
