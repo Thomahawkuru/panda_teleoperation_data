@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from plotly.offline import plot
 import plotly.express as px
 import dill
+import functions
 
 dill.load_session('data_calculated.pkl')
 
@@ -80,8 +81,8 @@ fig4.savefig("plots/average_velocity.jpg")
 # for p in Participants:
 #     for c in Conditions[1:]:
 #         for t in Trials:
-#             plt.plot(data[p][c][t]['Hand'].posZ) 
-#             fig3 = px.line_3d(data[p][c][t]['Hand'], x='posZ', y='posX', z='posY', title = 'Hand input')
+#             plot_data = functions.crop_data(data[p][c][t]['Hand'][['posZ','posX','posY']],data[p][c][t]['Experiment'])
+#             fig3 = px.line_3d(plot_data, x='posZ', y='posX', z='posY', title = 'Hand input')
 #             plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
 
 # %%
