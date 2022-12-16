@@ -29,7 +29,6 @@ fig1.savefig("plots/sanity_check.jpg")
 #%% plot data per condition
 failed_grabs = pd.DataFrame()
 correct_grabs = pd.DataFrame()
-max_velocity = pd.DataFrame()
 average_velocity = pd.DataFrame()
 
 for c in Conditions[1:]:
