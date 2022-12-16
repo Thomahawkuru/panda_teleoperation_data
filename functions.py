@@ -50,3 +50,9 @@ def filter_check(check): #removes data points just befor and just after a tracki
     check.iloc[loc] = False
 
     return check
+
+def pdf(x):
+    mean = np.mean(x)
+    std = np.std(x)
+    y_out = 1/(std * np.sqrt(2 * np.pi)) * np.exp( - (x - mean)**2 / (2 * std**2))
+    return y_out, std

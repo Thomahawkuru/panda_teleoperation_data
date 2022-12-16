@@ -37,6 +37,8 @@ for p in Participants:
             print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
+            data[p][c][t]['depth'] = calculators.input_depth(data, p, c, t)
+            print('Depth: {}'.format(data[p][c][t]['depth']))
             print()
 
 # %%

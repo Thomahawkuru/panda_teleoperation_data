@@ -67,3 +67,11 @@ def grabs(data, p, c, t):
     grabs['fail'] = len(peaks_fail)
 
     return grabs
+
+def input_depth(data, p, c, t):
+    input_z = functions.crop_data(data[p][c][t]['Hand']['posZ'], data[p][c][t]['Experiment'])
+    pdf_z, std_z = functions.pdf(input_z)
+
+    depth = 4*std_z
+
+    return depth
