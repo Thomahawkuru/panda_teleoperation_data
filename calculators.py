@@ -65,6 +65,7 @@ def grabs(data, p, c, t):
 
     grabs['succes'] = len(peaks_succes)
     grabs['fail'] = len(peaks_fail)
+    grabs['attempts'] = grabs['succes'] + grabs['fail']
 
     return grabs
 

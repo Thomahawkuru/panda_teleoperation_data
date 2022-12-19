@@ -30,34 +30,40 @@ fig1.savefig("plots/sanity_check.jpg")
 #%% plot data per condition
 failed_grabs = pd.DataFrame()
 correct_grabs = pd.DataFrame()
+grab_attempts = pd.DataFrame()
 average_velocity = pd.DataFrame()
 input_depth = pd.DataFrame()
 
 for c in Conditions[1:]:
     Fails = []
     Succes = []
+    Grabs = []
     Velocity = []
     Depth = []
 
     for p in Participants:
         failed = 0
         correct = 0
+        grabs = 0
         velocity = 0
         depth = 0
 
         for t in Trials:
             failed += data[p][c][t]['grabs']['fail']
             correct += data[p][c][t]['grabs']['succes']
+            grabs += data[p][c][t]['grabs']['attempts']
             velocity += np.mean(data[p][c][t]['velocity'])
             depth += data[p][c][t]['depth']
         
         Velocity.append(velocity/3)
         Fails.append(failed/3)
+        Grabs.append(grabs/3)
         Succes.append(correct/3)
         Depth.append(depth/3)
 
     failed_grabs[c] = Fails
     correct_grabs[c] = Succes
+    grab_attempts[c] = Grabs
     average_velocity[c] = Velocity
     input_depth[c] = Depth
 
@@ -88,6 +94,13 @@ ax5.set_title('Input depth [m]')
 ax5.set_xlabel('Conditions')
 ax5.set_xticklabels(['B','C','D','E','F'])
 fig5.savefig("plots/input_depth.jpg")
+
+fig6, ax6 = plt.subplots()
+ax6.boxplot(grab_attempts)
+ax6.set_title('grab_attempts [Average n]')
+ax6.set_xticklabels(['B','C','D','E','F'])
+ax6.set_xlabel('Conditions')
+fig6.savefig("plots/grab_attempts.jpg")
 
 #%% plot input paths
 # for p in Participants:
