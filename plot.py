@@ -109,7 +109,6 @@ fig6.savefig("plots/grab_attempts.jpg")
 
 #%% plot learning effects
 trial_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'trial'])
-velocity = []
 
 for p in Participants:
     for c in Conditions[1:]:
