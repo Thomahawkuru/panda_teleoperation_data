@@ -27,6 +27,28 @@ ax1.set_title('Sanity Checking, n = [{}]'.format(2*5*3))
 ax1.set_xticklabels(['Average FPS','Duration','Tracking errors'])
 fig1.savefig("plots/sanity_check.jpg")
 
+#%% plot sanity check data    
+fpss = []
+times = []
+track_err = []
+
+for p in Participants:
+    for c in Conditions[1:]:
+        for t in Trials:
+            fpss.append(data[p][c][t]['fps'])
+            times.append(data[p][c][t]['duration'])
+            track_err.append(data[p][c][t]['track_err']) 
+
+fig1, ax1 = plt.subplots(3)
+ax1[0].plot(fpss, 'b')
+ax1[0].legend(["FPS [n]"])
+ax1[1].plot(times, 'g')
+ax1[1].legend(["Duration [s]"])
+ax1[2].plot(track_err,'r')
+ax1[2].legend(["Tracking errors [n]"])
+ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
+fig1.savefig("plots/sanity_check.jpg")
+
 #%% plot data per condition
 failed_grabs = pd.DataFrame()
 correct_grabs = pd.DataFrame()

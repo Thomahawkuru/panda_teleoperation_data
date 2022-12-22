@@ -20,10 +20,10 @@ for p in Participants:
             print('Trial {}'.format(t))
             
             data[p][c][t]['fps'] = calculators.fps(data, p, c, t)
-            print('FPS: {}'.format(data[p][c][t]['fps']))
+            #print('FPS: {}'.format(data[p][c][t]['fps']))
             
             data[p][c][t]['duration'] = calculators.duration(data, p, c, t)
-            print('Duration: {}'.format(data[p][c][t]['duration']))
+            #print('Duration: {}'.format(data[p][c][t]['duration']))
             
             data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)
             print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
