@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from plotly.offline import plot
 import plotly.express as px
 import dill
+import seaborn as sns
 import functions
 
 dill.load_session('data_calculated.pkl')
@@ -106,10 +107,25 @@ ax6.set_xticklabels(['B','C','D','E','F'])
 ax6.set_xlabel('Conditions')
 fig6.savefig("plots/grab_attempts.jpg")
 
-#%% plot input paths
-# for p in Participants:
-#     for c in Conditions[1:]:
-#         for t in Trials:
+#%% plot learning effects
+trial_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'trial'])
+velocity = []
+
+for p in Participants:
+    for c in Conditions[1:]:
+        for t in Trials:         
+            new_row = [np.mean(data[p][c][t]['velocity']), p, c, t]
+            trial_velocity.loc[len(trial_velocity)] = new_row
+
+fig7, ax7 = plt.subplots()
+sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'])
+ax7.set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
+fig7.savefig("plots/trial_velocity.jpg")
+
+# %% plot input paths
+# for p in [8]:
+#     for c in ['B', 'C']:
+#         for t in [1]:
 #             plot_data = functions.crop_data(data[p][c][t]['Hand'][['posZ','posX','posY']],data[p][c][t]['Experiment'])
 #             fig3 = px.line_3d(plot_data, x='posZ', y='posX', z='posY', title = 'Hand input')
 #             plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t,))
