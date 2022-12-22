@@ -1,10 +1,5 @@
 #%% import
-import os
-import matplotlib.pyplot as plt
 from plotly.offline import plot
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.figure_factory as ff
 import numpy as np
 import dill
 import calculators
