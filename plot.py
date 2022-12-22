@@ -21,24 +21,6 @@ for p in Participants:
             times.append(data[p][c][t]['duration'])
             track_err.append(data[p][c][t]['track_err']) 
 
-fig1, ax1 = plt.subplots()
-ax1.boxplot([fpss,times,track_err])
-ax1.set_title('Sanity Checking, n = [{}]'.format(2*5*3))
-ax1.set_xticklabels(['Average FPS','Duration','Tracking errors'])
-fig1.savefig("plots/sanity_check.jpg")
-
-#%% plot sanity check data    
-fpss = []
-times = []
-track_err = []
-
-for p in Participants:
-    for c in Conditions[1:]:
-        for t in Trials:
-            fpss.append(data[p][c][t]['fps'])
-            times.append(data[p][c][t]['duration'])
-            track_err.append(data[p][c][t]['track_err']) 
-
 fig1, ax1 = plt.subplots(3)
 ax1[0].plot(fpss, 'b')
 ax1[0].legend(["FPS [n]"])
