@@ -116,7 +116,7 @@ for p in Participants:
             new_row = [np.mean(data[p][c][t]['velocity']), p, c, t]
             trial_velocity.loc[len(trial_velocity)] = new_row
 
-fig7, ax7 = plt.subplots(figsize=(15, 5))
+fig7, ax7 = plt.subplots(figsize=(5, 5))
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'])
 ax7.set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
 fig7.savefig("plots/trial_velocity.jpg")
@@ -130,7 +130,7 @@ for p in Participants:
             new_row = [data[p][c][t]['grabs']['attempts'], data[p][c][t]['grabs']['succes'], data[p][c][t]['grabs']['fail'], p, c, t]
             trial_grabs.loc[len(trial_grabs)] = new_row
 
-fig8, ax8 = plt.subplots(3, figsize=(15, 15))
+fig8, ax8 = plt.subplots(1,3, figsize=(15, 5))
 
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['attempts'], hue=trial_grabs['trial'], ax=ax8[0])
 ax8[0].set_title('Grab attempts per trial [n={}]'.format(len(Participants)))
