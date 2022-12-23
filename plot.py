@@ -107,7 +107,7 @@ ax6.set_xticklabels(['B','C','D','E','F'])
 ax6.set_xlabel('Conditions')
 fig6.savefig("plots/grab_attempts.jpg")
 
-#%% plot learning effects
+#%% plot learning effects in average trial velocity
 trial_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'trial'])
 
 for p in Participants:
@@ -116,10 +116,30 @@ for p in Participants:
             new_row = [np.mean(data[p][c][t]['velocity']), p, c, t]
             trial_velocity.loc[len(trial_velocity)] = new_row
 
-fig7, ax7 = plt.subplots()
+fig7, ax7 = plt.subplots(figsize=(15, 5))
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'])
 ax7.set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
 fig7.savefig("plots/trial_velocity.jpg")
+
+#%% plot learning effects in failed/succeded grabs
+trial_grabs = pd.DataFrame([] , columns=['attempts', 'succes', 'fails', 'participant', 'condition', 'trial'])
+
+for p in Participants:
+    for c in Conditions[1:]:
+        for t in Trials:         
+            new_row = [data[p][c][t]['grabs']['attempts'], data[p][c][t]['grabs']['succes'], data[p][c][t]['grabs']['fail'], p, c, t]
+            trial_grabs.loc[len(trial_grabs)] = new_row
+
+fig8, ax8 = plt.subplots(3, figsize=(15, 15))
+
+sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['attempts'], hue=trial_grabs['trial'], ax=ax8[0])
+ax8[0].set_title('Grab attempts per trial [n={}]'.format(len(Participants)))
+sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['succes'], hue=trial_grabs['trial'], ax=ax8[1])
+ax8[1].set_title('Grab successes per trial [n={}]'.format(len(Participants)))
+sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['fails'], hue=trial_grabs['trial'], ax=ax8[2])
+ax8[2].set_title('Grab fails per trial [n={}]'.format(len(Participants)))
+
+fig8.savefig("plots/trial_grabs.jpg")
 
 # %% plot input paths
 # for p in [8]:
