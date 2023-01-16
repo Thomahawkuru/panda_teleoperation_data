@@ -71,8 +71,8 @@ def grabs(data, p, c, t):
 
 def input_depth(data, p, c, t):
     input_z = functions.crop_data(data[p][c][t]['Hand']['posZ'], data[p][c][t]['Experiment'])
-    pdf_z, std_z = functions.pdf(input_z)
+    mean_z, std_z = functions.pdf(input_z)
 
-    depth = max(input_z)-min(input_z)
+    depth = std_z*6
 
     return depth
