@@ -18,7 +18,7 @@ def fps(data, p, c, t):
 
 def duration(data, p, c, t):
     time_raw = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start]
-    duration = np.max(time_raw - np.min(time_raw))
+    duration = np.max(time_raw - np.min(time_raw)) + data[p][c][t]['Experiment']["dt"][data[p][c][t]['Experiment'].start].tail(1)
 
     return duration
 

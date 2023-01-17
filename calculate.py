@@ -5,6 +5,7 @@ import dill
 import calculators
 
 dill.load_session('data_raw.pkl')
+Participants    = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]                            # number of participants
 
 #%% plot data   
 for p in Participants:

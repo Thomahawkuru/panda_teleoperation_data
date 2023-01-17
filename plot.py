@@ -9,6 +9,7 @@ import seaborn as sns
 import functions
 
 dill.load_session('data_calculated.pkl')
+Participants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]                            # number of participants
 
 #%% plot sanity check data    
 fpss = []
@@ -27,6 +28,7 @@ ax1[0].plot(fpss, 'b')
 ax1[0].legend(["Average FPS [n]"])
 ax1[1].plot(times, 'g')
 ax1[1].legend(["Trial Duration [s]"])
+ax1[1].set_ylim([59, 61])
 ax1[2].plot(track_err,'r')
 ax1[2].legend(["Tracking errors [n]"])
 ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
