@@ -6,6 +6,7 @@ import functions
 
 dill.load_session('data_plotted.pkl')
 
+#%% calculating p_values
 print('Calculating P-value tables')
 
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
@@ -31,8 +32,8 @@ print('Input Depth:'), print(p_input_depth), print()
 
 print('Plotting P-value tables')
 
+#%% plotting p-value tables
 fig8, ax8 = plt.subplots(5, 1, figsize=(5, 10))
-
 fig8.patch.set_visible(False)
 
 functions.subplot(ax8[0], p_grab_fails, 'Failed Grabs')
@@ -44,6 +45,6 @@ functions.subplot(ax8[4], p_input_depth, 'Input depth')
 fig8.tight_layout()
 fig8.savefig("plots/p_values.jpg")
 
-
+#%% saving variables
 print(), print('Dumping evaluated data to file...')
 dill.dump_session('data_evaluated.pkl')
