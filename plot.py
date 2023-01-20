@@ -124,7 +124,7 @@ for p in Participants:
             new_row = [data[p][c][t]['depth'], p, c, t]
             trail_depth.loc[len(trial_grabs)] = new_row            
 
-fig7, ax7 = plt.subplots(1,5, figsize=(25, 5))
+fig7, ax7 = plt.subplots(1,5, figsize=(30, 5))
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'], ax=ax7[0])
 ax7[0].set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['attempts'], hue=trial_grabs['trial'], ax=ax7[1])
@@ -136,6 +136,7 @@ ax7[3].set_title('Grab fails per trial [n={}]'.format(len(Participants)))
 sns.boxplot(x=trail_depth['condition'], y=trail_depth['depth'], hue=trail_depth['trial'], ax=ax7[4])
 ax7[4].set_title('Input depth per trial [n={}]'.format(len(Participants)))
 
+fig7.tight_layout()
 fig7.savefig("plots/learning_effects.jpg")
 
 # %% plot input paths
