@@ -19,17 +19,18 @@
 ########################################################################
 
 import sys
+import os
 import pyzed.sl as sl
 import numpy as np
 import cv2
 from pathlib import Path
 import enum
+import time
 
 
 class AppType(enum.Enum):
-    LEFT_AND_RIGHT = 1
-    LEFT_AND_DEPTH = 2
-    LEFT_AND_DEPTH_16 = 3
+    LEFT = 1
+    RIGHT = 2
 
 
 def progress_bar(percent_done, bar_length=50):
@@ -39,44 +40,7 @@ def progress_bar(percent_done, bar_length=50):
     sys.stdout.flush()
 
 
-def main():
-    
-    if not sys.argv or len(sys.argv) != 4:
-        sys.stdout.write("Usage: \n\n")
-        sys.stdout.write("    ZED_SVO_Export A B C \n\n")
-        sys.stdout.write("Please use the following parameters from the command line:\n")
-        sys.stdout.write(" A - SVO file path (input) : \"path/to/file.svo\"\n")
-        sys.stdout.write(" B - AVI file path (output) or image sequence folder(output) :\n")
-        sys.stdout.write("         \"path/to/output/file.avi\" or \"path/to/output/folder\"\n")
-        sys.stdout.write(" C - Export mode:  0=Export LEFT+RIGHT AVI.\n")
-        sys.stdout.write("                   1=Export LEFT+DEPTH_VIEW AVI.\n")
-        sys.stdout.write("                   2=Export LEFT+RIGHT image sequence.\n")
-        sys.stdout.write("                   3=Export LEFT+DEPTH_VIEW image sequence.\n")
-        sys.stdout.write("                   4=Export LEFT+DEPTH_16Bit image sequence.\n")
-        sys.stdout.write(" A and B need to end with '/' or '\\'\n\n")
-        sys.stdout.write("Examples: \n")
-        sys.stdout.write("  (AVI LEFT+RIGHT):  ZED_SVO_Export \"path/to/file.svo\" \"path/to/output/file.avi\" 0\n")
-        sys.stdout.write("  (AVI LEFT+DEPTH):  ZED_SVO_Export \"path/to/file.svo\" \"path/to/output/file.avi\" 1\n")
-        sys.stdout.write("  (SEQUENCE LEFT+RIGHT):  ZED_SVO_Export \"path/to/file.svo\" \"path/to/output/folder\" 2\n")
-        sys.stdout.write("  (SEQUENCE LEFT+DEPTH):  ZED_SVO_Export \"path/to/file.svo\" \"path/to/output/folder\" 3\n")
-        sys.stdout.write("  (SEQUENCE LEFT+DEPTH_16Bit):  ZED_SVO_Export \"path/to/file.svo\" \"path/to/output/folder\""
-                         " 4\n")
-        exit()
-
-    # Get input parameters
-    svo_input_path = Path(sys.argv[1])
-    output_path = Path(sys.argv[2])
-    output_as_video = True    
-    app_type = AppType.LEFT_AND_RIGHT
-    if sys.argv[3] == "1" or sys.argv[3] == "3":
-        app_type = AppType.LEFT_AND_DEPTH
-    if sys.argv[3] == "4":
-        app_type = AppType.LEFT_AND_DEPTH_16
-    
-    # Check if exporting to AVI or SEQUENCE
-    if sys.argv[3] != "0" and sys.argv[3] != "1":
-        output_as_video = False
-
+def convert(svo_input_path, output_path, app_type, output_as_video):
     if not output_as_video and not output_path.is_dir():
         sys.stdout.write("Input directory doesn't exist. Check permissions or create it.\n",
                          output_path, "\n")
@@ -102,7 +66,7 @@ def main():
     image_size = zed.get_camera_information().camera_resolution
     width = image_size.width
     height = image_size.height
-    width_sbs = width * 2
+    width_sbs = width
     
     # Prepare side by side image container equivalent to CV_8UC4
     svo_image_sbs_rgba = np.zeros((height, width_sbs, 4), dtype=np.uint8)
@@ -132,30 +96,45 @@ def main():
     # Start SVO conversion to AVI/SEQUENCE
     sys.stdout.write("Converting SVO... Use Ctrl-C to interrupt conversion.\n")
 
-    nb_frames = zed.get_svo_number_of_frames()
+    nb_frames = zed.get_svo_number_of_frames() -1
 
     while True:
         if zed.grab(rt_param) == sl.ERROR_CODE.SUCCESS:
             svo_position = zed.get_svo_position()
 
-            # Retrieve SVO images
-            zed.retrieve_image(left_image, sl.VIEW.LEFT)
-
-            if app_type == AppType.LEFT_AND_RIGHT:
+            if app_type == AppType.LEFT:
+                zed.retrieve_image(left_image, sl.VIEW.LEFT)
+            elif app_type == AppType.RIGHT:
                 zed.retrieve_image(right_image, sl.VIEW.RIGHT)
-            elif app_type == AppType.LEFT_AND_DEPTH:
-                zed.retrieve_image(right_image, sl.VIEW.DEPTH)
-            elif app_type == AppType.LEFT_AND_DEPTH_16:
-                zed.retrieve_measure(depth_image, sl.MEASURE.DEPTH)
 
-            # Copy the left image to the left side of SBS image
-            svo_image_sbs_rgba[0:height, 0:width, :] = left_image.get_data()
+            if output_as_video:
+                # Copy the left image to the left side of SBS image
+                if app_type == AppType.LEFT:
+                    svo_image_sbs_rgba[0:height, 0:width, :] = left_image.get_data()
+                elif app_type == AppType.RIGHT:  
+                    # Copy the right image to the right side of SBS image
+                    svo_image_sbs_rgba[0:height, 0:width, :] = right_image.get_data()
 
-            # Convert SVO image from RGBA to RGB
-            ocv_image_sbs_rgb = cv2.cvtColor(svo_image_sbs_rgba, cv2.COLOR_RGBA2RGB)
+                # Convert SVO image from RGBA to RGB
+                ocv_image_sbs_rgb = cv2.cvtColor(svo_image_sbs_rgba, cv2.COLOR_RGBA2RGB)
 
-            # Write the RGB image in the video
-            video_writer.write(ocv_image_sbs_rgb)
+                # Write the RGB image in the video
+                video_writer.write(ocv_image_sbs_rgb)
+            else:
+                # Generate file names
+                filename1 = output_path / ("left%s.png" % str(svo_position).zfill(6))
+                filename2 = output_path / (("right%s.png" if app_type == AppType.LEFT_AND_RIGHT
+                                           else "depth%s.png") % str(svo_position).zfill(6))
+                
+                # Save Left images
+                cv2.imwrite(str(filename1), left_image.get_data())
+
+                if app_type != AppType.LEFT_AND_DEPTH_16:
+                    # Save right images
+                    cv2.imwrite(str(filename2), right_image.get_data())
+                else:
+                    # Save depth images (convert to uint16)
+                    cv2.imwrite(str(filename2), depth_image.get_data().astype(np.uint16))
 
             # Display progress
             progress_bar((svo_position + 1) / nb_frames * 100, 30)
@@ -170,8 +149,30 @@ def main():
         video_writer.release()
 
     zed.close()
-    return 0
 
+def main():
+    datapath        = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Experiment\\"
+    n = 0
+
+    for root, dirs, files in os.walk(datapath):
+        for file in files:
+            if file.endswith(".svo"):
+                svo_path = os.path.join(root, file)
+                output_path = os.path.join(root, "ZED2_Recording.avi")
+                print("found svo: {}".format(svo_path))             
+                print("converting into: {}".format(os.path.join(output_path)))
+                convert(svo_path, output_path, AppType.RIGHT, True)
+                n += 1
+                if n == 3:
+                    break
+        else:
+            continue
+
+        break
+                
+    
+    print(), print("Total converted files: {}".format(n)), print()
+    
 
 if __name__ == "__main__":
     main()
