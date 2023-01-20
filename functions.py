@@ -57,7 +57,7 @@ def pdf(x):
     y_out = 1/(std * np.sqrt(2 * np.pi)) * np.exp( - (x - mean)**2 / (2 * std**2))
     return mean, std
 
-def subplot(ax, df, title):
+def tablesubplot(ax, df, title):
     ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, loc='center')
     ax.set_title(title)
     ax.axis('off')
