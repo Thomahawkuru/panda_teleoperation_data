@@ -151,17 +151,28 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
     zed.close()
 
 def main():
-    datapath        = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Experiment\\"
+    datapath = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Experiment\\"
+    savepath = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Videos\\"
     n = 0
 
     for root, dirs, files in os.walk(datapath):
         for file in files:
             if file.endswith(".svo"):
                 svo_path = os.path.join(root, file)
-                output_path = os.path.join(root, "ZED2_Recording.avi")
+                folder = os.path.relpath(root,datapath)
+                output_folder = os.path.join(savepath, folder)
+                
+                if not os.path.isdir(output_folder):
+                    print("creating output folder: {}".format(output_folder))
+                    os.makedirs(output_folder)
+
+                output_path = os.path.join(output_folder, "ZED2_Recording.avi")
+
                 print("found svo: {}".format(svo_path))             
-                print("converting into: {}".format(os.path.join(output_path)))
+                print("converting into: {}".format(output_path))
+                
                 convert(svo_path, output_path, AppType.RIGHT, True)
+                
                 n += 1
                 if n == 3:
                     break
