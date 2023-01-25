@@ -14,6 +14,7 @@ __pycache__/
 *.pkl
 *.avi
 *.mp4
+*.jpg
 
 # Distribution / packaging
 .Python
