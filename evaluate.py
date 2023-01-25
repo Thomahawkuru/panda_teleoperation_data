@@ -33,8 +33,8 @@ print('Input Depth:'), print(p_input_depth), print()
 print('Plotting P-value tables')
 
 #%% plotting p-value tables
-fig8, ax8 = plt.subplots(5, 1, figsize=(5, 10))
-fig8.patch.set_visible(False)
+fig4, ax4 = plt.subplots(5, 1, figsize=(5, 10))
+fig4.patch.set_visible(False)
 
 functions.tablesubplot(ax8[0], p_grab_fails, 'Failed Grabs')
 functions.tablesubplot(ax8[1], p_grab_succes, 'Correct grabs')
@@ -42,8 +42,8 @@ functions.tablesubplot(ax8[2], p_grab_attemts, 'Grab attempts')
 functions.tablesubplot(ax8[3], p_input_velocity, 'Input Velocity')
 functions.tablesubplot(ax8[4], p_input_depth, 'Input depth')
 
-fig8.tight_layout()
-fig8.savefig("plots/p_values.jpg")
+fig4.tight_layout()
+fig4.savefig("plots/p_values.jpg")
 
 #%% saving variables
 print(), print('Dumping evaluated data to file...')
