@@ -19,8 +19,9 @@ import dill
 import functions
 
 # define variables --------------------------------------------------------------------------------------------------
-datapath        = os.getcwd() + "\\data\\Experiment\\"        # full path to read recorded data
-savepath        = os.getcwd() + "\\save\\"        # full path to save calculated data
+root = os.getcwd().replace("\\","/")
+datapath        = root + "/data/Experiment/"        # full path to read recorded data
+savepath        = root + "/save/"        # full path to save calculated data
 
 exp_header      = [ "f", "dt", "t", "fps", "start", "hand", "Grip", "Tracked", "Controlling" ]
 gaze_header     = [ "f", "dt", "t", "status", "gazeX", "gazeY", "gazeZ", "gazeposition", "focusdistance", "focusstability", "statusL", "LeftX", "LeftY", "LeftZ", "posL", "pupilL", "statusR", "RightX", "RightY", "RightZ", "positionR", "pupilR"]
