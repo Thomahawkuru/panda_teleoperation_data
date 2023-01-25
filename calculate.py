@@ -21,19 +21,19 @@ for p in Participants:
             #print('Duration: {}'.format(data[p][c][t]['duration']))
             
             data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)
-            print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
+            #print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
 
             data[p][c][t]['time'] = calculators.time(data, p, c, t)
            
             data[p][c][t]['velocity'] = calculators.velocity(data, p, c, t, 'Hand')
-            print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
+            #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
             
             data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t)
-            print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
-            print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
+            #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
+            #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
             data[p][c][t]['depth'] = calculators.input_depth(data, p, c, t)
-            print('Depth: {}'.format(data[p][c][t]['depth']))
+            #print('Depth: {}'.format(data[p][c][t]['depth']))
             print()
 
 # %%
