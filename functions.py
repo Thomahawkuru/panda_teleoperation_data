@@ -20,7 +20,8 @@ def read_csv(path, participant, condition, trial, filename, header):
     
     file = [i for i in os.listdir(trial_path) if os.path.isfile(os.path.join(trial_path, i)) and filename in i]
     
-    csvdata = pandas.read_csv(trial_path + file[0], delimiter=",", header=0, names=header, skipfooter=1, engine='python')
+    csvdata = pandas.read_csv(trial_path + file[0], delimiter=",", header=0, names=header)
+    csvdata.drop(index=csvdata.index[-1],axis=0,inplace=True)
 
     return csvdata
 
