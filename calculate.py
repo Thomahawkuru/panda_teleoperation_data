@@ -2,6 +2,7 @@
 from plotly.offline import plot
 import numpy as np
 import dill
+import pickle
 import calculators
 
 dill.load_session('data_raw.pkl')

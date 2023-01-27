@@ -52,5 +52,3 @@ for p in Participants:
 #%% save imported data
 print(), print('Dumping raw data to file...')
 dill.dump_session('data_raw.pkl')
-
-# %%
