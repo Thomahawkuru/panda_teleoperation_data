@@ -12,7 +12,8 @@ dill.load_session('data_calculated.pkl')
 Participants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]                              # number of participants
 Measures = ['Max', 'Med', 'Min', 'Avg']
 
-#%% plot max/med/min/avg reache performance over all 3 trials  
+#%% plot ming sanity check data
+print(), print('Plotting sanity check') 
 fpss = []
 times = []
 track_err = []
@@ -35,7 +36,9 @@ ax1[2].legend(["Tracking errors [n]"])
 ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
 fig1.savefig("plots/sanity_check.jpg")
 
-#%% Load data into dataframes
+#%% plot max/med/min/avg reache performance over all 3 trials 
+print(), print('Plotting min/max/avg boxplots') 
+
 grab_fails = pd.DataFrame([] , columns=['fails', 'participant', 'condition', 'measure'])
 grab_succes = pd.DataFrame([] , columns=['succes', 'participant', 'condition', 'measure'])
 grab_attempts = pd.DataFrame([] , columns=['attempts', 'participant', 'condition', 'measure'])
@@ -56,23 +59,30 @@ for p in Participants:
             new_row = functions.minmax(data, 'depth', None, p, c, m, Trials, Measures)
             depth.loc[len(depth)] = new_row  
 
-fig2, ax2 = plt.subplots(5, 1, figsize=(5, 20))
+fig2, ax2 = plt.subplots(5, 1, figsize=(7.5, 20))
 
 sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0])
 ax2[0].set_title('Failed Grabs [n={}]'.format(len(Participants)))
+ax2[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=grab_succes['condition'], y=grab_succes['succes'], hue=grab_succes['measure'], ax=ax2[1])
 ax2[1].set_title('Correct Grabs [n={}]'.format(len(Participants)))
+ax2[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=grab_attempts['condition'], y=grab_attempts['attempts'], hue=grab_attempts['measure'], ax=ax2[2])
 ax2[2].set_title('grab_attempts [n={}]'.format(len(Participants)))
+ax2[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=velocity['condition'], y=velocity['velocity'], hue=velocity['measure'], ax=ax2[3])
 ax2[3].set_title('Average Velocity [m/s]')
+ax2[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=depth['condition'], y=depth['depth'], hue=depth['measure'], ax=ax2[4])
 ax2[4].set_title('Input depth [m]')
+ax2[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig2.tight_layout()
 fig2.savefig("plots/trial_average.jpg")
 
 #%% plot learning effects from trial 1 to 3
+print(), print('Plotting learning effect boxplots') 
+
 trial_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'trial'])
 trial_grabs = pd.DataFrame([] , columns=['attempts', 'succes', 'fails', 'participant', 'condition', 'trial'])
 trail_depth = pd.DataFrame([] , columns=['depth', 'participant', 'condition', 'trial'])
@@ -87,18 +97,23 @@ for p in Participants:
             new_row = [data[p][c][t]['depth'], p, c, t]
             trail_depth.loc[len(trail_depth)] = new_row 
 
-fig3, ax3 = plt.subplots(5, 1, figsize=(5, 20))
+fig3, ax3 = plt.subplots(5, 1, figsize=(7.5, 20))
 
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['fails'], hue=trial_grabs['trial'], ax=ax3[0])
 ax3[0].set_title('Grab fails per trial [n={}]'.format(len(Participants)))
+ax3[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['succes'], hue=trial_grabs['trial'], ax=ax3[1])
 ax3[1].set_title('Grab successes per trial [n={}]'.format(len(Participants)))
+ax3[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['attempts'], hue=trial_grabs['trial'], ax=ax3[2])
 ax3[2].set_title('Grab attempts per trial [n={}]'.format(len(Participants)))
+ax3[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'], ax=ax3[3])
 ax3[3].set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
+ax3[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trail_depth['condition'], y=trail_depth['depth'], hue=trail_depth['trial'], ax=ax3[4])
 ax3[4].set_title('Input depth per trial [n={}]'.format(len(Participants)))
+ax3[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig3.tight_layout()
 fig3.savefig("plots/learning_effects.jpg")
