@@ -10,6 +10,9 @@ dill.load_session('data_plotted.pkl')
 #%% calculating p_values for min/med/max/avg measures
 print(), print('Calculating P-value tables over all trials')
 
+fig4, ax4 = plt.subplots(5, 4, figsize=(12, 10))
+fig4.patch.set_visible(False)
+
 for m in Measures:
     print("Measure: {}".format(m))
     
@@ -29,20 +32,19 @@ for m in Measures:
             _, p_input_depth[c1][c2] = functions.p_values(depth, 'depth', m, c1, c2, 'measure')
 
     # plotting p-value tables
-    fig4, ax4 = plt.subplots(5, 1, figsize=(5, 10))
-    fig4.patch.set_visible(False)
-
-    functions.tablesubplot(ax4[0], p_grab_fails, '{} Failed Grabs'.format(m))
-    functions.tablesubplot(ax4[1], p_grab_succes, '{} Correct grabs'.format(m))
-    functions.tablesubplot(ax4[2], p_grab_attemts, '{} Grab attempts'.format(m))
-    functions.tablesubplot(ax4[3], p_input_velocity, '{} Input Velocity'.format(m))
-    functions.tablesubplot(ax4[4], p_input_depth, '{} Input depth'.format(m))
+    functions.tablesubplot(ax4[0][Measures.index(m)], p_grab_fails, '{} Failed Grabs'.format(m))
+    functions.tablesubplot(ax4[1][Measures.index(m)], p_grab_succes, '{} Correct grabs'.format(m))
+    functions.tablesubplot(ax4[2][Measures.index(m)], p_grab_attemts, '{} Grab attempts'.format(m))
+    functions.tablesubplot(ax4[3][Measures.index(m)], p_input_velocity, '{} Input Velocity'.format(m))
+    functions.tablesubplot(ax4[4][Measures.index(m)], p_input_depth, '{} Input depth'.format(m))
     
-    fig4.tight_layout()
-    fig4.savefig("plots/p_values_{}.jpg".format(m))
+fig4.tight_layout()
+fig4.savefig("plots/p_values_trials.jpg".format(m))
 
 #%% calculating p_values for trial 1-3 learning effects
 print(), print('Calculating P-value tables for learning effects')
+fig5, ax5 = plt.subplots(5, 3, figsize=(9, 10))
+fig5.patch.set_visible(False)
 
 for t in Trials:
     print("Trial: {}".format(t))
@@ -63,17 +65,14 @@ for t in Trials:
             _, p_input_depth[c1][c2] = functions.p_values(trail_depth, 'depth', t, c1, c2, 'trial')
 
     # plotting p-value tables
-    fig4, ax4 = plt.subplots(5, 1, figsize=(5, 10))
-    fig4.patch.set_visible(False)
+    functions.tablesubplot(ax5[0][t-1], p_grab_fails, 'Failed Grabs Trial {}'.format(t))
+    functions.tablesubplot(ax5[1][t-1], p_grab_succes, 'Correct grabs Trial {}'.format(t))
+    functions.tablesubplot(ax5[2][t-1], p_grab_attemts, 'Grab attempts Trial {}'.format(t))
+    functions.tablesubplot(ax5[3][t-1], p_input_velocity, 'Input Velocity Trial {}'.format(t))
+    functions.tablesubplot(ax5[4][t-1], p_input_depth, 'Input depth Trial {}'.format(t))
 
-    functions.tablesubplot(ax4[0], p_grab_fails, 'Failed Grabs Trial {}'.format(t))
-    functions.tablesubplot(ax4[1], p_grab_succes, 'Correct grabs Trial {}'.format(t))
-    functions.tablesubplot(ax4[2], p_grab_attemts, 'Grab attempts Trial {}'.format(t))
-    functions.tablesubplot(ax4[3], p_input_velocity, 'Input Velocity Trial {}'.format(t))
-    functions.tablesubplot(ax4[4], p_input_depth, 'Input depth Trial {}'.format(t))
-    
-    fig4.tight_layout()
-    fig4.savefig("plots/p_values_trial_{}.jpg".format(t))
+fig5.tight_layout()
+fig5.savefig("plots/p_values_learning.jpg".format(t))
 
 #%% saving variables
 print(), print('Dumping evaluated data to file...')
