@@ -1,4 +1,5 @@
 #%% import
+import time
 from plotly.offline import plot
 import numpy as np
 import dill
@@ -6,6 +7,7 @@ import pickle
 import calculators
 
 dill.load_session('data_raw.pkl')
+start = time.time()
 
 #%% plot data   
 for p in Participants:
@@ -39,3 +41,6 @@ for p in Participants:
 # %%
 print(), print('Dumping calculated data to file...')
 dill.dump_session('data_calculated.pkl')
+
+end =  time.time()
+print("Calculation time: {}".format(end-start))

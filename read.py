@@ -7,6 +7,7 @@ Created on Thu Jan 20 11:14:53 2022
 
 #%% import
 import os
+import time
 import matplotlib.pyplot as plt
 from plotly.offline import plot
 import plotly.express as px
@@ -17,6 +18,8 @@ import pandas as pd
 import pickle
 import dill
 import functions
+
+start = time.time()
 
 # define variables --------------------------------------------------------------------------------------------------
 root            = os.getcwd().replace("\\","/")
@@ -30,7 +33,7 @@ hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rot
 gripper_header  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grip_pos", "grip_vel", "grip_eff" ]
 robot_header    = [ "f", "dt", "t", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "fx", "fy", "fz" ]
 
-Participants    = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]                            # number of participants
+Participants    = range(1,20)                          # number of participants
 Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
 Trials          = [1, 2, 3]
 Files           = ['Experiment', 'Gaze', 'Hand', 'HMD', 'Gripper', 'Robot']
@@ -43,7 +46,7 @@ for p in Participants:
     print(), print(), print('Reading data for participant {}'.format(p))    
     
     for c in Conditions[1:]:        
-        print(), print('Condition {}'.format(c))
+        print('Condition {}'.format(c))
 
         for t in Trials:           
             for f,h in zip(Files, Headers):
@@ -52,3 +55,6 @@ for p in Participants:
 #%% save imported data
 print(), print('Dumping raw data to file...')
 dill.dump_session('data_raw.pkl')
+
+end =  time.time()
+print("Read time: {}".format(end-start))

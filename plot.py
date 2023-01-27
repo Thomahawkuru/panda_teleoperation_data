@@ -1,4 +1,5 @@
 #%% import
+import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +10,9 @@ import seaborn as sns
 import functions
 
 dill.load_session('data_calculated.pkl')
-Participants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]                              # number of participants
+start = time.time()
+
+#Participants = range(1,30)                              # number of participants
 Measures = ['Max', 'Med', 'Min', 'Avg']
 
 #%% plot ming sanity check data
@@ -129,3 +132,6 @@ fig3.savefig("plots/learning_effects.jpg")
 # %%
 print(), print('Dumping plotted data to file...')
 dill.dump_session('data_plotted.pkl')
+
+end =  time.time()
+print("Plotting time: {}".format(end-start))

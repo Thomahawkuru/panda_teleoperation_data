@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import numpy as np
 import dill
@@ -6,7 +7,7 @@ from scipy import stats
 import functions
 
 dill.load_session('data_plotted.pkl')
-
+start = time.time()
 #%% calculating p_values for min/med/max/avg measures
 print(), print('Calculating P-value tables over all trials')
 
@@ -77,3 +78,6 @@ fig5.savefig("plots/p_values_learning.jpg".format(t))
 #%% saving variables
 print(), print('Dumping evaluated data to file...')
 dill.dump_session('data_evaluated.pkl')
+
+end =  time.time()
+print("Evaluation time: {}".format(end-start))
