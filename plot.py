@@ -10,8 +10,9 @@ import functions
 
 dill.load_session('data_calculated.pkl')
 Participants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]                              # number of participants
+Measures = ['Max', 'Med', 'Min', 'Avg']
 
-#%% plot sanity check data    
+#%% plot max/med/min/avg reache performance over all 3 trials  
 fpss = []
 times = []
 track_err = []
@@ -34,77 +35,44 @@ ax1[2].legend(["Tracking errors [n]"])
 ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
 fig1.savefig("plots/sanity_check.jpg")
 
-#%% plot data per condition
-failed_grabs = pd.DataFrame()
-correct_grabs = pd.DataFrame()
-grab_attempts = pd.DataFrame()
-average_velocity = pd.DataFrame()
-input_depth = pd.DataFrame()
+#%% Load data into dataframes
+grab_fails = pd.DataFrame([] , columns=['fails', 'participant', 'condition', 'measure'])
+grab_succes = pd.DataFrame([] , columns=['succes', 'participant', 'condition', 'measure'])
+grab_attempts = pd.DataFrame([] , columns=['attempts', 'participant', 'condition', 'measure'])
+velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
+depth = pd.DataFrame([] , columns=['depth', 'participant', 'condition', 'measure'])
 
-for c in Conditions[1:]:
-    Fails = []
-    Succes = []
-    Grabs = []
-    Velocity = []
-    Depth = []
-
-    for p in Participants:
-        failed = 0
-        correct = 0
-        grabs = 0
-        velocity = 0
-        depth = 0
-
-        for t in Trials:
-            failed += data[p][c][t]['grabs']['fail']
-            correct += data[p][c][t]['grabs']['succes']
-            grabs += data[p][c][t]['grabs']['attempts']
-            velocity += np.mean(data[p][c][t]['velocity'])
-            depth += data[p][c][t]['depth']
-        
-        Velocity.append(velocity/3)
-        Fails.append(failed/3)
-        Grabs.append(grabs/3)
-        Succes.append(correct/3)
-        Depth.append(depth/3)
-
-    failed_grabs[c] = Fails
-    correct_grabs[c] = Succes
-    grab_attempts[c] = Grabs
-    average_velocity[c] = Velocity
-    input_depth[c] = Depth
+for p in Participants:
+    for c in Conditions[1:]:
+        for m in Measures:         
+            new_row = functions.minmax(data, 'grabs', 'fail', p, c, m, Trials, Measures)
+            grab_fails.loc[len(grab_fails)] = new_row
+            new_row = functions.minmax(data, 'grabs', 'succes', p, c, m, Trials, Measures)
+            grab_succes.loc[len(grab_succes)] = new_row
+            new_row = functions.minmax(data, 'grabs', 'attempts', p, c, m, Trials, Measures)
+            grab_attempts.loc[len(grab_attempts)] = new_row
+            new_row = functions.minmax(data, 'velocity', None, p, c, m, Trials, Measures)
+            velocity.loc[len(velocity)] = new_row
+            new_row = functions.minmax(data, 'depth', None, p, c, m, Trials, Measures)
+            depth.loc[len(depth)] = new_row  
 
 fig2, ax2 = plt.subplots(1,5, figsize=(25, 5))
 
-ax2[0].boxplot(failed_grabs, whis=[0, 100], showmeans=True)
-ax2[0].set_title('Failed Grabs [Average n]')
-ax2[0].set_xlabel('Conditions')
-ax2[0].set_xticklabels(['B','C','D','E','F'])
-
-ax2[1].boxplot(correct_grabs, whis=[0, 100], showmeans=True)
-ax2[1].set_title('Correct Grabs [Average n]')
-ax2[1].set_xticklabels(['B','C','D','E','F'])
-ax2[1].set_xlabel('Conditions')
-
-ax2[2].boxplot(grab_attempts, whis=[0, 100], showmeans=True)
-ax2[2].set_title('grab_attempts [Average n]')
-ax2[2].set_xticklabels(['B','C','D','E','F'])
-ax2[2].set_xlabel('Conditions')
-
-ax2[3].boxplot(average_velocity, whis=[0, 100], showmeans=True)
+sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0])
+ax2[0].set_title('Failed Grabs [n={}]'.format(len(Participants)))
+sns.boxplot(x=grab_succes['condition'], y=grab_succes['succes'], hue=grab_succes['measure'], ax=ax2[1])
+ax2[1].set_title('Correct Grabs [n={}]'.format(len(Participants)))
+sns.boxplot(x=grab_attempts['condition'], y=grab_attempts['attempts'], hue=grab_attempts['measure'], ax=ax2[2])
+ax2[2].set_title('grab_attempts [n={}]'.format(len(Participants)))
+sns.boxplot(x=velocity['condition'], y=velocity['velocity'], hue=velocity['measure'], ax=ax2[3])
 ax2[3].set_title('Average Velocity [m/s]')
-ax2[3].set_xlabel('Conditions')
-ax2[3].set_xticklabels(['B','C','D','E','F'])
-
-ax2[4].boxplot(input_depth, whis=[0, 100], showmeans=True)
+sns.boxplot(x=depth['condition'], y=depth['depth'], hue=depth['measure'], ax=ax2[4])
 ax2[4].set_title('Input depth [m]')
-ax2[4].set_xlabel('Conditions')
-ax2[4].set_xticklabels(['B','C','D','E','F'])
 
 fig2.tight_layout()
 fig2.savefig("plots/trial_average.jpg")
 
-#%% plot learning effects in average trial velocity and grab attempts
+#%% plot learning effects from trial 1 to 3
 trial_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'trial'])
 trial_grabs = pd.DataFrame([] , columns=['attempts', 'succes', 'fails', 'participant', 'condition', 'trial'])
 trail_depth = pd.DataFrame([] , columns=['depth', 'participant', 'condition', 'trial'])
@@ -117,7 +85,7 @@ for p in Participants:
             new_row = [data[p][c][t]['grabs']['attempts'], data[p][c][t]['grabs']['succes'], data[p][c][t]['grabs']['fail'], p, c, t]
             trial_grabs.loc[len(trial_grabs)] = new_row
             new_row = [data[p][c][t]['depth'], p, c, t]
-            trail_depth.loc[len(trial_grabs)] = new_row            
+            trail_depth.loc[len(trail_depth)] = new_row 
 
 fig3, ax3 = plt.subplots(1,5, figsize=(25, 5))
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['fails'], hue=trial_grabs['trial'], ax=ax3[0])
