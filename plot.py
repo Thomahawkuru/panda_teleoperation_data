@@ -56,7 +56,7 @@ for p in Participants:
             new_row = functions.minmax(data, 'depth', None, p, c, m, Trials, Measures)
             depth.loc[len(depth)] = new_row  
 
-fig2, ax2 = plt.subplots(1,5, figsize=(25, 5))
+fig2, ax2 = plt.subplots(5, 1, figsize=(5, 20))
 
 sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0])
 ax2[0].set_title('Failed Grabs [n={}]'.format(len(Participants)))
@@ -87,7 +87,8 @@ for p in Participants:
             new_row = [data[p][c][t]['depth'], p, c, t]
             trail_depth.loc[len(trail_depth)] = new_row 
 
-fig3, ax3 = plt.subplots(1,5, figsize=(25, 5))
+fig3, ax3 = plt.subplots(5, 1, figsize=(5, 20))
+
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['fails'], hue=trial_grabs['trial'], ax=ax3[0])
 ax3[0].set_title('Grab fails per trial [n={}]'.format(len(Participants)))
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['succes'], hue=trial_grabs['trial'], ax=ax3[1])
