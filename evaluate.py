@@ -32,8 +32,7 @@ for m in Measures:
     # print('Grab attempts:'), print(p_grab_attemts), print()     
     # print('Input velocity:'), print(p_input_velocity), print()
     # print('Input Depth:'), print(p_input_depth), print()     
-
-    print('Plotting P-value tables')
+    #print('Plotting P-value tables')
 
     #%% plotting p-value tables
     fig4, ax4 = plt.subplots(5, 1, figsize=(5, 10))

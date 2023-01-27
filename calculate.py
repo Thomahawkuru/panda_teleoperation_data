@@ -34,7 +34,6 @@ for p in Participants:
            
             data[p][c][t]['depth'] = calculators.input_depth(data, p, c, t)
             #print('Depth: {}'.format(data[p][c][t]['depth']))
-            print()
 
 # %%
 print(), print('Dumping calculated data to file...')
