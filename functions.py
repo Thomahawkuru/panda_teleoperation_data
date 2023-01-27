@@ -84,9 +84,9 @@ def minmax(data, key, type, p, c, m, T, M):
 
     return row
 
-def p_values(data, key, m, c1, c2):
+def p_values(data, key, m, c1, c2, type):
 
-    measure_data = data[data['measure'] == m]
+    measure_data = data[data[type] == m]
     p_value = np.round(stats.ttest_rel(
         measure_data[measure_data['condition']==c1][key], 
         measure_data[measure_data['condition']==c2][key]),3)
