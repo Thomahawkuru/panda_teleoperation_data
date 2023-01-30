@@ -20,7 +20,8 @@ def duration(data, p, c, t):
     time_raw = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start]
     duration = np.max(time_raw - np.min(time_raw)) + data[p][c][t]['Experiment']["dt"][data[p][c][t]['Experiment'].start].tail(1)
 
-    return duration
+    
+    return float(duration)
 
 def time(data, p, c, t):
     time_crop = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])
