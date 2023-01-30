@@ -12,7 +12,7 @@ import functions
 dill.load_session('data_calculated.pkl')
 start = time.time()
 
-Participants = range(1,1+20)                              # number of participants
+Participants = Participants[1:]                              # number of participants
 Measures = ['Max', 'Med', 'Min', 'Avg']
 
 #%% plot ming sanity check data

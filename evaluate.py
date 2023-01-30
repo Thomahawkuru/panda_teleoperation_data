@@ -10,12 +10,11 @@ import functions
 dill.load_session('data_plotted.pkl')
 start = time.time()
 
-
 #%% determine unvalid participant trials
 unvalid = pd.DataFrame([] , columns=['fps', 'duration', 'track_err'])
 
 for p in Participants:
-    unvalid.loc[len(unvalid)] = ['', '', '']
+    unvalid.loc[p] = ['', '', '']
 
     for c in Conditions[1:]:
         for t in Trials:
