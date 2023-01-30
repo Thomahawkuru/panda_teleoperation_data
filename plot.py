@@ -17,26 +17,30 @@ Measures = ['Max', 'Med', 'Min', 'Avg']
 
 #%% plot ming sanity check data
 print(), print('Plotting sanity check') 
-fpss = []
-times = []
-track_err = []
+fpss =  pd.DataFrame([] , columns=['fps', 'participant', 'condition', 'trial'])
+times =  pd.DataFrame([] , columns=['duration', 'participant', 'condition', 'trial'])
+track_err = pd.DataFrame([] , columns=['track_err', 'participant', 'condition', 'trial'])
 
 for p in Participants:
     for c in Conditions[1:]:
         for t in Trials:
-            fpss.append(data[p][c][t]['fps'])
-            times.append(data[p][c][t]['duration'])
-            track_err.append(data[p][c][t]['track_err']) 
+            new_row = [np.mean(data[p][c][t]['fps']), p, c, t]
+            fpss.loc[len(fpss)] = new_row 
+            new_row = [np.mean(data[p][c][t]['duration']), p, c, t]
+            times.loc[len(times)] = new_row 
+            new_row = [np.mean(data[p][c][t]['track_err']), p, c, t]
+            track_err.loc[len(track_err)] = new_row 
 
 fig1, ax1 = plt.subplots(3)
-ax1[0].plot(fpss, 'b')
-ax1[0].legend(["Average FPS [n]"])
-ax1[1].plot(times, 'g')
-ax1[1].legend(["Trial Duration [s]"])
-ax1[1].set_ylim([59, 61])
-ax1[2].plot(track_err,'r')
-ax1[2].legend(["Tracking errors [n]"])
+sns.boxplot(x=fpss['condition'], y=fpss['fps'], hue=fpss['trial'], ax=ax1[0])
+ax1[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+sns.boxplot(x=times['condition'], y=times['duration'], hue=times['trial'], ax=ax1[1])
+ax1[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+sns.boxplot(x=track_err['condition'], y=track_err['track_err'], hue=track_err['trial'], ax=ax1[2])
+ax1[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
 ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
+fig1.tight_layout()
 fig1.savefig("plots/sanity_check.jpg")
 
 #%% plot max/med/min/avg reache performance over all 3 trials 
