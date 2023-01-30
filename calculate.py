@@ -32,7 +32,7 @@ for p in Participants:
             #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
-            data[p][c][t]['velocity'] = calculators.velocity(data, p, c, t, 'Hand')
+            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand')
             #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
            
             data[p][c][t]['depth'] = calculators.input_depth(data, p, c, t)

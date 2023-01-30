@@ -12,7 +12,7 @@ import functions
 dill.load_session('data_calculated.pkl')
 start = time.time()
 
-#Participants = range(1,30)                              # number of participants
+Participants = range(1,1+20)                              # number of participants
 Measures = ['Max', 'Med', 'Min', 'Avg']
 
 #%% plot ming sanity check data
@@ -78,7 +78,7 @@ sns.boxplot(x=grab_attempts['condition'], y=grab_attempts['attempts'], hue=grab_
 ax2[2].set_title('grab_attempts [n={}]'.format(len(Participants)))
 ax2[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=velocity['condition'], y=velocity['velocity'], hue=velocity['measure'], ax=ax2[3])
-ax2[3].set_title('Average Velocity [m/s]')
+ax2[3].set_title('Average Grab Velocity [m/s]')
 ax2[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=depth['condition'], y=depth['depth'], hue=depth['measure'], ax=ax2[4])
 ax2[4].set_title('Input depth [m]')
@@ -116,7 +116,7 @@ sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['attempts'], hue=trial_gra
 ax3[2].set_title('Grab attempts per trial [n={}]'.format(len(Participants)))
 ax3[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['velocity'], hue=trial_velocity['trial'], ax=ax3[3])
-ax3[3].set_title('Average input velocity per trial [n={}]'.format(len(Participants)))
+ax3[3].set_title('Average grab velocity per trial [n={}]'.format(len(Participants)))
 ax3[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trail_depth['condition'], y=trail_depth['depth'], hue=trail_depth['trial'], ax=ax3[4])
 ax3[4].set_title('Input depth per trial [n={}]'.format(len(Participants)))

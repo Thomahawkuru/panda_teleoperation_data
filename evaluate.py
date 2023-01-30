@@ -1,5 +1,4 @@
 #%%
-#%%
 import time
 import pandas as pd
 import numpy as np
@@ -58,7 +57,7 @@ for m in Measures:
     functions.tablesubplot(ax4[0][Measures.index(m)], p_grab_fails, '{} Failed Grabs'.format(m))
     functions.tablesubplot(ax4[1][Measures.index(m)], p_grab_succes, '{} Correct grabs'.format(m))
     functions.tablesubplot(ax4[2][Measures.index(m)], p_grab_attemts, '{} Grab attempts'.format(m))
-    functions.tablesubplot(ax4[3][Measures.index(m)], p_input_velocity, '{} Input Velocity'.format(m))
+    functions.tablesubplot(ax4[3][Measures.index(m)], p_input_velocity, '{} Grab Velocity'.format(m))
     functions.tablesubplot(ax4[4][Measures.index(m)], p_input_depth, '{} Input depth'.format(m))
     
 fig4.tight_layout()
@@ -91,7 +90,7 @@ for t in Trials:
     functions.tablesubplot(ax5[0][t-1], p_grab_fails, 'Failed Grabs Trial {}'.format(t))
     functions.tablesubplot(ax5[1][t-1], p_grab_succes, 'Correct grabs Trial {}'.format(t))
     functions.tablesubplot(ax5[2][t-1], p_grab_attemts, 'Grab attempts Trial {}'.format(t))
-    functions.tablesubplot(ax5[3][t-1], p_input_velocity, 'Input Velocity Trial {}'.format(t))
+    functions.tablesubplot(ax5[3][t-1], p_input_velocity, 'Grab Velocity Trial {}'.format(t))
     functions.tablesubplot(ax5[4][t-1], p_input_depth, 'Input depth Trial {}'.format(t))
 
 fig5.tight_layout()
