@@ -100,11 +100,11 @@ def grab_velocity(data, p, c, t, file, pre_time):
                 t += input_data.loc[startpoints[i]-j]['dt']    
             except KeyError:
                 t = pre_time
+                j -= 1
+                
+        prepoint = startpoints[i] - j
 
-        if j < startpoints[i-1]:
-            j = startpoints[i-1] + 1
-
-        prepoints.append(startpoints[i] - j)
+        prepoints.append(prepoint)
         #print('pre-start dist: {}'.format(startpoints[i] - j))
 
 
