@@ -48,6 +48,12 @@ def grabs(data, p, c, t):
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
     peaks_fail, _   = signal.find_peaks(grab_crop, height = -0.02, prominence=0.005,distance=50)
 
+    # plt.plot(grab_crop)
+    # plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
+    # plt.plot(startpoints,grab_crop[startpoints],'gx')
+    # plt.plot(endpoints,grab_crop[endpoints],'rx')
+    # plt.show()
+
     grabs['succes'] = len(peaks_succes)
     grabs['fail'] = len(peaks_fail)
     grabs['attempts'] = grabs['succes'] + grabs['fail']
@@ -69,7 +75,8 @@ def velocity(data, p, c, t, file):
 
     return velocity
 
-def grab_velocity(data, p, c, t, file):
+def grab_velocity(data, p, c, t, file, pre_time):
+    avg_v = {'pre': [], 'post': []}
 
     grab_data = -data[p][c][t]['Gripper']["grip_pos"]
     input_data = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]
@@ -79,36 +86,37 @@ def grab_velocity(data, p, c, t, file):
 
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
 
-    peak = False
-    startpoints = []
-    endpoints = []
+    startpoints, endpoints = functions.grab_start_end(grab_crop, peaks_succes)    
     
-    for i in range(len(peaks_succes)):
-        j = peaks_succes[i]
+    prepoints = []
 
-        while grab_crop[j] > -0.0395 and peak == False:
-            j -= 1
-            if grab_crop[j] < -0.0395:
-                startpoints.append(j)    
-                peak = True
-                j += 1
+    for i in range(len(startpoints)):
+        t = 0
+        j = 0
 
-        while grab_crop[j] > -0.0395 and peak == True:
+        while t < pre_time:
             j += 1
-            if j < len(grab_crop):
-                if grab_crop[j] < -0.0395:                
-                    endpoints.append(j)    
-                    peak = False
-            elif j == len(grab_crop):
-                startpoints.remove(startpoints[-1])
-                j -= 1
-                peak = False
- 
-    # plt.plot(grab_crop)
-    # plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
-    # plt.plot(startpoints,grab_crop[startpoints],'gx')
-    # plt.plot(endpoints,grab_crop[endpoints],'rx')
-    # plt.show()
+            try: 
+                t += input_data.loc[startpoints[i]-j]['dt']    
+            except KeyError:
+                t = 1
+
+        prepoints.append(startpoints[i] - j)
+        #print('pre-start dist: {}'.format(startpoints[i] - j))
+
+
+    post_grab_v = []
+    pre_grab_v = []
+    
+    for g in range(len(startpoints)):
+        pre_grab_input = input_crop.loc[prepoints[g]:startpoints[g]]
+        pre_grab_v.append(functions.avg_velocity(pre_grab_input))
+
+        post_grab_input = input_crop.loc[startpoints[g]:endpoints[g]]
+        post_grab_v.append(functions.avg_velocity(post_grab_input))
+
+    avg_v['pre'] = np.mean(pre_grab_v)
+    avg_v['post'] = np.mean(post_grab_v)
 
     # grab_start = input_crop.iloc[startpoints,[1,2,3]]
     # fig1 = px.line_3d(input_crop, x='posZ', y='posX', z='posY', title = 'Hand input')
@@ -116,24 +124,6 @@ def grab_velocity(data, p, c, t, file):
     # fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY')
     # fig3 = go.Figure(data=fig1.data + fig2.data)
     # plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t))
-
-    v = [0.0]
-    grab_v = [0.0]
-    
-    for g in range(len(startpoints)):
-
-        data_3D = input_crop.loc[startpoints[g]:endpoints[g]]
-
-        for i in range(1,len(data_3D.iloc[:, 0])):
-            dx = data_3D.iloc[i,1]-data_3D.iloc[i-1,1]
-            dy = data_3D.iloc[i,2]-data_3D.iloc[i-1,2]
-            dz = data_3D.iloc[i,3]-data_3D.iloc[i-1,3]
-            
-            grab_v.append(np.sqrt(dx*dx + dy*dy + dz*dz)/data_3D.iloc[i,0])
-
-        v.append(np.mean(grab_v))
-
-    avg_v = np.mean(v)
 
     return avg_v
 

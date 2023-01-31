@@ -104,7 +104,52 @@ def p_values(data, key, m, c1, c2, type):
     p_value = np.round(
         stats.ttest_rel(
             measure_data[measure_data['condition']==c1][key], 
-            measure_data[measure_data['condition']==c2][key])
-        ,3)
+            measure_data[measure_data['condition']==c2][key],
+            nan_policy='omit')
+        , 3)
 
     return p_value
+
+def grab_start_end(grab_crop, peaks_succes):
+    startpoints = []
+    endpoints = []
+    
+    peak = False
+    
+    for i in range(len(peaks_succes)):
+        j = peaks_succes[i]
+
+        while grab_crop[j] > -0.0395 and peak == False:
+            j -= 1
+            if grab_crop[j] < -0.0395:
+                startpoints.append(j)    
+                peak = True
+                j += 1
+
+        while grab_crop[j] > -0.0395 and peak == True:
+            j += 1
+            if j < len(grab_crop):
+                if grab_crop[j] < -0.0395:                
+                    endpoints.append(j)    
+                    peak = False
+            elif j == len(grab_crop):
+                startpoints.remove(startpoints[-1])
+                j -= 1
+                peak = False
+
+    return startpoints, endpoints
+
+def avg_velocity(data_3D):
+    v = []
+    
+    for i in range(1,len(data_3D.iloc[:, 0])):
+        dx = data_3D.iloc[i,1]-data_3D.iloc[i-1,1]
+        dy = data_3D.iloc[i,2]-data_3D.iloc[i-1,2]
+        dz = data_3D.iloc[i,3]-data_3D.iloc[i-1,3]
+        
+        v.append(np.sqrt(dx*dx + dy*dy + dz*dz)/data_3D.iloc[i,0])
+
+    avg_v = np.mean(v)
+
+    return avg_v
+
