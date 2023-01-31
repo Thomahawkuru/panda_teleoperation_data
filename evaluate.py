@@ -40,8 +40,8 @@ for m in Measures:
     p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_input_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_input_depth = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
@@ -49,15 +49,15 @@ for m in Measures:
             _, p_grab_fails[c1][c2] = functions.p_values(grab_fails, 'fails', m, c1, c2, 'measure')
             _, p_grab_succes[c1][c2] = functions.p_values(grab_succes, 'succes', m, c1, c2, 'measure')
             _, p_grab_attemts[c1][c2] = functions.p_values(grab_attempts, 'attempts', m, c1, c2, 'measure')
-            _, p_input_velocity[c1][c2] = functions.p_values(velocity, 'velocity', m, c1, c2, 'measure')
-            _, p_input_depth[c1][c2] = functions.p_values(depth, 'depth', m, c1, c2, 'measure')
+            _, p_pre_velocity[c1][c2] = functions.p_values(pre_velocity, 'velocity', m, c1, c2, 'measure')
+            _, p_post_velocity[c1][c2] = functions.p_values(post_velocity, 'velocity', m, c1, c2, 'measure')
 
     # plotting p-value tables
     functions.tablesubplot(ax4[0][Measures.index(m)], p_grab_fails, '{} Failed Grabs'.format(m))
     functions.tablesubplot(ax4[1][Measures.index(m)], p_grab_succes, '{} Correct grabs'.format(m))
     functions.tablesubplot(ax4[2][Measures.index(m)], p_grab_attemts, '{} Grab attempts'.format(m))
-    functions.tablesubplot(ax4[3][Measures.index(m)], p_input_velocity, '{} Grab Velocity'.format(m))
-    functions.tablesubplot(ax4[4][Measures.index(m)], p_input_depth, '{} Input depth'.format(m))
+    functions.tablesubplot(ax4[3][Measures.index(m)], p_pre_velocity, '{} Pre-Grab Velocity'.format(m))
+    functions.tablesubplot(ax4[4][Measures.index(m)], p_post_velocity, '{} Post-Grab Velocity'.format(m))
     
 fig4.tight_layout()
 fig4.savefig("plots/p_values_trials.jpg".format(m))
@@ -73,8 +73,8 @@ for t in Trials:
     p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_input_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_input_depth = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
@@ -82,15 +82,15 @@ for t in Trials:
             _, p_grab_fails[c1][c2] = functions.p_values(trial_grabs, 'fails', t, c1, c2, 'trial')
             _, p_grab_succes[c1][c2] = functions.p_values(trial_grabs, 'succes', t, c1, c2, 'trial')
             _, p_grab_attemts[c1][c2] = functions.p_values(trial_grabs, 'attempts', t, c1, c2, 'trial')
-            _, p_input_velocity[c1][c2] = functions.p_values(trial_velocity, 'velocity', t, c1, c2, 'trial')
-            _, p_input_depth[c1][c2] = functions.p_values(trail_depth, 'depth', t, c1, c2, 'trial')
+            _, p_pre_velocity[c1][c2] = functions.p_values(trial_velocity, 'pre', t, c1, c2, 'trial')
+            _, p_post_velocity[c1][c2] = functions.p_values(trial_velocity, 'post', t, c1, c2, 'trial')
 
     # plotting p-value tables
     functions.tablesubplot(ax5[0][t-1], p_grab_fails, 'Failed Grabs Trial {}'.format(t))
     functions.tablesubplot(ax5[1][t-1], p_grab_succes, 'Correct grabs Trial {}'.format(t))
     functions.tablesubplot(ax5[2][t-1], p_grab_attemts, 'Grab attempts Trial {}'.format(t))
-    functions.tablesubplot(ax5[3][t-1], p_input_velocity, 'Grab Velocity Trial {}'.format(t))
-    functions.tablesubplot(ax5[4][t-1], p_input_depth, 'Input depth Trial {}'.format(t))
+    functions.tablesubplot(ax5[3][t-1], p_pre_velocity, 'Pre-Grab Velocity Trial {}'.format(t))
+    functions.tablesubplot(ax5[4][t-1], p_post_velocity, 'Post-Grab Velocity Trial {}'.format(t))
 
 fig5.tight_layout()
 fig5.savefig("plots/p_values_learning.jpg".format(t))

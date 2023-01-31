@@ -32,12 +32,9 @@ for p in Participants:
             #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
-            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand')
+            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', 1)
             #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
            
-            data[p][c][t]['depth'] = calculators.input_depth(data, p, c, t)
-            #print('Depth: {}'.format(data[p][c][t]['depth']))
-
 # %%
 print(), print('Dumping calculated data to file...')
 dill.dump_session('data_calculated.pkl')
