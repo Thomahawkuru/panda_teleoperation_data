@@ -10,7 +10,7 @@ dill.load_session('data_raw.pkl')
 start = time.time()
 
 #%% plot data   
-for p in Participants:
+for p in Participants[1:]:
     print(), print(), print('Calculating data for participant {}'.format(p))
     for c in Conditions[1:]:
         print(), print('Condition {}'.format(c))
