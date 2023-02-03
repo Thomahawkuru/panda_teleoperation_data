@@ -33,7 +33,7 @@ hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rot
 gripper_header  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grip_pos", "grip_vel", "grip_eff" ]
 robot_header    = [ "f", "dt", "t", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "fx", "fy", "fz" ]
 
-Participants    = range(1+20)                          # number of participants
+Participants    = range(1+24)                          # number of participants
 Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
 Trials          = [1, 2, 3]
 Files           = ['Experiment', 'Gaze', 'Hand', 'HMD', 'Gripper', 'Robot']

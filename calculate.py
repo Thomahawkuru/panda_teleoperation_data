@@ -8,9 +8,10 @@ import calculators
 
 dill.load_session('data_raw.pkl')
 start = time.time()
+Participants = Participants[1:]                              # number of participants
 
 #%% plot data   
-for p in Participants[1:]:
+for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))
     for c in Conditions[1:]:
         print(), print('Condition {}'.format(c))
@@ -32,7 +33,7 @@ for p in Participants[1:]:
             #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
-            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', 2)
+            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', 1)
             #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
            
 # %%
