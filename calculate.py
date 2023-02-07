@@ -5,10 +5,11 @@ import numpy as np
 import dill
 import pickle
 import calculators
+import warnings
 
 dill.load_session('data_raw.pkl')
 start = time.time()
-Participants = Participants[1:]                              # number of participants
+Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]                      # Array of participants
 
 #%% plot data   
 for p in Participants:
