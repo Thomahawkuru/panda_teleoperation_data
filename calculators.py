@@ -13,7 +13,7 @@ import functions
 from plotly.offline import plot
 import plotly.express as px
 import plotly.graph_objects as go
-
+import math
 
 def fps(data, p, c, t):
     fps = np.mean(data[p][c][t]['Experiment'].fps)
@@ -111,8 +111,9 @@ def grab_velocity(data, p, c, t, file, pre_time):
         pre_grab_v.append(functions.avg_velocity(pre_grab_input))
 
         post_grab_input = input_crop.loc[startpoints[g]:endpoints[g]]
-        dist = post_grab_input[0:1] - post_grab_input[-1:]
-        post_grab_v.append(functions.avg_velocity(post_grab_input))
+        dist = math.dist(post_grab_input.iloc[0,[1,2,3]], post_grab_input.iloc[-1,[1,2,3]])
+        time = np.sum(post_grab_input.iloc[:,[0]])
+        post_grab_v.append(dist/time)
 
     avg_v['pre'] = np.mean(pre_grab_v)
     avg_v['post'] = np.mean(post_grab_v)
