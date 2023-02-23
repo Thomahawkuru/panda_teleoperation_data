@@ -11,21 +11,21 @@ dill.load_session('data_plotted.pkl')
 start = time.time()
 
 #%% determine unvalid participant trials
-unvalid = pd.DataFrame([] , columns=['fps', 'duration', 'track_err'])
+unvalid = pd.DataFrame([] , columns=['fps 1', 'fps 2', 'fps 3', 'duration 1', 'duration 2', 'duration 3', 'track_err 1', 'track_err 2', 'track_err 3'])
 
 for p in Participants:
-    unvalid.loc[p] = ['', '', '']
+    unvalid.loc[p] = ['', '', '','', '', '','', '', '']
 
     for c in Conditions[1:]:
         for t in Trials:
             if data[p][c][t]['fps'] < 55:
-                unvalid['fps'][p] = data[p][c][t]['fps']
+                unvalid[f'fps {t}'][p] = np.round(data[p][c][t]['fps'],1)
             if data[p][c][t]['duration'] < 59.9:
-                unvalid['duration'][p] = data[p][c][t]['fps']
-            if data[p][c][t]['track_err'] > 5:
-                unvalid['track_err'][p] = data[p][c][t]['track_err']
+                unvalid[f'duration {t}'][p] = np.round(data[p][c][t]['duration'],1)
+            if data[p][c][t]['track_err'] > 0:
+                unvalid[f'track_err {t}'][p] = data[p][c][t]['track_err']
 
-print(), print('Unvalid data for participant: ') 
+print(), print('Validation data for participant: ') 
 print(unvalid)
 
 #%% calculating p_values for min/med/max/avg measures
