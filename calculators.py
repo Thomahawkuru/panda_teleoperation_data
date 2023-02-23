@@ -79,15 +79,12 @@ def grab_velocity(data, p, c, t, file, pre_time):
     avg_v = {'pre': [], 'post': []}
 
     grab_data = -data[p][c][t]['Gripper']["grip_pos"]
-    input_data = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]
-    
+    input_data = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]   
     grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
     input_crop = input_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
 
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
-
-    startpoints, endpoints = functions.grab_start_end(grab_crop, peaks_succes)    
-    
+    startpoints, endpoints = functions.grab_start_end(grab_crop, peaks_succes)        
     prepoints = []
 
     for i in range(len(startpoints)):
@@ -103,10 +100,8 @@ def grab_velocity(data, p, c, t, file, pre_time):
                 j -= 1
                 
         prepoint = startpoints[i] - j
-
         prepoints.append(prepoint)
         #print('pre-start dist: {}'.format(startpoints[i] - j))
-
 
     post_grab_v = []
     pre_grab_v = []
@@ -116,17 +111,19 @@ def grab_velocity(data, p, c, t, file, pre_time):
         pre_grab_v.append(functions.avg_velocity(pre_grab_input))
 
         post_grab_input = input_crop.loc[startpoints[g]:endpoints[g]]
+        dist = post_grab_input[0:1] - post_grab_input[-1:]
         post_grab_v.append(functions.avg_velocity(post_grab_input))
 
     avg_v['pre'] = np.mean(pre_grab_v)
     avg_v['post'] = np.mean(post_grab_v)
 
     # grab_start = input_crop.iloc[startpoints,[1,2,3]]
+    # grab_end = input_crop.iloc[endpoints,[1,2,3]]
     # fig1 = px.line_3d(input_crop, x='posZ', y='posX', z='posY', title = 'Hand input')
-    # fig1.update_traces(line=dict(color = 'rgba(100,0,0,0.5)'))
-    # fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY')
-    # fig3 = go.Figure(data=fig1.data + fig2.data)
-    # plot(fig3, filename='plots/fig{}{}{}.html'.format(p,c,t))
+    # fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY',color_discrete_sequence=['green'])
+    # fig3 = px.scatter_3d(grab_end, x='posZ', y='posX', z='posY',color_discrete_sequence=['red'])
+    # fig4 = go.Figure(data=fig1.data + fig2.data + fig3.data)
+    # plot(fig4, filename='plots/fig{}{}{}.html'.format(p,c,t))
 
     return avg_v
 
