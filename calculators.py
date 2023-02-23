@@ -40,7 +40,7 @@ def track_error(data, p, c, t):
 
     return errors
 
-def grabs(data, p, c, t):
+def grabs(data, p, c, t, debug):
     grabs = {}
     grab_data = -data[p][c][t]['Gripper']["grip_pos"]
     grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
@@ -48,11 +48,12 @@ def grabs(data, p, c, t):
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
     peaks_fail, _   = signal.find_peaks(grab_crop, height = -0.02, prominence=0.005,distance=50)
 
-    # plt.plot(grab_crop)
-    # plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
-    # plt.plot(startpoints,grab_crop[startpoints],'gx')
-    # plt.plot(endpoints,grab_crop[endpoints],'rx')
-    # plt.show()
+    if debug is True:
+        plt.plot(grab_crop)
+        plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
+        plt.plot(startpoints,grab_crop[startpoints],'gx')
+        plt.plot(endpoints,grab_crop[endpoints],'rx')
+        plt.show()
 
     grabs['succes'] = len(peaks_succes)
     grabs['fail'] = len(peaks_fail)

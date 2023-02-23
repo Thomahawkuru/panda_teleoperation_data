@@ -30,7 +30,7 @@ for p in Participants:
             data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)
             #print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
                       
-            data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t)
+            data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t, debug=False)
             #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
