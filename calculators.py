@@ -123,7 +123,7 @@ def input_depth(data, p, c, t):
     return depth
 
 def head_movement(data, p, c, t, debug):
-    HMD = functions.crop_data(data[p][c][t]['HMD'], data[p][c][t]['Experiment'])\
+    HMD = functions.crop_data(data[p][c][t]['HMD'], data[p][c][t]['Experiment'])
     
     if debug is True:
         fig = px.line_3d(HMD, x='posZ', y='posX', z='posY', title = 'HMD_movement')
