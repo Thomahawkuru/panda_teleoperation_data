@@ -60,21 +60,6 @@ def grabs(data, p, c, t):
 
     return grabs
 
-def velocity(data, p, c, t, file):
-    v = [0.0]
-    data_3D = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]
-
-    for i in range(1,len(data_3D.iloc[:, 0])):
-        dx = data_3D.iloc[i,1]-data_3D.iloc[i-1,1]
-        dy = data_3D.iloc[i,2]-data_3D.iloc[i-1,2]
-        dz = data_3D.iloc[i,3]-data_3D.iloc[i-1,3]
-        
-        v.append(np.sqrt(dx*dx + dy*dy + dz*dz)/data_3D.iloc[i,0])
-        
-    velocity = functions.crop_data(pd.DataFrame(v), data[p][c][t]['Experiment']).to_numpy()
-
-    return velocity
-
 def grab_velocity(data, p, c, t, file, pre_time):
     avg_v = {'pre': [], 'post': []}
 
