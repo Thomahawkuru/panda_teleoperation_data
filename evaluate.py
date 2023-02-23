@@ -31,7 +31,7 @@ print(unvalid)
 #%% calculating p_values for min/med/max/avg measures
 print(), print('Calculating P-value tables over all trials')
 
-fig4, ax4 = plt.subplots(5, 4, figsize=(12, 10))
+fig4, ax4 = plt.subplots(6, 4, figsize=(12, 12))
 fig4.patch.set_visible(False)
 
 for m in Measures:
@@ -42,6 +42,7 @@ for m in Measures:
     p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_hmd_movement = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
@@ -51,6 +52,7 @@ for m in Measures:
             _, p_grab_attemts[c1][c2] = functions.p_values(grab_attempts, 'attempts', m, c1, c2, 'measure')
             _, p_pre_velocity[c1][c2] = functions.p_values(pre_velocity, 'velocity', m, c1, c2, 'measure')
             _, p_post_velocity[c1][c2] = functions.p_values(post_velocity, 'velocity', m, c1, c2, 'measure')
+            _, p_hmd_movement[c1][c2] = functions.p_values(hmd_movement, 'max_std', m, c1, c2, 'measure')
 
     # plotting p-value tables
     functions.tablesubplot(ax4[0][Measures.index(m)], p_grab_fails, '{} Failed Grabs'.format(m))
@@ -58,13 +60,14 @@ for m in Measures:
     functions.tablesubplot(ax4[2][Measures.index(m)], p_grab_attemts, '{} Grab attempts'.format(m))
     functions.tablesubplot(ax4[3][Measures.index(m)], p_pre_velocity, '{} Pre-Grab Velocity'.format(m))
     functions.tablesubplot(ax4[4][Measures.index(m)], p_post_velocity, '{} Post-Grab Velocity'.format(m))
+    functions.tablesubplot(ax4[5][Measures.index(m)], p_hmd_movement, '{} HMD movement std'.format(m))
     
 fig4.tight_layout()
 fig4.savefig("plots/p_values_trials.jpg".format(m))
 
 #%% calculating p_values for trial 1-3 learning effects
 print(), print('Calculating P-value tables for learning effects')
-fig5, ax5 = plt.subplots(5, 3, figsize=(9, 10))
+fig5, ax5 = plt.subplots(6, 3, figsize=(9, 12))
 fig5.patch.set_visible(False)
 
 for t in Trials:
@@ -75,6 +78,7 @@ for t in Trials:
     p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+    p_hmd_movement = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
@@ -84,6 +88,7 @@ for t in Trials:
             _, p_grab_attemts[c1][c2] = functions.p_values(trial_grabs, 'attempts', t, c1, c2, 'trial')
             _, p_pre_velocity[c1][c2] = functions.p_values(trial_velocity, 'pre', t, c1, c2, 'trial')
             _, p_post_velocity[c1][c2] = functions.p_values(trial_velocity, 'post', t, c1, c2, 'trial')
+            _, p_hmd_movement[c1][c2] = functions.p_values(trial_hmd, 'max_std', t, c1, c2, 'trial')
 
     # plotting p-value tables
     functions.tablesubplot(ax5[0][t-1], p_grab_fails, 'Failed Grabs Trial {}'.format(t))
@@ -91,6 +96,7 @@ for t in Trials:
     functions.tablesubplot(ax5[2][t-1], p_grab_attemts, 'Grab attempts Trial {}'.format(t))
     functions.tablesubplot(ax5[3][t-1], p_pre_velocity, 'Pre-Grab Velocity Trial {}'.format(t))
     functions.tablesubplot(ax5[4][t-1], p_post_velocity, 'Post-Grab Velocity Trial {}'.format(t))
+    functions.tablesubplot(ax5[5][t-1], p_hmd_movement, 'HMD movement std Trial {}'.format(t))
 
 fig5.tight_layout()
 fig5.savefig("plots/p_values_learning.jpg".format(t))

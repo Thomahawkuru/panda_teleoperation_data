@@ -121,3 +121,15 @@ def input_depth(data, p, c, t):
     depth = std_z*6
 
     return depth
+
+def head_movement(data, p, c, t, debug):
+    HMD = functions.crop_data(data[p][c][t]['HMD'], data[p][c][t]['Experiment'])\
+    
+    if debug is True:
+        fig = px.line_3d(HMD, x='posZ', y='posX', z='posY', title = 'HMD_movement')
+        fig.show()
+
+    mean, std = functions.pdf(HMD.iloc[:,3:10])
+    max_std = max(std)
+
+    return max_std

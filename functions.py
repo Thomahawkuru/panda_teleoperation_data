@@ -53,8 +53,8 @@ def filter_check(check): #removes data points just befor and just after a tracki
     return check
 
 def pdf(x):
-    mean = np.mean(x)
-    std = np.std(x)
+    mean = np.mean(x,axis=0)
+    std = np.std(x,axis=0)
     y_out = 1/(std * np.sqrt(2 * np.pi)) * np.exp( - (x - mean)**2 / (2 * std**2))
     return mean, std
 
@@ -166,7 +166,7 @@ def pre_grap_location(input_data, startpoints, pre_time):
         prepoints.append(prepoint)
         #print('pre-start dist: {}'.format(startpoints[i] - j))
     
-    return prepoints[1:]
+    return prepoints
 
 def avg_velocity(data_3D):
     v = []
