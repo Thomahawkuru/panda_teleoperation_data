@@ -60,18 +60,28 @@ def grabs(data, p, c, t):
 
     return grabs
 
-def grab_velocity(data, p, c, t, file, pre_time):
+def grab_velocity(data, p, c, t, file, pre_time, debug):
     avg_v = {'pre': [], 'post': []}
 
     grab_data = -data[p][c][t]['Gripper']["grip_pos"]
     input_data = data[p][c][t][file][["dt", "posX", "posY", "posZ"]]   
+    input_data['grab'] = data[p][c][t]['Hand']["pinch"]
     grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
     input_crop = input_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
 
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
-    startpoints, endpoints = functions.grab_start_end(grab_crop, peaks_succes)        
+    startpoints, endpoints = functions.grab_start_end(input_crop['grab'], peaks_succes)   
     prepoints = functions.pre_grap_location(input_data, startpoints, pre_time)
-
+    
+    if debug is True:
+        plt.plot(input_crop['grab'])
+        plt.plot(grab_crop)
+        plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
+        plt.plot(startpoints,input_crop['grab'][startpoints],'gx')
+        plt.plot(endpoints,input_crop['grab'][endpoints],'rx')
+        plt.plot(prepoints,input_crop['grab'][prepoints],'yx')
+        plt.show()
+    
     post_grab_v = []
     pre_grab_v = []
     
@@ -89,13 +99,17 @@ def grab_velocity(data, p, c, t, file, pre_time):
     avg_v['pre'] = np.mean(pre_grab_v)
     avg_v['post'] = np.mean(post_grab_v)
 
-    # grab_start = input_crop.iloc[startpoints,[1,2,3]]
-    # grab_end = input_crop.iloc[endpoints,[1,2,3]]
-    # fig1 = px.line_3d(input_crop, x='posZ', y='posX', z='posY', title = 'Hand input')
-    # fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY',color_discrete_sequence=['green'])
-    # fig3 = px.scatter_3d(grab_end, x='posZ', y='posX', z='posY',color_discrete_sequence=['red'])
-    # fig4 = go.Figure(data=fig1.data + fig2.data + fig3.data)
-    # plot(fig4, filename='plots/fig{}{}{}.html'.format(p,c,t))
+    if debug is True:
+
+        grab_pre = input_crop.iloc[prepoints,[1,2,3]]
+        grab_start = input_crop.iloc[startpoints,[1,2,3]]
+        grab_end = input_crop.iloc[endpoints,[1,2,3]]
+        fig1 = px.line_3d(input_crop, x='posZ', y='posX', z='posY', title = 'Hand input')
+        fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY',color_discrete_sequence=['green'])
+        fig3 = px.scatter_3d(grab_end, x='posZ', y='posX', z='posY',color_discrete_sequence=['red'])
+        fig4 = px.scatter_3d(grab_pre, x='posZ', y='posX', z='posY',color_discrete_sequence=['yellow'])
+        fig5 = go.Figure(data=fig1.data + fig2.data + fig3.data + fig4.data)
+        plot(fig5, filename='plots/fig{}{}{}.html'.format(p,c,t))
 
     return avg_v
 

@@ -34,7 +34,7 @@ for p in Participants:
             #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
             #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
 
-            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', 1)
+            data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', pre_time=2, debug=False)
             #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
            
 # %%

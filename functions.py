@@ -113,29 +113,37 @@ def p_values(data, key, m, c1, c2, type):
 def grab_start_end(grab_crop, peaks_succes):
     startpoints = []
     endpoints = []
+
+    threshold = 0.3 #-0.0395
     
-    peak = False
+    start = False
     
     for i in range(len(peaks_succes)):
         j = peaks_succes[i]
 
-        while grab_crop[j] > -0.0395 and peak == False:
+        while grab_crop[j] < threshold:
             j -= 1
-            if grab_crop[j] < -0.0395:
-                startpoints.append(j)    
-                peak = True
-                j += 1
+            if j < 0:
+                j = peaks_succes[i]
+                break
 
-        while grab_crop[j] > -0.0395 and peak == True:
+        while grab_crop[j] > threshold and start == False:
+            j -= 1
+            if grab_crop[j] < threshold or j == 0:
+                startpoints.append(j)    
+                start = True
+
+        while start == True:
             j += 1
+
             if j < len(grab_crop):
-                if grab_crop[j] < -0.0395:                
+                if grab_crop[j] < threshold:             
                     endpoints.append(j)    
-                    peak = False
+                    start = False
             elif j == len(grab_crop):
                 startpoints.remove(startpoints[-1])
                 j -= 1
-                peak = False
+                start = False
 
     return startpoints, endpoints
 
@@ -158,7 +166,7 @@ def pre_grap_location(input_data, startpoints, pre_time):
         prepoints.append(prepoint)
         #print('pre-start dist: {}'.format(startpoints[i] - j))
     
-    return prepoints
+    return prepoints[1:]
 
 def avg_velocity(data_3D):
     v = []
