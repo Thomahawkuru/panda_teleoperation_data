@@ -77,12 +77,14 @@ def grab_velocity(data, p, c, t, file, pre_time):
     
     for g in range(len(startpoints)):
         pre_grab_input = input_crop.loc[prepoints[g]:startpoints[g]]
-        pre_grab_v.append(functions.avg_velocity(pre_grab_input))
+        pre_dist = math.dist(pre_grab_input.iloc[0,[1,2,3]], pre_grab_input.iloc[-1,[1,2,3]])
+        pre_time = np.sum(pre_grab_input.iloc[:,[0]])
+        pre_grab_v.append(pre_dist/pre_time)
 
         post_grab_input = input_crop.loc[startpoints[g]:endpoints[g]]
-        dist = math.dist(post_grab_input.iloc[0,[1,2,3]], post_grab_input.iloc[-1,[1,2,3]])
-        time = np.sum(post_grab_input.iloc[:,[0]])
-        post_grab_v.append(dist/time)
+        post_dist = math.dist(post_grab_input.iloc[0,[1,2,3]], post_grab_input.iloc[-1,[1,2,3]])
+        post_time = np.sum(post_grab_input.iloc[:,[0]])
+        post_grab_v.append(post_dist/post_time)
 
     avg_v['pre'] = np.mean(pre_grab_v)
     avg_v['post'] = np.mean(post_grab_v)
