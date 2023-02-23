@@ -70,23 +70,7 @@ def grab_velocity(data, p, c, t, file, pre_time):
 
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
     startpoints, endpoints = functions.grab_start_end(grab_crop, peaks_succes)        
-    prepoints = []
-
-    for i in range(len(startpoints)):
-        t = 0
-        j = 0
-
-        while t < pre_time:
-            j += 1
-            try: 
-                t += input_data.loc[startpoints[i]-j]['dt']    
-            except KeyError:
-                t = pre_time
-                j -= 1
-                
-        prepoint = startpoints[i] - j
-        prepoints.append(prepoint)
-        #print('pre-start dist: {}'.format(startpoints[i] - j))
+    prepoints = functions.pre_grap_location(input_data, startpoints, pre_time)
 
     post_grab_v = []
     pre_grab_v = []
