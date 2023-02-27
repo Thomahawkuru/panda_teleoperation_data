@@ -51,6 +51,7 @@ grab_attempts = pd.DataFrame([] , columns=['attempts', 'participant', 'condition
 pre_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
 post_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
 hmd_movement = pd.DataFrame([] , columns=['max_std', 'participant', 'condition', 'measure'])
+in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 
 for p in Participants:
     for c in Conditions[1:]:
@@ -64,16 +65,16 @@ for p in Participants:
             new_row = functions.minmax(data, 'velocity', 'pre', p, c, m, Trials, Measures)
             pre_velocity.loc[len(pre_velocity)] = new_row
             new_row = functions.minmax(data, 'velocity', 'post', p, c, m, Trials, Measures)
-            post_velocity.loc[len(post_velocity)] = new_row 
-            
+            post_velocity.loc[len(post_velocity)] = new_row           
             if c == 'B':
                 new_row = [0, p, c, m]
             else: 
-                new_row = functions.minmax(data, 'HMD', None, p, c, m, Trials, Measures)
-            
+                new_row = functions.minmax(data, 'HMD', None, p, c, m, Trials, Measures)            
             hmd_movement.loc[len(hmd_movement)] = new_row  
+            new_row = functions.minmax(data, 'in_out', None, p, c, m, Trials, Measures)
+            in_out_corr.loc[len(in_out_corr)] = new_row 
 
-fig2, ax2 = plt.subplots(6, 1, figsize=(7.5, 20))
+fig2, ax2 = plt.subplots(7, 1, figsize=(7.5, 21))
 
 sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0])
 ax2[0].set_title('Failed Grabs [n={}]'.format(len(Participants)))
@@ -93,9 +94,12 @@ ax2[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['max_std'], hue=post_velocity['measure'], ax=ax2[5])
 ax2[5].set_title('Average HMD movement [std]')
 ax2[5].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6])
+ax2[6].set_title('Input-Output Correlation')
+ax2[6].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig2.tight_layout()
-fig2.savefig("plots/trial_average.jpg")
+fig2.savefig("plots/min_max_avg.jpg")
 
 #%% plot learning effects from trial 1 to 3
 print(), print('Plotting learning effect boxplots') 
@@ -103,6 +107,7 @@ print(), print('Plotting learning effect boxplots')
 trial_velocity = pd.DataFrame([] , columns=['pre', 'post', 'participant', 'condition', 'trial'])
 trial_grabs = pd.DataFrame([] , columns=['attempts', 'succes', 'fails', 'participant', 'condition', 'trial'])
 trial_hmd = pd.DataFrame([] , columns=['max_std', 'participant', 'condition', 'trial'])
+trial_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'trial'])
 
 for p in Participants:
     for c in Conditions[1:]:
@@ -118,8 +123,10 @@ for p in Participants:
                 new_row = [data[p][c][t]['HMD'], p, c, t]
             
             trial_hmd.loc[len(trial_hmd)] = new_row
+            new_row = [data[p][c][t]['in_out'], p, c, t]
+            trial_corr.loc[len(trial_corr)] = new_row
 
-fig3, ax3 = plt.subplots(6, 1, figsize=(7.5, 20))
+fig3, ax3 = plt.subplots(7, 1, figsize=(7.5, 21))
 
 sns.boxplot(x=trial_grabs['condition'], y=trial_grabs['fails'], hue=trial_grabs['trial'], ax=ax3[0])
 ax3[0].set_title('Grab fails per trial [n={}]'.format(len(Participants)))
@@ -139,6 +146,9 @@ ax3[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_hmd['condition'], y=trial_hmd['max_std'], hue=trial_hmd['trial'], ax=ax3[5])
 ax3[5].set_title('Max std of HMD movement [n={}]'.format(len(Participants)))
 ax3[5].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+sns.boxplot(x=trial_corr['condition'], y=trial_corr['corr'], hue=trial_corr['trial'], ax=ax3[6])
+ax3[6].set_title('Input-Output Correlation[n={}]'.format(len(Participants)))
+ax3[6].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig3.tight_layout()
 fig3.savefig("plots/learning_effects.jpg")

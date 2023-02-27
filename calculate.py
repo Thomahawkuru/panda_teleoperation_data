@@ -37,11 +37,11 @@ for p in Participants:
             data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', pre_time=2, debug=False)
             #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
 
-            if c == 'B':
-                continue
-            else:
+            if c is not 'B':
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=False)
-                #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))   
+                #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity']))) 
+
+            data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=False)  
            
 # %%
 print(), print('Dumping calculated data to file...')

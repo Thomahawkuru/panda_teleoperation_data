@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import signal
+from scipy import stats
 import functions
 from plotly.offline import plot
 import plotly.express as px
@@ -133,3 +134,23 @@ def head_movement(data, p, c, t, debug):
     max_std = max(std)
 
     return max_std
+
+def in_out_corr(data, p, c, t, debug):
+    input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])
+    output = functions.crop_data(data[p][c][t]['Gripper'][["posX", "posY", "posZ"]], data[p][c][t]['Experiment'])
+
+    input.columns= ["posZ", "posX", "posY"]
+    input['posY'] = input['posY'] + 0.1
+    input = input.sort_index(axis=1)
+    output.columns= ["posX", "posY", "posZ"]
+
+    correlation = np.mean(input.corrwith(output,axis=0))
+
+    if debug is True:
+        plt.plot(input)
+        plt.plot(output)
+        plt.savefig('test.jpg')
+
+    return correlation
+
+
