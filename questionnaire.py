@@ -8,8 +8,10 @@ import plotly.graph_objects as go
 import plotly.figure_factory as ff
 import numpy as np
 import pandas as pd
+from scipy import stats
 import dill
 import seaborn as sns
+import functions
 
 start = time.time()
 
@@ -66,9 +68,12 @@ for c in Conditions:
         
     results = pd.concat([results, Opinions[c]])
 
+# add average over trials
+results['average'] = results[['trial 1', 'trial 2', 'trial 3']].mean(axis=1)
+
 #%% plot responses
 print('Plotting...')
-difficulty = results.iloc[:,range(5)].melt(['condition','hand'], var_name='trial',value_name='difficulty')
+difficulty = results.iloc[:,[0,1,2,3,4,9]].melt(['condition','hand'], var_name='trial',value_name='difficulty')
 usefullness = results[['condition', 'requirements', 'frustration', 'easyness', 'correcting']]
 usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opinion')
 
@@ -86,8 +91,43 @@ ax4[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 fig4.tight_layout()
 fig4.savefig("plots/questionnaire.jpg")
 
-#%% evaluate responses
+#%% evaluate SEQ responses
 print('Evaluating...')
+fig5, ax5 = plt.subplots(2, 4, figsize=(9, 4))
+fig5.patch.set_visible(False)
+trials = ['trial 1', 'trial 2', 'trial 3', 'average']
+
+for t in trials: 
+    p_difficulty = pd.DataFrame(index = Conditions, columns = Conditions)
+
+    for c1 in Conditions:
+        for c2 in Conditions:
+            diff_c1 = difficulty[(difficulty['condition']==c1) & (difficulty['trial']==t)]['difficulty']
+            diff_c2 = difficulty[(difficulty['condition']==c2) & (difficulty['trial']==t)]['difficulty']
+            p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
+            p_difficulty[c1][c2] = p_value[1]
+
+    # plotting p-value tables
+    functions.tablesubplot(ax5[0][trials.index(t)], p_difficulty, f'{t} difficulty')
+
+#%% evaluate UMUX responses
+measures = ['requirements', 'frustration', 'easyness', 'correcting']
+
+for m in measures: 
+    p_usefullness= pd.DataFrame(index = Conditions, columns = Conditions)
+
+    for c1 in Conditions:
+        for c2 in Conditions:
+            use_c1 = usefullness[(usefullness['condition']==c1) & (usefullness['measure']==m)]['opinion']
+            use_c2 = usefullness[(usefullness['condition']==c2) & (usefullness['measure']==m)]['opinion']
+            p_value = np.round(stats.ttest_rel(use_c1, use_c2, nan_policy='omit') , 3)
+            p_usefullness[c1][c2] = p_value[1]
+
+    # plotting p-value tables
+    functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m}')
+    
+fig5.tight_layout()
+fig5.savefig("plots/p_values_questionnaire.jpg")
 
 #%% saving variables
 print(), print('Dumping questionnaire data to file...')
