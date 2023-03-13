@@ -97,6 +97,7 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
     sys.stdout.write("Converting SVO... Use Ctrl-C to interrupt conversion.\n")
 
     nb_frames = zed.get_svo_number_of_frames() -1
+    converted = 0
 
     while True:
         if zed.grab(rt_param) == sl.ERROR_CODE.END_OF_SVOFILE_REACHED:
@@ -146,6 +147,7 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
             # Check if we have reached the end of the video
             if svo_position >= (nb_frames - 1):  # End of SVO
                 sys.stdout.write("\nSVO end has been reached. Exiting now.\n")
+                converted = 1
                 break
 
     if output_as_video:
@@ -153,6 +155,8 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
         video_writer.release()
 
     zed.close()
+
+    return converted
 
 def main():
     datapath = "Network/Thomas/Experiment Data/Panda Experiment/Experiment/"
@@ -175,8 +179,8 @@ def main():
                 print("found svo: {}".format(file_path))             
                 print("converting into: {}".format(output_path))
                 
-                convert(file_path, output_path, AppType.RIGHT, True)               
-                n += 1
+                n += convert(file_path, output_path, AppType.RIGHT, True)               
+                
 
             elif file.endswith(".mp4"):
                 print("found mp4: {}".format(file_path))             
