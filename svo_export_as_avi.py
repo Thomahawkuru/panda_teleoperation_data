@@ -25,8 +25,8 @@ import numpy as np
 import cv2
 from pathlib import Path
 import enum
-import time
-
+import shutil
+from smb.SMBConnection import SMBConnection
 
 class AppType(enum.Enum):
     LEFT = 1
@@ -151,39 +151,42 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
     zed.close()
 
 def main():
-    datapath = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Experiment\\"
-    savepath = "C:\\Users\\thoma\\Documents\\Unity\\Panda-manipulation\\Data\\Videos\\"
-    n = 0
+    datapath = "Network/Thomas/Experiment Data/Panda Experiment/Experiment/"
+    savepath = "Videos/"
+    n = c = 0
 
     for root, dirs, files in os.walk(datapath):
         for file in files:
-            if file.endswith(".svo"):
-                svo_path = os.path.join(root, file)
-                folder = os.path.relpath(root,datapath)
-                output_folder = os.path.join(savepath, folder)
-                
-                if not os.path.isdir(output_folder):
-                    print("creating output folder: {}".format(output_folder))
-                    os.makedirs(output_folder)
+            file_path = os.path.join(root, file)
+            folder = os.path.relpath(root,datapath)
+            output_folder = os.path.join(savepath, folder)
+            
+            if not os.path.isdir(output_folder):
+                print("creating output folder: {}".format(output_folder))
+                os.makedirs(output_folder)
 
+            if file.endswith(".svo"):
                 output_path = os.path.join(output_folder, "ZED2_Recording.avi")
 
-                print("found svo: {}".format(svo_path))             
+                print("found svo: {}".format(file_path))             
                 print("converting into: {}".format(output_path))
                 
-                convert(svo_path, output_path, AppType.RIGHT, True)
-                
+                convert(file_path, output_path, AppType.RIGHT, True)               
                 n += 1
-                if n == 3:
-                    break
+
+            elif file.endswith(".mp4"):
+                print("found mp4: {}".format(file_path))             
+                print("Copying into: {}...".format(output_folder))
+                shutil.copy(file_path, output_folder)
+                c += 1
+
         else:
             continue
 
         break
                 
-    
     print(), print("Total converted files: {}".format(n)), print()
-    
+    print("Total copied files: {}".format(c)), print()
 
 if __name__ == "__main__":
     main()
