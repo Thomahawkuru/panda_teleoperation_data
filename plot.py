@@ -40,7 +40,8 @@ ax1[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
 fig1.tight_layout()
-fig1.savefig("plots/sanity_check.jpg")
+fig1.savefig("plots/sanity_check.jpg", dpi=1000)
+fig1.savefig("plots/sanity_check.svg", dpi=1000)
 
 #%% plot max/med/min/avg reache performance over all 3 trials 
 print(), print('Plotting min/max/avg boxplots') 
@@ -99,7 +100,8 @@ ax2[6].set_title('Input-Output Correlation')
 ax2[6].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig2.tight_layout()
-fig2.savefig("plots/min_max_avg.jpg")
+fig2.savefig("plots/min_max_avg.jpg", dpi=1000)
+fig2.savefig("plots/min_max_avg.svg", dpi=1000)
 
 #%% plot learning effects from trial 1 to 3
 print(), print('Plotting learning effect boxplots') 
@@ -151,7 +153,8 @@ ax3[6].set_title('Input-Output Correlation[n={}]'.format(len(Participants)))
 ax3[6].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig3.tight_layout()
-fig3.savefig("plots/learning_effects.jpg")
+fig3.savefig("plots/learning_effects.jpg", dpi=1000)
+fig3.savefig("plots/learning_effects.svg", dpi=1000)
 
 # %% plot input paths
 # for p in [8]:

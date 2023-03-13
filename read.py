@@ -43,7 +43,7 @@ data = {Participant: {Condition: {Trial: {File: {} for File in Files} for Trial 
 
 #%% Read data ----------------------------------------------------------------------------------------------------------------------
 for p in Participants: 
-    print(), print(), print('Reading data for participant {}'.format(p))    
+    print(), print('Reading data for participant {}'.format(p))    
     
     for c in Conditions[1:]:        
         print('Condition {}'.format(c))

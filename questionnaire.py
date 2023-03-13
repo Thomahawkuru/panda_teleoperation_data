@@ -77,7 +77,7 @@ difficulty = results.iloc[:,[0,1,2,3,4,9]].melt(['condition','hand'], var_name='
 usefullness = results[['condition', 'requirements', 'frustration', 'easyness', 'correcting']]
 usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opinion')
 
-fig4, ax4 = plt.subplots(2, 1, figsize=(7.5, 8))
+fig4, ax4 = plt.subplots(2, 1, figsize=(7.5, 6))
 
 sns.boxplot(x=difficulty['condition'], y=difficulty['difficulty'], hue=difficulty['trial'], ax=ax4[0])
 ax4[0].set_title('Perceived Easiness per trial [n={}]'.format(len(Participants)))
@@ -89,7 +89,8 @@ ax4[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 
 fig4.tight_layout()
-fig4.savefig("plots/questionnaire.jpg")
+fig4.savefig("plots/questionnaire.jpg", dpi=1000)
+fig4.savefig("plots/questionnaire.svg", dpi=1000)
 
 #%% evaluate SEQ responses
 print('Evaluating...')
@@ -127,7 +128,8 @@ for m in measures:
     functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m}')
     
 fig5.tight_layout()
-fig5.savefig("plots/p_values_questionnaire.jpg")
+fig5.savefig("plots/p_values_questionnaire.jpg", dpi=1000)
+fig5.savefig("plots/p_values_questionnaire.svg", dpi=1000)
 
 #%% saving variables
 print(), print('Dumping questionnaire data to file...')

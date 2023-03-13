@@ -66,7 +66,8 @@ for m in Measures:
     functions.tablesubplot(ax4[6][Measures.index(m)], p_correlation, '{} Input-Output Correlation'.format(m))
     
 fig4.tight_layout()
-fig4.savefig("plots/p_values_min_max.jpg".format(m))
+fig4.savefig("plots/p_values_min_max.jpg".format(m), dpi=1000)
+fig4.savefig("plots/p_values_min_max.svg".format(m), dpi=1000)
 
 #%% calculating p_values for trial 1-3 learning effects
 print(), print('Calculating P-value tables for learning effects')
@@ -105,7 +106,8 @@ for t in Trials:
     functions.tablesubplot(ax5[6][t-1], p_correlation, 'Input-Output Correlation Trial {}'.format(t))
 
 fig5.tight_layout()
-fig5.savefig("plots/p_values_learning.jpg".format(t))
+fig5.savefig("plots/p_values_learning.jpg".format(t), dpi=1000)
+fig5.savefig("plots/p_values_learning.svg".format(t), dpi=1000)
 
 #%% saving variables
 print(), print('Dumping evaluated data to file...')
