@@ -23,7 +23,7 @@ import os
 import pyzed.sl as sl
 import numpy as np
 import cv2
-from pathlib import Path
+import logging
 import enum
 import shutil
 from smb.SMBConnection import SMBConnection
@@ -99,6 +99,10 @@ def convert(svo_input_path, output_path, app_type, output_as_video):
     nb_frames = zed.get_svo_number_of_frames() -1
 
     while True:
+        if zed.grab(rt_param) == sl.ERROR_CODE.END_OF_SVOFILE_REACHED:
+            logging.warning("Corrupted SVO file")
+            break
+
         if zed.grab(rt_param) == sl.ERROR_CODE.SUCCESS:
             svo_position = zed.get_svo_position()
 
