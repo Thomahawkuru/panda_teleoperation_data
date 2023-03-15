@@ -46,10 +46,10 @@ Count = Count.drop('variable', axis=1)
 #%% Calculating
 print('Calculating...')
 
-group = pd.DataFrame(Count.groupby(['Participant Number', 'condition'])['blocks'].sum())
+group = pd.DataFrame(Count.groupby(['Participant Number', 'condition'])['blocks'].mean())
 group = group.reset_index().rename(columns={'index': 'original_index'})
 group = group.melt(id_vars=['Participant Number', 'condition'], value_vars='blocks', value_name='blocks', var_name='trial')
-group['trial'] = 'sum'
+group['trial'] = 'mean'
 count_trail = pd.concat([Count,group],ignore_index=True)
 
 count_minmax = Count
@@ -69,7 +69,7 @@ ax8[0].set_title('Counted blocks per trial [n={}]'.format(len(Participants)))
 ax8[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 sns.boxplot(x=count_minmax['condition'][count_minmax['condition'] != 'A'], y=count_minmax['blocks'], hue=count_minmax['measure'], ax=ax8[1])
-ax8[1].set_title('Counted blocks per trial [n={}]'.format(len(Participants)))
+ax8[1].set_title('Max, med, min and average counted blocks [n={}]'.format(len(Participants)))
 ax8[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig8.tight_layout()
@@ -80,7 +80,7 @@ fig8.savefig("plots/blocks_count.svg", dpi=1000)
 print('Evaluating...')
 fig9, ax9 = plt.subplots(2, 4, figsize=(9, 4))
 fig9.patch.set_visible(False)
-trials = ['1', '2', '3', 'sum']
+trials = ['1', '2', '3', 'mean']
 measures = ['max', 'med', 'min', 'avg']
 
 for t in trials: 
