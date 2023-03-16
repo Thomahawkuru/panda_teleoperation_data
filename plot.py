@@ -51,7 +51,7 @@ grab_succes = pd.DataFrame([] , columns=['succes', 'participant', 'condition', '
 grab_attempts = pd.DataFrame([] , columns=['attempts', 'participant', 'condition', 'measure'])
 pre_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
 post_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
-hmd_movement = pd.DataFrame([] , columns=['max_std', 'participant', 'condition', 'measure'])
+hmd_movement = pd.DataFrame([] , columns=['std', 'participant', 'condition', 'measure'])
 in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 
 for p in Participants:
@@ -70,7 +70,7 @@ for p in Participants:
             if c == 'B':
                 new_row = [0, p, c, m]
             else: 
-                new_row = functions.minmax(data, 'HMD', None, p, c, m, Trials, Measures)            
+                new_row = functions.minmax(data, 'HMD', 'rotation', p, c, m, Trials, Measures)            
             hmd_movement.loc[len(hmd_movement)] = new_row  
             new_row = functions.minmax(data, 'in_out', None, p, c, m, Trials, Measures)
             in_out_corr.loc[len(in_out_corr)] = new_row 
@@ -92,8 +92,8 @@ ax2[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=post_velocity['condition'], y=post_velocity['velocity'], hue=post_velocity['measure'], ax=ax2[4])
 ax2[4].set_title('Average Post-Grab Velocity [m/s]')
 ax2[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['max_std'], hue=post_velocity['measure'], ax=ax2[5])
-ax2[5].set_title('Average HMD movement [std]')
+sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=post_velocity['measure'], ax=ax2[5])
+ax2[5].set_title('Rotational SD of HMD movement [m]')
 ax2[5].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6])
 ax2[6].set_title('Input-Output Correlation')
@@ -108,7 +108,7 @@ print(), print('Plotting learning effect boxplots')
 
 trial_velocity = pd.DataFrame([] , columns=['pre', 'post', 'participant', 'condition', 'trial'])
 trial_grabs = pd.DataFrame([] , columns=['attempts', 'succes', 'fails', 'participant', 'condition', 'trial'])
-trial_hmd = pd.DataFrame([] , columns=['max_std', 'participant', 'condition', 'trial'])
+trial_hmd = pd.DataFrame([] , columns=['std', 'participant', 'condition', 'trial'])
 trial_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'trial'])
 
 for p in Participants:
@@ -122,7 +122,7 @@ for p in Participants:
             if c == 'B':
                 new_row = [0, p, c, t]
             else:
-                new_row = [data[p][c][t]['HMD'], p, c, t]
+                new_row = [data[p][c][t]['HMD']["rotation"], p, c, t]
             
             trial_hmd.loc[len(trial_hmd)] = new_row
             new_row = [data[p][c][t]['in_out'], p, c, t]
@@ -145,8 +145,8 @@ ax3[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_velocity['condition'], y=trial_velocity['post'], hue=trial_velocity['trial'], ax=ax3[4])
 ax3[4].set_title('Average post-grab velocity per trial [n={}]'.format(len(Participants)))
 ax3[4].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=trial_hmd['condition'], y=trial_hmd['max_std'], hue=trial_hmd['trial'], ax=ax3[5])
-ax3[5].set_title('Max std of HMD movement [n={}]'.format(len(Participants)))
+sns.boxplot(x=trial_hmd['condition'], y=trial_hmd['std'], hue=trial_hmd['trial'], ax=ax3[5])
+ax3[5].set_title('Rotational SD of HMD movement [n={}]'.format(len(Participants)))
 ax3[5].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=trial_corr['condition'], y=trial_corr['corr'], hue=trial_corr['trial'], ax=ax3[6])
 ax3[6].set_title('Input-Output Correlation[n={}]'.format(len(Participants)))

@@ -131,9 +131,12 @@ def head_movement(data, p, c, t, debug):
         fig.show()
 
     mean, std = functions.pdf(HMD.iloc[:,3:10])
-    max_std = max(std)
+    pos_std = sum(std[:3])
+    rot_std = sum(std[3:])
 
-    return max_std
+    HMD_std ={'position': pos_std, 'rotation': rot_std} 
+
+    return HMD_std
 
 def in_out_corr(data, p, c, t, debug):
     input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])

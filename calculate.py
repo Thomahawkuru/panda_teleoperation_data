@@ -20,27 +20,13 @@ for p in Participants:
             print('Trial {}'.format(t))
             
             data[p][c][t]['fps'] = calculators.fps(data, p, c, t)
-            #print('FPS: {}'.format(data[p][c][t]['fps']))
-            
             data[p][c][t]['duration'] = calculators.duration(data, p, c, t)
-            #print('Duration: {}'.format(data[p][c][t]['duration']))
-
             data[p][c][t]['time'] = calculators.time(data, p, c, t)
-
-            data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)
-            #print('Tracking errors: {}'.format(data[p][c][t]['track_err']))
-                      
+            data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t)       
             data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t, debug=False)
-            #print('Succes: {}'.format(data[p][c][t]['grabs']['succes']))  
-            #print('Fail: {}'.format(data[p][c][t]['grabs']['fail']))   
-
             data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', pre_time=2, debug=False)
-            #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity'])))            
-
-            if c != 'B':
+            if c != 'B': #omit B because there is no HMD data
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=False)
-                #print('Velocity: {}'.format(np.mean(data[p][c][t]['velocity']))) 
-
             data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=False)  
            
 # %%
