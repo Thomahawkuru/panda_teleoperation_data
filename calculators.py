@@ -131,8 +131,8 @@ def head_movement(data, p, c, t, debug):
         fig.show()
 
     mean, std = functions.pdf(HMD.iloc[:,3:10])
-    pos_std = sum(std[:3])
-    rot_std = sum(std[3:])
+    pos_std = np.sqrt(sum(std[:3]))
+    rot_std = np.sqrt(sum(std[3:]))
 
     HMD_std ={'position': pos_std, 'rotation': rot_std} 
 
