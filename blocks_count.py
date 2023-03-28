@@ -94,7 +94,7 @@ for t in trials:
             p_count_trial[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    functions.tablesubplot(ax9[0][trials.index(t)], p_count_trial, f'Trial {t} blocks [n]')
+    functions.tablesubplot(ax9[0][trials.index(t)], p_count_trial, f'Trial {t} blocks')
 
 for m in measures: 
     p_count_minmax = pd.DataFrame(index = Conditions, columns = Conditions)
@@ -107,11 +107,28 @@ for m in measures:
             p_count_minmax[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    functions.tablesubplot(ax9[1][measures.index(m)], p_count_minmax, f'{m} blocks [n]')
+    functions.tablesubplot(ax9[1][measures.index(m)], p_count_minmax, f'{m} blocks')
 
 fig9.tight_layout()
 fig9.savefig("plots/p_values_blocks_count.jpg", dpi=1000)
 fig9.savefig("plots/p_values_blocks_count.svg", dpi=1000)
+
+#%% plot only average results
+print('Average only...')
+
+fig10, ax10 = plt.subplots(1, 2, figsize=(7.5, 2.5))
+
+count_avg = count_minmax[count_minmax['measure'] == m]
+sns.boxplot(x=count_avg['condition'][count_avg['condition'] != 'A'], y=count_avg['blocks'], hue=count_avg['measure'], ax=ax10[0])
+ax10[0].set_title(f'{m} blocks transferred [n=3]')
+ax10[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+# plotting p-value tables
+functions.tablesubplot(ax10[1], p_count_minmax, f'{m} blocks transferred paired T-test p-values')
+
+fig10.tight_layout()
+fig10.savefig("plots/blocks_count_avg.jpg", dpi=1000)
+fig10.savefig("plots/blocks_count_avg.svg", dpi=1000)
 
 #%% saving variables
 print(), print('Dumping blocks count data to file...')

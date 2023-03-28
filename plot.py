@@ -74,7 +74,7 @@ for p in Participants:
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
 
-fig2, ax2 = plt.subplots(7, 2, figsize=(7.5, 20))
+fig2, ax2 = plt.subplots(7, 2, figsize=(7.5, 17.5))
 
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax2[0,0])
 ax2[0,0].set_title('Mean grab count over 3 trials'.format(len(Participants)))
@@ -87,10 +87,10 @@ sns.boxplot(x=velocity['condition'], y=velocity['post'], hue=velocity['measure']
 ax2[3,0].set_title('Average Post-Grab Velocity [m/s]')
 ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement['measure'], ax=ax2[4,0])
-ax2[4,0].set_title('Rotational SD of HMD movement')
+ax2[4,0].set_title('Rotational SD of HMD movement [rad]')
 ax2[4,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[5,0])
-ax2[5,0].set_title('Input-Output Correlation [rad]')
+ax2[5,0].set_title('Input-Output Correlation')
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[6,0])
 ax2[6,0].set_title('Average peak force [N]')
