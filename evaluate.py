@@ -58,14 +58,14 @@ for m in Measures:
             _, p_force[c1][c2] = functions.p_values(force, 'force', m, c1, c2, 'measure')
 
     # plotting p-value tables
-    functions.tablesubplot(ax2[0,1], p_grab_fails, '{} Failed Grabs'.format(m))
-    functions.tablesubplot(ax2[1,1], p_grab_succes, '{} Correct grabs'.format(m))
-    functions.tablesubplot(ax2[2,1], p_grab_attemts, '{} Grab attempts'.format(m))
-    functions.tablesubplot(ax2[3,1], p_pre_velocity, '{} Pre-Grab Velocity'.format(m))
-    functions.tablesubplot(ax2[4,1], p_post_velocity, '{} Post-Grab Velocity'.format(m))
-    functions.tablesubplot(ax2[5,1], p_hmd_movement, '{} HMD rotational SD'.format(m))
-    functions.tablesubplot(ax2[6,1], p_correlation, '{} Input-Output Correlation'.format(m))
-    functions.tablesubplot(ax2[7,1], p_force, '{} Average peak force'.format(m))
+    functions.tablesubplot(ax2[0,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
+    functions.tablesubplot(ax2[1,1], p_grab_succes, 'Correct grabs paired T-test p-values')
+    functions.tablesubplot(ax2[2,1], p_grab_attemts, 'Grab attempts paired T-test p-values')
+    functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
+    functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
+    functions.tablesubplot(ax2[5,1], p_hmd_movement, 'HMD rotational SD paired T-test p-values')
+    functions.tablesubplot(ax2[6,1], p_correlation, 'Input-Output Correlation paired T-test p-values')
+    functions.tablesubplot(ax2[7,1], p_force, 'Average peak force paired T-test p-values')
     
 fig2.tight_layout()
 fig2.savefig("plots/avg.jpg", dpi=1000)

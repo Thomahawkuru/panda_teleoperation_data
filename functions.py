@@ -64,17 +64,18 @@ def tablesubplot(ax, df, title):
     for _ , row in df.iterrows():
         colors_in_column = ["w"]*len(df)
         for idx in row.index:    
-            if row[idx] < 0.05:                    
+            if row[idx] <= 0.05:                    
                 colors_in_column[row.index.get_loc(idx)] = "g"
 
-            elif 0.05 <= row[idx] < 0.1:
-                colors_in_column[row.index.get_loc(idx)] = "y"
+            # elif 0.05 <= row[idx] < 0.1:
+            #     colors_in_column[row.index.get_loc(idx)] = "y"
 
         
         colors.append(colors_in_column)
 
-    ax.table(cellText=df.values, colLabels=df.columns, rowLabels=df.index, loc='center', cellColours=colors)
-    ax.set_title(title)
+    cell_text = [['{:.3f}'.format(val) for val in row] for _, row in df.iterrows()]
+    ax.table(cellText=cell_text, colLabels=df.columns, rowLabels=df.index, loc='center', cellColours=colors)
+    ax.set_title(title, wrap=True)
     ax.axis('off')
     ax.axis('tight')
 
@@ -101,7 +102,7 @@ def minmax(data, key, type, p, c, m, T, M):
 def p_values(data, key, m, c1, c2, type):
 
     measure_data = data[data[type] == m]
-    p_value = np.round(
+    p_value = np.around(
         stats.ttest_rel(
             measure_data[measure_data['condition']==c1][key], 
             measure_data[measure_data['condition']==c2][key],

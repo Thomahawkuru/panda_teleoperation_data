@@ -12,7 +12,7 @@ import functions
 dill.load_session('data_calculated.pkl')
 start = time.time()
 
-Measures = ['Avg']
+Measures = ['Mean [n=3]']
 
 #%% plot ming sanity check data
 print(), print('Plotting sanity check') 
@@ -81,13 +81,13 @@ for p in Participants:
 fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 21))
 
 sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0,0])
-ax2[0,0].set_title('Failed Grabs [n={}]'.format(len(Participants)))
+ax2[0,0].set_title('Failed Grabs [n]'.format(len(Participants)))
 ax2[0,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=grab_succes['condition'], y=grab_succes['succes'], hue=grab_succes['measure'], ax=ax2[1,0])
-ax2[1,0].set_title('Correct Grabs [n={}]'.format(len(Participants)))
+ax2[1,0].set_title('Correct Grabs [n]'.format(len(Participants)))
 ax2[1,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=grab_attempts['condition'], y=grab_attempts['attempts'], hue=grab_attempts['measure'], ax=ax2[2,0])
-ax2[2,0].set_title('grab_attempts [n={}]'.format(len(Participants)))
+ax2[2,0].set_title('grab_attempts [n]'.format(len(Participants)))
 ax2[2,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=pre_velocity['condition'], y=pre_velocity['velocity'], hue=pre_velocity['measure'], ax=ax2[3,0])
 ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]')
@@ -99,7 +99,7 @@ sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=post_velocit
 ax2[5,0].set_title('Rotational SD of HMD movement')
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6,0])
-ax2[6,0].set_title('Input-Output Correlation')
+ax2[6,0].set_title('Input-Output Correlation [rad]')
 ax2[6,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[7,0])
 ax2[7,0].set_title('Average peak force [N]')
