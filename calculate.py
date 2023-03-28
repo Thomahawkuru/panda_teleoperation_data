@@ -9,7 +9,7 @@ import warnings
 
 dill.load_session('data_raw.pkl')
 start = time.time()
-Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]                      # Array of participants
+Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26] # Array of participants
 
 #%% plot data   
 for p in Participants:
@@ -28,6 +28,7 @@ for p in Participants:
             if c != 'B': #omit B because there is no HMD data
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=False)
             data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=False)  
+            data[p][c][t]['force'] = calculators.force(data, p, c, t, debug=False)  
            
 # %%
 print(), print('Dumping calculated data to file...')

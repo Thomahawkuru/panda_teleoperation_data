@@ -156,4 +156,25 @@ def in_out_corr(data, p, c, t, debug):
 
     return correlation
 
+def force(data, p, c, t, debug):
+    forcexyz = functions.crop_data(data[p][c][t]['Robot'][["fx", "fy", "fz"]], data[p][c][t]['Experiment'])
+    force = np.linalg.norm(forcexyz, axis=1)
 
+    min_peak_height = 10 # [N] set minimum peak height
+    min_peak_distance = 60 # [s] set minimum peak distance
+
+    # find peaks in the force data with specified height and minimum distance
+    peaks, _ = signal.find_peaks(force, height=min_peak_height, distance=min_peak_distance)
+
+    if debug:
+        input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])
+        input = input.reset_index(drop=True)
+        plt.plot(force)
+        plt.plot(input*30)
+
+        # plot the force data and highlight the peaks
+        plt.plot(force)
+        plt.plot(peaks, force[peaks], "x")
+        plt.show()
+
+    return np.mean(force[peaks])
