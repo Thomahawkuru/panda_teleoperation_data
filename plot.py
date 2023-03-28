@@ -46,11 +46,8 @@ fig1.savefig("plots/sanity_check.svg", dpi=1000)
 #%% plot avg reache performance over all 3 trials 
 print(), print('Plotting avg boxplots') 
 
-grab_fails = pd.DataFrame([] , columns=['fails', 'participant', 'condition', 'measure'])
-grab_succes = pd.DataFrame([] , columns=['succes', 'participant', 'condition', 'measure'])
-grab_attempts = pd.DataFrame([] , columns=['attempts', 'participant', 'condition', 'measure'])
-pre_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
-post_velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
+grabs = pd.DataFrame([] , columns=['count', 'participant', 'condition', 'measure'])
+velocity = pd.DataFrame([] , columns=['pre', 'post', 'participant', 'condition', 'measure'])
 hmd_movement = pd.DataFrame([] , columns=['std', 'participant', 'condition', 'measure'])
 in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure'])
@@ -58,16 +55,15 @@ force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure
 for p in Participants:
     for c in Conditions[1:]:
         for m in Measures:         
-            new_row = functions.minmax(data, 'grabs', 'fail', p, c, m, Trials, Measures)
-            grab_fails.loc[len(grab_fails)] = new_row
-            new_row = functions.minmax(data, 'grabs', 'succes', p, c, m, Trials, Measures)
-            grab_succes.loc[len(grab_succes)] = new_row
-            new_row = functions.minmax(data, 'grabs', 'attempts', p, c, m, Trials, Measures)
-            grab_attempts.loc[len(grab_attempts)] = new_row
-            new_row = functions.minmax(data, 'velocity', 'pre', p, c, m, Trials, Measures)
-            pre_velocity.loc[len(pre_velocity)] = new_row
-            new_row = functions.minmax(data, 'velocity', 'post', p, c, m, Trials, Measures)
-            post_velocity.loc[len(post_velocity)] = new_row           
+            new_row = [data[p][c][t]['grabs']['attempts'], p, c, 'attempts']
+            grabs.loc[len(grabs)] = new_row
+            new_row = [data[p][c][t]['grabs']['succes'], p, c, 'succes']
+            grabs.loc[len(grabs)] = new_row
+            new_row = [data[p][c][t]['grabs']['fail'], p, c, 'fails']
+            grabs.loc[len(grabs)] = new_row
+
+            new_row = [data[p][c][t]['velocity']['pre'], data[p][c][t]['velocity']['post'], p, c, m]
+            velocity.loc[len(velocity)] = new_row
             if c == 'B':
                 new_row = [0, p, c, m]
             else: 
@@ -78,32 +74,27 @@ for p in Participants:
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
 
-fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 21))
+fig2, ax2 = plt.subplots(7, 2, figsize=(7.5, 20))
 
-sns.boxplot(x=grab_fails['condition'], y=grab_fails['fails'], hue=grab_fails['measure'], ax=ax2[0,0])
-ax2[0,0].set_title('Failed Grabs [n]'.format(len(Participants)))
+sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax2[0,0])
+ax2[0,0].set_title('Mean grab count over 3 trials'.format(len(Participants)))
 ax2[0,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=grab_succes['condition'], y=grab_succes['succes'], hue=grab_succes['measure'], ax=ax2[1,0])
-ax2[1,0].set_title('Correct Grabs [n]'.format(len(Participants)))
-ax2[1,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=grab_attempts['condition'], y=grab_attempts['attempts'], hue=grab_attempts['measure'], ax=ax2[2,0])
-ax2[2,0].set_title('grab_attempts [n]'.format(len(Participants)))
+
+sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[2,0])
+ax2[2,0].set_title('Average Pre-Grab Velocity [m/s]')
 ax2[2,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=pre_velocity['condition'], y=pre_velocity['velocity'], hue=pre_velocity['measure'], ax=ax2[3,0])
-ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]')
+sns.boxplot(x=velocity['condition'], y=velocity['post'], hue=velocity['measure'], ax=ax2[3,0])
+ax2[3,0].set_title('Average Post-Grab Velocity [m/s]')
 ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=post_velocity['condition'], y=post_velocity['velocity'], hue=post_velocity['measure'], ax=ax2[4,0])
-ax2[4,0].set_title('Average Post-Grab Velocity [m/s]')
+sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement['measure'], ax=ax2[4,0])
+ax2[4,0].set_title('Rotational SD of HMD movement')
 ax2[4,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=post_velocity['measure'], ax=ax2[5,0])
-ax2[5,0].set_title('Rotational SD of HMD movement')
+sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[5,0])
+ax2[5,0].set_title('Input-Output Correlation [rad]')
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6,0])
-ax2[6,0].set_title('Input-Output Correlation [rad]')
+sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[6,0])
+ax2[6,0].set_title('Average peak force [N]')
 ax2[6,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[7,0])
-ax2[7,0].set_title('Average peak force [N]')
-ax2[7,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 fig2.tight_layout()
 fig2.savefig("plots/avg.jpg", dpi=1000)

@@ -33,11 +33,17 @@ print(), print('Calculating P-value tables for average data')
 
 # fig4, ax4 = plt.subplots(7, 4, figsize=(12, 14))
 # fig4.patch.set_visible(False)
+p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+for c1 in Conditions[1:]:
+    for c2 in Conditions[1:]:
+
+        _, p_grab_fails[c1][c2] = functions.p_values(grabs, 'count', 'fails', c1, c2, 'measure')
+        _, p_grab_succes[c1][c2] = functions.p_values(grabs, 'count', 'succes', c1, c2, 'measure')
+        _, p_grab_attemts[c1][c2] = functions.p_values(grabs, 'count', 'attempts', c1, c2, 'measure')
 
 for m in Measures:  
-    p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-    p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
     p_hmd_movement = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
@@ -46,26 +52,22 @@ for m in Measures:
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
-
-            _, p_grab_fails[c1][c2] = functions.p_values(grab_fails, 'fails', m, c1, c2, 'measure')
-            _, p_grab_succes[c1][c2] = functions.p_values(grab_succes, 'succes', m, c1, c2, 'measure')
-            _, p_grab_attemts[c1][c2] = functions.p_values(grab_attempts, 'attempts', m, c1, c2, 'measure')
-            _, p_pre_velocity[c1][c2] = functions.p_values(pre_velocity, 'velocity', m, c1, c2, 'measure')
-            _, p_post_velocity[c1][c2] = functions.p_values(post_velocity, 'velocity', m, c1, c2, 'measure')
+            _, p_pre_velocity[c1][c2] = functions.p_values(velocity, 'pre', m, c1, c2, 'measure')
+            _, p_post_velocity[c1][c2] = functions.p_values(velocity, 'post', m, c1, c2, 'measure')
             if c1 != 'B' and c2 != 'B':
                 _, p_hmd_movement[c1][c2] = functions.p_values(hmd_movement, 'std', m, c1, c2, 'measure')
             _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', m, c1, c2, 'measure')
             _, p_force[c1][c2] = functions.p_values(force, 'force', m, c1, c2, 'measure')
 
     # plotting p-value tables
-    functions.tablesubplot(ax2[0,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
-    functions.tablesubplot(ax2[1,1], p_grab_succes, 'Correct grabs paired T-test p-values')
-    functions.tablesubplot(ax2[2,1], p_grab_attemts, 'Grab attempts paired T-test p-values')
-    functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
-    functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
-    functions.tablesubplot(ax2[5,1], p_hmd_movement, 'HMD rotational SD paired T-test p-values')
-    functions.tablesubplot(ax2[6,1], p_correlation, 'Input-Output Correlation paired T-test p-values')
-    functions.tablesubplot(ax2[7,1], p_force, 'Average peak force paired T-test p-values')
+    functions.tablesubplot(ax2[1,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
+    functions.tablesubplot(ax2[1,0], p_grab_succes, 'Correct grabs paired T-test p-values')
+    functions.tablesubplot(ax2[0,1], p_grab_attemts, 'Grab attempts paired T-test p-values')
+    functions.tablesubplot(ax2[2,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
+    functions.tablesubplot(ax2[3,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
+    functions.tablesubplot(ax2[4,1], p_hmd_movement, 'HMD rotational SD paired T-test p-values')
+    functions.tablesubplot(ax2[5,1], p_correlation, 'Input-Output Correlation paired T-test p-values')
+    functions.tablesubplot(ax2[6,1], p_force, 'Average peak force paired T-test p-values')
     
 fig2.tight_layout()
 fig2.savefig("plots/avg.jpg", dpi=1000)
