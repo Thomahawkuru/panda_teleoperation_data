@@ -175,6 +175,10 @@ def force(data, p, c, t, debug):
         # plot the force data and highlight the peaks
         plt.plot(force)
         plt.plot(peaks, force[peaks], "x")
+        checks = -data[p][c][t]['Experiment']["Controlling"][data[p][c][t]['Experiment'].start]
+        peaks, _ = signal.find_peaks(checks)
+        plt.plot(checks.reset_index(drop=True))
+        plt.plot(peaks, force[peaks], "rx")
         plt.show()
 
     return np.mean(force[peaks])
