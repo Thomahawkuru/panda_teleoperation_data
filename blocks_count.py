@@ -60,6 +60,7 @@ count_minmax['min'] = Count.groupby(['Participant Number', 'condition'])['blocks
 count_minmax['avg'] = Count.groupby(['Participant Number', 'condition'])['blocks'].transform(np.mean)
 count_minmax = count_minmax.melt(id_vars=['Participant Number', 'condition'], value_vars=['max', 'med', 'min', 'avg'], \
                                  var_name ='measure', value_name='blocks')
+count_minmax = count_minmax.drop_duplicates()
 
 #%% plotting
 print('Plotting...')
@@ -85,10 +86,10 @@ trials = ['1', '2', '3', 'mean']
 measures = ['max', 'med', 'min', 'avg']
 
 for t in trials: 
-    p_count_trial = pd.DataFrame(index = Conditions, columns = Conditions)
+    p_count_trial = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
-    for c1 in Conditions:
-        for c2 in Conditions:
+    for c1 in Conditions[1:]:
+        for c2 in Conditions[1:]:
             diff_c1 = count_trail[(count_trail['condition']==c1) & (count_trail['trial']==t)]['blocks']
             diff_c2 = count_trail[(count_trail['condition']==c2) & (count_trail['trial']==t)]['blocks']
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
@@ -98,10 +99,10 @@ for t in trials:
     functions.tablesubplot(ax9[0][trials.index(t)], p_count_trial, f'Trial {t} blocks')
 
 for m in measures: 
-    p_count_minmax = pd.DataFrame(index = Conditions, columns = Conditions)
+    p_count_minmax = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
-    for c1 in Conditions:
-        for c2 in Conditions:
+    for c1 in Conditions[1:]:
+        for c2 in Conditions[1:]:
             diff_c1 = count_minmax[(count_minmax['condition']==c1) & (count_minmax['measure']==m)]['blocks']
             diff_c2 = count_minmax[(count_minmax['condition']==c2) & (count_minmax['measure']==m)]['blocks']
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
@@ -135,7 +136,7 @@ ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 # plotting p-value tables
-functions.tablesubplot(ax2[2,1], p_count_minmax, f'{m} blocks transferred paired T-test p-values')
+functions.tablesubplot(ax2[2,1], p_count_minmax, 'Blocks transferred paired T-test p-values')
 
 meanA = np.mean(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])
 stdA = np.std(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])

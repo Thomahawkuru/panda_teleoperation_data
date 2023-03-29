@@ -61,7 +61,7 @@ for m in Measures:
 
     # plotting p-value tables
     functions.tablesubplot(ax2[1,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
-    functions.tablesubplot(ax2[2,0], p_grab_succes, 'Correct grabs paired T-test p-values')
+    functions.tablesubplot(ax2[2,0], p_grab_succes, 'Succesful grabs paired T-test p-values')
     functions.tablesubplot(ax2[1,0], p_grab_attemts, 'Grab attempts paired T-test p-values')
     functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
     functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
