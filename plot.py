@@ -17,8 +17,9 @@ Measures = ['Mean [n=3]']
 #%% plot ming sanity check data
 print(), print('Plotting sanity check') 
 fpss =  pd.DataFrame([] , columns=['fps', 'participant', 'condition', 'trial'])
-times =  pd.DataFrame([] , columns=['duration', 'participant', 'condition', 'trial'])
+times =  pd.DataFrame([] , columns=['duration [s]', 'participant', 'condition', 'trial'])
 track_err = pd.DataFrame([] , columns=['track_err', 'participant', 'condition', 'trial'])
+input_lag = pd.DataFrame([] , columns=['lag [s]', 'participant', 'condition', 'trial'])
 
 for p in Participants:
     for c in Conditions[1:]:
@@ -28,17 +29,24 @@ for p in Participants:
             new_row = [np.mean(data[p][c][t]['duration']), p, c, t]
             times.loc[len(times)] = new_row 
             new_row = [np.mean(data[p][c][t]['track_err']), p, c, t]
-            track_err.loc[len(track_err)] = new_row 
+            track_err.loc[len(track_err)] = new_row
+            new_row = [np.mean(data[p][c][t]['in_out']['lag'])/np.mean(data[p][c][t]['fps']), p, c, t]
+            input_lag.loc[len(track_err)] = new_row 
 
-fig1, ax1 = plt.subplots(3)
+fig1, ax1 = plt.subplots(4,figsize=(7.5,10))
 sns.boxplot(x=fpss['condition'], y=fpss['fps'], hue=fpss['trial'], ax=ax1[0])
 ax1[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=times['condition'], y=times['duration'], hue=times['trial'], ax=ax1[1])
+ax1[0].set_title(f'Average FPS per trial n = [{len(Participants)}]')
+sns.boxplot(x=times['condition'], y=times['duration [s]'], hue=times['trial'], ax=ax1[1])
 ax1[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax1[1].set_title(f'Average duration per trial n = [{len(Participants)}]')
 sns.boxplot(x=track_err['condition'], y=track_err['track_err'], hue=track_err['trial'], ax=ax1[2])
 ax1[2].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax1[2].set_title(f'Tracking losses per trial n = [{len(Participants)}]')
+sns.boxplot(x=input_lag['condition'], y=input_lag['lag [s]'], hue=input_lag['trial'], ax=ax1[3])
+ax1[3].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax1[3].set_title(f'Average input Lag per trial n = [{len(Participants)}]')
 
-ax1[0].set_title('Sanity Checking, n = [{}]'.format(2*5*3))
 fig1.tight_layout()
 fig1.savefig("plots/sanity_check.jpg", dpi=1000)
 fig1.savefig("plots/sanity_check.svg", dpi=1000)
@@ -69,7 +77,7 @@ for p in Participants:
             else: 
                 new_row = functions.minmax(data, 'HMD', 'rotation', p, c, m, Trials, Measures)            
             hmd_movement.loc[len(hmd_movement)] = new_row  
-            new_row = functions.minmax(data, 'in_out', None, p, c, m, Trials, Measures)
+            new_row = functions.minmax(data, 'in_out', 'corr', p, c, m, Trials, Measures)
             in_out_corr.loc[len(in_out_corr)] = new_row
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
