@@ -130,6 +130,11 @@ fig10.tight_layout()
 fig10.savefig("plots/blocks_count_avg.jpg", dpi=1000)
 fig10.savefig("plots/blocks_count_avg.svg", dpi=1000)
 
+meanA = np.mean(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])
+stdA = np.std(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])
+print(f'Mean blocks transfered in Condition A: {meanA}')
+print(f'SD of blocks transfered in Condition A: {stdA}')
+
 #%% saving variables
 print(), print('Dumping blocks count data to file...')
 dill.dump_session('data_blocks_count.pkl')

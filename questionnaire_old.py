@@ -77,22 +77,26 @@ difficulty = results.iloc[:,[0,1,2,3,4,9]].melt(['condition','hand'], var_name='
 usefullness = results[['condition', 'requirements', 'frustration', 'easyness', 'correcting']]
 usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opinion')
 
-fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
-avg_difficulty = difficulty[difficulty['trial']=='average']
-sns.barplot(x=avg_difficulty['condition'], y=avg_difficulty['difficulty'], hue=avg_difficulty['trial'], ax=ax4[0], errorbar='sd')
-ax4[0].set_title('Average perceived Easiness [errorbar = SD]'.format(len(Participants)))
+fig4, ax4 = plt.subplots(2, 1, figsize=(7.5, 6))
+
+sns.boxplot(x=difficulty['condition'], y=difficulty['difficulty'], hue=difficulty['trial'], ax=ax4[0])
+ax4[0].set_title('Perceived Easiness per trial [n={}]'.format(len(Participants)))
 ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
-fig5, ax5 = plt.subplots(3, 2, figsize=(7.5, 6))
-fig5.patch.set_visible(False)
-ax = plt.subplot(3, 1, 1)
-sns.barplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax, errorbar='sd')
-ax.set_title('UMUX results per condition [errorbar = SD]'.format(len(Participants)))
-ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+sns.boxplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax4[1])
+ax4[1].set_title('UMUX results per condition [n={}]'.format(len(Participants)))
+ax4[1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+
+fig4.tight_layout()
+fig4.savefig("plots/questionnaire.jpg", dpi=1000)
+fig4.savefig("plots/questionnaire.svg", dpi=1000)
 
 #%% evaluate SEQ responses
 print('Evaluating...')
-trials = ['average']
+fig5, ax5 = plt.subplots(2, 4, figsize=(9, 4))
+fig5.patch.set_visible(False)
+trials = ['trial 1', 'trial 2', 'trial 3', 'average']
 
 for t in trials: 
     p_difficulty = pd.DataFrame(index = Conditions, columns = Conditions)
@@ -105,11 +109,7 @@ for t in trials:
             p_difficulty[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    functions.tablesubplot(ax4[1], p_difficulty, f'{t} difficulty')
-
-fig4.tight_layout()
-fig4.savefig("plots/difficulty.jpg", dpi=1000)
-fig4.savefig("plots/difficulty.svg", dpi=1000)
+    functions.tablesubplot(ax5[0][trials.index(t)], p_difficulty, f'{t} difficulty')
 
 #%% evaluate UMUX responses
 measures = ['requirements', 'frustration', 'easyness', 'correcting']
@@ -125,14 +125,11 @@ for m in measures:
             p_usefullness[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    if measures.index(m) < 2:
-        functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m}')
-    else:
-        functions.tablesubplot(ax5[2][measures.index(m)-2], p_usefullness, f'{m}')
+    functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m}')
     
 fig5.tight_layout()
-fig5.savefig("plots/usefullness.jpg", dpi=1000)
-fig5.savefig("plots/usefullness.svg", dpi=1000)
+fig5.savefig("plots/p_values_questionnaire.jpg", dpi=1000)
+fig5.savefig("plots/p_values_questionnaire.svg", dpi=1000)
 
 #%% saving variables
 print(), print('Dumping questionnaire data to file...')
