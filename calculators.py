@@ -147,19 +147,20 @@ def in_out_corr(data, p, c, t, debug):
     input = input.sort_index(axis=1)
     output.columns= ["posX", "posY", "posZ"]
 
+    correlation = np.mean(input.corrwith(output,axis=0))
+
     lags = range(-50, 50)
     corr_coeffs_x = [np.correlate(input['posX'], np.roll(output['posX'], -k), mode='valid')[0] for k in lags]
     corr_coeffs_y = [np.correlate(input['posY'], np.roll(output['posY'], -k), mode='valid')[0] for k in lags]
     corr_coeffs_z = [np.correlate(input['posX'], np.roll(output['posZ'], -k), mode='valid')[0] for k in lags]
-
-    correlation = np.mean(input.corrwith(output,axis=0))
-    corr = np.mean(np.array([corr_coeffs_x,corr_coeffs_y,corr_coeffs_z]),axis=0)/100
+    corr = np.mean(np.array([corr_coeffs_x,corr_coeffs_y,corr_coeffs_z]),axis=0)
+    
     max_corr = max(corr)
     max_lag = lags[np.where(corr==max_corr)[0][0]]
 
     # print('pearson correlation coefficient:', correlation)
-    # print('Maximum correlation coefficient:', max_corr)
-    # print('Lag at which maximum correlation occurs:', max_lag)
+    # print('Maximum cross correlation:', max_corr)
+    # print('Lag at maximum cross correlation:', max_lag)
     
     in_out ={'corr': correlation, 'max_corr': max_corr, 'lag': max_lag} 
     
