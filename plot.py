@@ -77,7 +77,7 @@ for p in Participants:
             else: 
                 new_row = functions.minmax(data, 'HMD', 'rotation', p, c, m, Trials, Measures)            
             hmd_movement.loc[len(hmd_movement)] = new_row  
-            new_row = functions.minmax(data, 'in_out', 'corr', p, c, m, Trials, Measures)
+            new_row = functions.minmax(data, 'in_out', 'max_corr', p, c, m, Trials, Measures)
             in_out_corr.loc[len(in_out_corr)] = new_row
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
@@ -99,7 +99,7 @@ sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement
 ax2[5,0].set_title('Rotational SD of HMD movement [rad]')
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6,0])
-ax2[6,0].set_title('Input-Output Correlation')
+ax2[6,0].set_title('Input-Output Cross-correlation')
 ax2[6,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[7,0])
 ax2[7,0].set_title('Average peak force [N]')
