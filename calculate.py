@@ -33,11 +33,7 @@ for p in Participants:
 
 #%% calculated blocks count
 print(), print('Calculating blocks count data...')
-count_avg = Count
-count_avg['avg'] = Count.groupby(['Participant Number', 'condition'])['blocks'].transform(np.mean)
-count_avg = count_avg.melt(id_vars=['Participant Number', 'condition'], value_vars=['avg'], \
-                                var_name ='measure', value_name='blocks')
-count_avg = count_avg.drop_duplicates()
+count_avg = calculators.count_average(Count)
 
 # %%
 print(), print('Dumping calculated data to file...')

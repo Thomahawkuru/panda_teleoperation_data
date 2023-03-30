@@ -197,3 +197,12 @@ def force(data, p, c, t, debug):
         plt.show()
 
     return np.mean(force[peaks])
+
+def count_average(Count):
+    count_avg = Count
+    count_avg['avg'] = Count.groupby(['Participant Number', 'condition'])['blocks'].transform(np.mean)
+    count_avg = count_avg.melt(id_vars=['Participant Number', 'condition'], value_vars=['avg'], \
+                                    var_name ='measure', value_name='blocks')
+    count_avg = count_avg.drop_duplicates()
+
+    return count_avg
