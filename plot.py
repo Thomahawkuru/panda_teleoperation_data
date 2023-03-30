@@ -12,6 +12,7 @@ import functions
 plot_start = time.time()
 dill.load_session('data_calculated.pkl')
 Measures = ['Mean [n=3]']
+Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26] # Array of participants
 
 #%% plot ming sanity check data
 print(), print('Plotting sanity check') 
