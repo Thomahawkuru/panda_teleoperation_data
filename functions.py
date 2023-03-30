@@ -24,6 +24,26 @@ def read_csv(path, participant, condition, trial, filename, header):
 
     return csvdata
 
+def read_blocks_count(datapath,Participants):
+    Count   = pandas.read_csv(datapath + "blocks_count.csv", delimiter=",", header=0).set_index('Participant Number')
+    # remove invalid participants:
+    for index, rows in Count.iterrows():
+        if index not in Participants:
+            Count = Count.drop(index)
+
+    Count = Count.reset_index().rename(columns={'index': 'original_index'})
+
+    # Decode questionaire responses
+    print('Decoding...')
+    # melt the dataframe
+    Count = pd.melt(Count, id_vars=['Participant Number'], value_name='blocks')
+    # split the variable column into separate columns for the letter and number
+    Count[['condition', 'trial']] = Count['variable'].str.extract('(\D)(\d)')
+    # drop the original variable column
+    Count = Count.drop('variable', axis=1) 
+
+    return Count
+
 def crop_data(data_to_crop, check):
     
     data_cropped = data_to_crop.loc[check.start]

@@ -6,12 +6,13 @@ import dill
 import pickle
 import calculators
 import warnings
+import pandas as pd 
 
 dill.load_session('data_raw.pkl')
 start = time.time()
 Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26] # Array of participants
 
-#%% plot data   
+#%% calculate data   
 for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))
     for c in Conditions[1:]:
@@ -29,7 +30,15 @@ for p in Participants:
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=False)
             data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=False)  
             data[p][c][t]['force'] = calculators.force(data, p, c, t, debug=False)  
-           
+
+#%% calculated blocks count
+print(), print('Calculating blocks count data...')
+count_avg = Count
+count_avg['avg'] = Count.groupby(['Participant Number', 'condition'])['blocks'].transform(np.mean)
+count_avg = count_avg.melt(id_vars=['Participant Number', 'condition'], value_vars=['avg'], \
+                                var_name ='measure', value_name='blocks')
+count_avg = count_avg.drop_duplicates()
+
 # %%
 print(), print('Dumping calculated data to file...')
 dill.dump_session('data_calculated.pkl')

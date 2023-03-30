@@ -41,7 +41,7 @@ Headers         = [exp_header, gaze_header, hand_header, hmd_header, gripper_hea
 
 data = {Participant: {Condition: {Trial: {File: {} for File in Files} for Trial in Trials} for Condition in Conditions} for Participant in Participants}
 
-#%% Read data ----------------------------------------------------------------------------------------------------------------------
+#%% Read data
 for p in Participants: 
     print(), print('Reading data for participant {}'.format(p))    
     
@@ -51,7 +51,11 @@ for p in Participants:
         for t in Trials:           
             for f,h in zip(Files, Headers):
                 data[p][c][t].update({f: functions.read_csv(datapath, p, c, t, f + '.csv', h)})
-            
+
+#%% read questionnaire responses
+print(), print('Reading blocks count csv')
+Count   = functions.read_blocks_count(datapath,Participants)
+           
 #%% save imported data
 print(), print('Dumping raw data to file...')
 dill.dump_session('data_raw.pkl')

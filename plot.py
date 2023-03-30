@@ -9,9 +9,8 @@ import dill
 import seaborn as sns
 import functions
 
+plot_start = time.time()
 dill.load_session('data_calculated.pkl')
-start = time.time()
-
 Measures = ['Mean [n=3]']
 
 #%% plot ming sanity check data
@@ -82,36 +81,54 @@ for p in Participants:
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
 
-fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 20))
+fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 16))
 
 ax_span = plt.subplot(8,1,1)
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span)
 ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
+print('Average only...')
+for p in Participants:
+    count_p = count_avg[count_avg['Participant Number']==p]
+    for c in Conditions[1:]:
+        count_c = count_p[count_p['condition']==c]     
+        new_row = [count_c['blocks'].mean(), p, c, 'transfer']
+        grabs.loc[len(grabs)] = new_row
+
+grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
+ax_span.cla()
+hue_order = ['attempts', 'fails', 'succes', 'transfer']
+sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
+ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
+ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
 sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[3,0])
-ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]')
+ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]', wrap=True)
 ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=velocity['condition'], y=velocity['post'], hue=velocity['measure'], ax=ax2[4,0])
-ax2[4,0].set_title('Average Post-Grab Velocity [m/s]')
+ax2[4,0].set_title('Average Post-Grab Velocity [m/s]', wrap=True)
 ax2[4,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement['measure'], ax=ax2[5,0])
-ax2[5,0].set_title('Rotational SD of HMD movement [rad]')
+ax2[5,0].set_title('Rotational SD of HMD movement [rad]', wrap=True)
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6,0])
-ax2[6,0].set_title('Input-Output Cross-correlation')
+ax2[6,0].set_title('Input-Output Cross-correlation', wrap=True)
 ax2[6,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=force['condition'], y=force['force'], hue=force['measure'], ax=ax2[7,0])
-ax2[7,0].set_title('Average peak force [N]')
+ax2[7,0].set_title('Average peak force [N]', wrap=True)
 ax2[7,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+meanA = np.mean(count_avg[count_avg['condition'] == 'A']['blocks'])
+stdA = np.std(count_avg[count_avg['condition'] == 'A']['blocks'])
+print(f'Mean blocks transfered in Condition A: {meanA}')
+print(f'SD of blocks transfered in Condition A: {stdA}')
 
 fig2.tight_layout()
 fig2.savefig("plots/avg.jpg", dpi=1000)
 fig2.savefig("plots/avg.svg", dpi=1000)
 
-# %%
 print(), print('Dumping plotted data to file...')
 dill.dump_session('data_plotted.pkl')
-
 end =  time.time()
-print("Plotting time: {}".format(end-start))
+print("Plotting time: {}".format(end-plot_start))
