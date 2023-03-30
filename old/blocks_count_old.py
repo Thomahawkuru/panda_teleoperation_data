@@ -115,38 +115,6 @@ fig9.tight_layout()
 fig9.savefig("plots/p_values_blocks_count.jpg", dpi=1000)
 fig9.savefig("plots/p_values_blocks_count.svg", dpi=1000)
 
-#%% plot only average results
-print('Average only...')
-
-fig10, ax10 = plt.subplots(1, 2, figsize=(7.5, 2.5))
-count_avg = count_minmax[count_minmax['measure'] == m]
-
-for p in Participants:
-    count_p = count_avg[count_avg['Participant Number']==p]
-    for c in Conditions[1:]:
-        count_c = count_p[count_p['condition']==c]     
-        new_row = [count_c['blocks'].mean(), p, c, 'transfer']
-        grabs.loc[len(grabs)] = new_row
-
-grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
-ax_span.cla()
-hue_order = ['attempts', 'fails', 'succes', 'transfer']
-sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
-ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
-ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-
-# plotting p-value tables
-functions.tablesubplot(ax2[2,1], p_count_minmax, 'Blocks transferred paired T-test p-values')
-
-meanA = np.mean(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])
-stdA = np.std(count_minmax[count_minmax['condition'] == 'A'][count_minmax['measure'] == 'avg']['blocks'])
-print(f'Mean blocks transfered in Condition A: {meanA}')
-print(f'SD of blocks transfered in Condition A: {stdA}')
-
-fig2.tight_layout()
-fig2.savefig("plots/avg.jpg", dpi=1000)
-fig2.savefig("plots/avg.svg", dpi=1000)
-
 #%% saving variables
 print(), print('Dumping blocks count data to file...')
 dill.dump_session('data_blocks_count.pkl')
