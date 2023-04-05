@@ -49,6 +49,7 @@ for c in Conditions:
     results = pd.concat([results, Opinions[c]])
 
 # add average over trials
+
 results['average'] = results[['trial 1', 'trial 2', 'trial 3']].mean(axis=1)
 
 #%% plot responses
@@ -59,7 +60,7 @@ usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opi
 
 fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
 avg_difficulty = difficulty[difficulty['trial']=='average']
-sns.barplot(x=avg_difficulty['condition'], y=avg_difficulty['difficulty'], hue=avg_difficulty['trial'], ax=ax4[0], errorbar='sd')
+sns.barplot(x=avg_difficulty['trial'], y=avg_difficulty['difficulty'], hue=avg_difficulty['condition'], ax=ax4[0], errorbar='sd')
 ax4[0].set_title('Average perceived Easiness [errorbar = SD]'.format(len(Participants)))
 ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
