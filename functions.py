@@ -36,7 +36,7 @@ def read_blocks_count(datapath,Participants):
     # Decode questionaire responses
     print('Decoding...')
     # melt the dataframe
-    Count = pd.melt(Count, id_vars=['Participant Number'], value_name='blocks')
+    Count = pandas.melt(Count, id_vars=['Participant Number'], value_name='blocks')
     # split the variable column into separate columns for the letter and number
     Count[['condition', 'trial']] = Count['variable'].str.extract('(\D)(\d)')
     # drop the original variable column
