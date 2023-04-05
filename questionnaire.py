@@ -13,28 +13,8 @@ import dill
 import seaborn as sns
 import functions
 
-start = time.time()
-
-# define variables --------------------------------------------------------------------------------------------------
-root            = os.getcwd().replace("\\","/")
-datapath        = root + "/data/Experiment/"        # full path to read recorded data
-savepath        = root + "/save/"        # full path to save calculated data
-
-Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]                      # Array of participants
-Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
-Trials          = [1, 2, 3]
-
-opnion_header = ['condition', 'hand', 'trial 1', 'comment 1','trial 2', 'comment 2', 'trial 3', 'comment 3', 'requirements', 'frustration', 'easyness', 'correcting']
-
-#%% read questionnaire responses ----------------------------------------------------------------
-print(), print('Reading questionnaire csv')
-Questionnaire   = pd.read_csv(datapath + "responses.csv", delimiter=",", header=0).set_index('Participant number:')
-Demographic     = Questionnaire.iloc[:,range(10)]
-
-# remove invalid participants:
-for index, rows in Questionnaire.iterrows():
-    if index not in Participants:
-        Questionnaire = Questionnaire.drop(index)
+questionaire_start = time.time()
+dill.load_session('data_raw.pkl')
 
 #%% Decode questionaire responses ---------------------------------------------------------------
 print('Decoding...')
@@ -139,4 +119,4 @@ print(), print('Dumping questionnaire data to file...')
 dill.dump_session('data_questionnaire.pkl')
 
 end =  time.time()
-print("Evaluation took: {}".format(end-start))
+print("Evaluation took: {}".format(end-questionaire_start))

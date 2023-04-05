@@ -32,6 +32,8 @@ hand_header     = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rot
 hmd_header      = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotw"]
 gripper_header  = [ "f", "dt", "t", "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "rotW", "grip_pos", "grip_vel", "grip_eff" ]
 robot_header    = [ "f", "dt", "t", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "fx", "fy", "fz" ]
+opnion_header   = ['condition', 'hand', 'trial 1', 'comment 1','trial 2', 'comment 2', 'trial 3', 'comment 3', 'requirements', 'frustration', 'easyness', 'correcting']
+
 
 Participants    = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]                      # Array of participants
 Conditions      = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -52,10 +54,20 @@ for p in Participants:
             for f,h in zip(Files, Headers):
                 data[p][c][t].update({f: functions.read_csv(datapath, p, c, t, f + '.csv', h)})
 
-#%% read questionnaire responses
+#%% read blocks count data
 print(), print('Reading blocks count csv')
 Count   = functions.read_blocks_count(datapath,Participants)
-           
+        
+#%% read questionnaire responses ----------------------------------------------------------------
+print(), print('Reading questionnaire csv')
+Questionnaire   = pd.read_csv(datapath + "responses.csv", delimiter=",", header=0).set_index('Participant number:')
+Demographic     = Questionnaire.iloc[:,range(10)]
+
+# remove invalid participants:
+for index, rows in Questionnaire.iterrows():
+    if index not in Participants:
+        Questionnaire = Questionnaire.drop(index)
+
 #%% save imported data
 print(), print('Dumping raw data to file...')
 dill.dump_session('data_raw.pkl')
