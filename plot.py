@@ -55,7 +55,7 @@ fig1.savefig("plots/sanity_check.svg", dpi=1000)
 print(), print('Plotting avg boxplots') 
 
 grabs = pd.DataFrame([] , columns=['count', 'participant', 'condition', 'measure'])
-velocity = pd.DataFrame([] , columns=['pre', 'post', 'participant', 'condition', 'measure'])
+velocity = pd.DataFrame([] , columns=['value', 'participant', 'condition', 'measure'])
 hmd_movement = pd.DataFrame([] , columns=['std', 'participant', 'condition', 'measure'])
 in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure'])
@@ -70,7 +70,9 @@ for p in Participants:
             new_row = [data[p][c][t]['grabs']['fail'], p, c, 'fails']
             grabs.loc[len(grabs)] = new_row
 
-            new_row = [data[p][c][t]['velocity']['pre'], data[p][c][t]['velocity']['post'], p, c, m]
+            new_row = [data[p][c][t]['velocity']['pre'], p, c, 'pre']
+            velocity.loc[len(velocity)] = new_row
+            new_row = [data[p][c][t]['velocity']['post'], p, c, 'post']
             velocity.loc[len(velocity)] = new_row
             if c == 'B':
                 new_row = [0, p, c, m]
@@ -104,11 +106,11 @@ sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_
 ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
-sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[3,0])
-ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]', wrap=True)
-ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.boxplot(x=velocity['condition'], y=velocity['post'], hue=velocity['measure'], ax=ax2[4,0])
-ax2[4,0].set_title('Average Post-Grab Velocity [m/s]', wrap=True)
+ax_span = plt.subplot(8,1,4)
+sns.boxplot(x=velocity['condition'], y=velocity['value'], hue=velocity['measure'], ax=ax_span)
+ax_span.set_title('Average Grab Velocities [m/s]', wrap=True)
+ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
 ax2[4,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement['measure'], ax=ax2[5,0])
 ax2[5,0].set_title('Rotational SD of HMD movement [rad]', wrap=True)

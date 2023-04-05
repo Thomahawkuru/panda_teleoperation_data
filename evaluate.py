@@ -53,8 +53,8 @@ for m in Measures:
 
     for c1 in Conditions[1:]:
         for c2 in Conditions[1:]:
-            _, p_pre_velocity[c1][c2] = functions.p_values(velocity, 'pre', m, c1, c2, 'measure')
-            _, p_post_velocity[c1][c2] = functions.p_values(velocity, 'post', m, c1, c2, 'measure')
+            _, p_pre_velocity[c1][c2] = functions.p_values(velocity, 'value', 'pre', c1, c2, 'measure')
+            _, p_post_velocity[c1][c2] = functions.p_values(velocity, 'value', 'post', c1, c2, 'measure')
             if c1 != 'B' and c2 != 'B':
                 _, p_hmd_movement[c1][c2] = functions.p_values(hmd_movement, 'std', m, c1, c2, 'measure')
             _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', m, c1, c2, 'measure')
@@ -70,7 +70,7 @@ for m in Measures:
     functions.tablesubplot(ax2[1,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
     functions.tablesubplot(ax2[2,0], p_grab_succes, 'Succesful grabs paired T-test p-values')
     functions.tablesubplot(ax2[2,1], p_count_avg, 'Blocks transferred paired T-test p-values')
-    functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
+    functions.tablesubplot(ax2[4,0], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
     functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
     functions.tablesubplot(ax2[5,1], p_hmd_movement, 'HMD rotational SD paired T-test p-values')
     functions.tablesubplot(ax2[6,1], p_correlation, 'Input-Output Correlation paired T-test p-values')
