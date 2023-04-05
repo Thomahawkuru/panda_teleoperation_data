@@ -78,8 +78,8 @@ for m in Measures:
 
     
 fig2.tight_layout()
-fig2.savefig("plots/avg.jpg", dpi=1000)
-fig2.savefig("plots/avg.svg", dpi=1000)
+fig2.savefig("plots/average_results.jpg", dpi=1000)
+fig2.savefig("plots/average_results.svg", dpi=1000)
 
 #%% saving variables
 print(), print('Dumping evaluated data to file...')

@@ -62,9 +62,11 @@ fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
 avg_difficulty = difficulty[difficulty['trial']=='average']
 sns.barplot(x=avg_difficulty['trial'], y=avg_difficulty['difficulty'], hue=avg_difficulty['condition'], ax=ax4[0], errorbar='sd')
 ax4[0].set_title('Average perceived Easiness [errorbar = SD]'.format(len(Participants)))
+ax4[0].set_xticks([], [])
+ax4[0].set_xlabel('Conditions'), ax4[0].set_ylabel('Average Easiness')
 ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
-fig5, ax5 = plt.subplots(3, 2, figsize=(7.5, 6))
+fig5, ax5 = plt.subplots(3, 2, figsize=(7.5, 7.5))
 fig5.patch.set_visible(False)
 ax = plt.subplot(3, 1, 1)
 sns.barplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax, errorbar='sd')
@@ -86,7 +88,7 @@ for t in trials:
             p_difficulty[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    functions.tablesubplot(ax4[1], p_difficulty, f'{t} difficulty')
+    functions.tablesubplot(ax4[1], p_difficulty, f'{t} Easiness paired T-test p-values')
 
 fig4.tight_layout()
 fig4.savefig("plots/difficulty.jpg", dpi=1000)
@@ -107,9 +109,9 @@ for m in measures:
 
     # plotting p-value tables
     if measures.index(m) < 2:
-        functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m}')
+        functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m} paired T-test p-values')
     else:
-        functions.tablesubplot(ax5[2][measures.index(m)-2], p_usefullness, f'{m}')
+        functions.tablesubplot(ax5[2][measures.index(m)-2], p_usefullness, f'{m} paired T-test p-values')
     
 fig5.tight_layout()
 fig5.savefig("plots/usefullness.jpg", dpi=1000)

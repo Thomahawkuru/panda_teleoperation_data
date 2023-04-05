@@ -126,8 +126,8 @@ print(f'Mean blocks transfered in Condition A: {meanA}')
 print(f'SD of blocks transfered in Condition A: {stdA}')
 
 fig2.tight_layout()
-fig2.savefig("plots/avg.jpg", dpi=1000)
-fig2.savefig("plots/avg.svg", dpi=1000)
+fig2.savefig("plots/average_results.jpg", dpi=1000)
+fig2.savefig("plots/average_results.svg", dpi=1000)
 
 print(), print('Dumping plotted data to file...')
 dill.dump_session('data_plotted.pkl')
