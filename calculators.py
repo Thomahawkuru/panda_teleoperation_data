@@ -10,34 +10,65 @@ import numpy as np
 import pandas as pd
 from scipy import signal
 from scipy import stats
+from scipy.spatial.transform import Rotation
 import functions
 from plotly.offline import plot
 import plotly.express as px
 import plotly.graph_objects as go
 import math
 
-def fps(data, p, c, t):
-    fps = np.mean(data[p][c][t]['Experiment'].fps)
+def fps(data, p, c, t, debug):
+    fps = functions.crop_data(data[p][c][t]['Experiment'].fps, data[p][c][t]['Experiment'])
+    avg_fps = np.mean(data[p][c][t]['Experiment'].fps)
 
-    return fps
+    if debug is True:
+        time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])-4
+        fig, ax = plt.subplots()
+        ax.plot(time, fps, label='raw FPS')
+        ax.axhline(avg_fps, color='r', label='Average FPS')
+        ax.set_title(f'FPS for participant {p}, condition {c}, trial {t}')
+        ax.set_xlabel('time [s]'), ax.set_ylabel('FPS')
+        ax.legend()
+        plt.show()
 
-def duration(data, p, c, t):
+    return avg_fps
+
+def duration(data, p, c, t, debug):
     time_raw = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start]
     duration = np.max(time_raw - np.min(time_raw)) + data[p][c][t]['Experiment']["dt"][data[p][c][t]['Experiment'].start].tail(1)
-
-    
+   
     return float(duration)
 
-def time(data, p, c, t):
+def time(data, p, c, t, debug):
+    time_raw = data[p][c][t]['Experiment']["t"]
     time_crop = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment'])
     
+    if debug is True:
+        fig, ax = plt.subplots()
+        ax.plot(time_raw, label='Total recording time')
+        ax.plot(time_crop, label='Execution time')
+        ax.set_title(f'Experiment time for participant {p}, condition {c}, trial {t}')
+        ax.set_xlabel('datapoints [n]'), ax.set_ylabel('Time [s]')
+        ax.legend()
+        plt.show()
+
     return time_crop
 
-def track_error(data, p, c, t):
+def track_error(data, p, c, t, debug):
     checks = -data[p][c][t]['Experiment']["Controlling"][data[p][c][t]['Experiment'].start]
     peaks, _ = signal.find_peaks(checks)
-
     errors = len(peaks)
+
+    if debug is True:
+        peaks = checks.index[peaks] 
+        time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start]-4
+        fig, ax = plt.subplots()
+        ax.plot(time, checks, label='Tracking checks')
+        ax.plot(time[peaks], checks[peaks],'rx', label='Detected tracking loss')
+        ax.set_title(f'Tracking loss for participant {p}, condition {c}, trial {t}')
+        ax.set_xlabel('time [s]'), ax.set_ylabel('Tracking loss check [True/False]')
+        ax.legend()
+        plt.show()
 
     return errors
 
@@ -50,10 +81,13 @@ def grabs(data, p, c, t, debug):
     peaks_fail, _   = signal.find_peaks(grab_crop, height = -0.02, prominence=0.005,distance=50)
 
     if debug is True:
-        plt.plot(grab_crop)
-        plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
-        plt.plot(startpoints,grab_crop[startpoints],'gx')
-        plt.plot(endpoints,grab_crop[endpoints],'rx')
+        time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start].reset_index(drop=True)-4
+        fig, ax = plt.subplots()
+        ax.plot(time,grab_crop, label='Grab width [m]')
+        ax.plot(time[peaks_succes],grab_crop[peaks_succes],'gx', label='Succesful grabs')
+        ax.plot(time[peaks_fail],grab_crop[peaks_fail],'rx', label='Failed grabs')
+        ax.set_xlabel('time [s]'), ax.set_ylabel('-Width [m]')
+        ax.legend()
         plt.show()
 
     grabs['succes'] = len(peaks_succes)
@@ -73,17 +107,8 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
 
     peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
     startpoints, endpoints = functions.grab_start_end(input_crop['grab'], peaks_succes)   
-    prepoints = functions.pre_grap_location(input_data, startpoints, pre_time)
-    
-    if debug is True:
-        plt.plot(input_crop['grab'])
-        plt.plot(grab_crop)
-        plt.plot(peaks_succes,grab_crop[peaks_succes],'bx')
-        plt.plot(startpoints,input_crop['grab'][startpoints],'gx')
-        plt.plot(endpoints,input_crop['grab'][endpoints],'rx')
-        plt.plot(prepoints,input_crop['grab'][prepoints],'yx')
-        plt.show()
-    
+    prepoints = functions.pre_grap_location(input_data, startpoints, pre_time)   
+ 
     post_grab_v = []
     pre_grab_v = []
     
@@ -106,12 +131,26 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
         grab_pre = input_crop.iloc[prepoints,[1,2,3]]
         grab_start = input_crop.iloc[startpoints,[1,2,3]]
         grab_end = input_crop.iloc[endpoints,[1,2,3]]
-        fig1 = px.line_3d(input_crop, x='posZ', y='posX', z='posY', title = 'Hand input')
-        fig2 = px.scatter_3d(grab_start, x='posZ', y='posX', z='posY',color_discrete_sequence=['green'])
-        fig3 = px.scatter_3d(grab_end, x='posZ', y='posX', z='posY',color_discrete_sequence=['red'])
-        fig4 = px.scatter_3d(grab_pre, x='posZ', y='posX', z='posY',color_discrete_sequence=['yellow'])
-        fig5 = go.Figure(data=fig1.data + fig2.data + fig3.data + fig4.data)
-        plot(fig5, filename='plots/fig{}{}{}.html'.format(p,c,t))
+
+        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'})
+        ax1.plot(input_crop['posZ'], input_crop['posX'], input_crop['posY'], label='Hand input')
+        ax1.scatter(grab_start['posZ'], grab_start['posX'], grab_start['posY'], color='g', label='Startpoints')
+        ax1.scatter(grab_end['posZ'], grab_end['posX'], grab_end['posY'], color='r', label='Endpoints')
+        ax1.scatter(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], color='y', label='Prepoints')
+        ax1.legend()
+
+        fig2, ax2 = plt.subplots()
+        time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start].reset_index(drop=True)-4
+
+        ax2.plot(time, input_crop['grab'], label='Grab input')
+        ax2.plot(time, grab_crop, label='Gripper width [m]')
+        ax2.plot(time[peaks_succes],grab_crop[peaks_succes], 'bx', label='Succesfull grabs')
+        ax2.plot(time[startpoints],input_crop['grab'][startpoints], 'gx', label='Startpoints')
+        ax2.plot(time[endpoints],input_crop['grab'][endpoints], 'rx', label='Endpoints')
+        ax2.plot(time[prepoints],input_crop['grab'][prepoints], 'yx', label='Preppoints')
+        ax2.legend()
+
+        plt.show()
 
     return avg_v
 
@@ -125,10 +164,23 @@ def input_depth(data, p, c, t):
 
 def head_movement(data, p, c, t, debug):
     HMD = functions.crop_data(data[p][c][t]['HMD'], data[p][c][t]['Experiment'])
-    
+    HMD = HMD.reset_index(drop=True)    
+
     if debug is True:
-        fig = px.line_3d(HMD, x='posZ', y='posX', z='posY', title = 'HMD_movement')
-        fig.show()
+        fig, ax = plt.subplots(subplot_kw={'projection': '3d'})        
+        ax.scatter(HMD['posZ'], HMD['posX'], HMD['posY'], label='Position')
+        ax.set_title('HMD_movement')
+        for i in range(len(HMD)):
+            Q = HMD.loc[i, ['rotX', 'rotY', 'rotZ', 'rotw']].to_numpy()
+            R = Rotation.from_quat(Q).as_matrix()
+            u = R[2, 1]
+            v = R[0, 2]
+            w = R[1, 0]
+            ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u, v, w, color='red', length=0.02)
+
+        ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u, v, w, color='red', length=0.02, label='Direction')
+        ax.legend()
+        plt.show()
 
     mean, std = functions.pdf(HMD.iloc[:,3:10])
     pos_std = np.sqrt(sum(std[:3]))
@@ -157,17 +209,21 @@ def in_out_corr(data, p, c, t, debug):
     
     max_corr = max(corr)
     max_lag = lags[np.where(corr==max_corr)[0][0]]
-
-    # print('pearson correlation coefficient:', correlation)
-    # print('Maximum cross correlation:', max_corr)
-    # print('Lag at maximum cross correlation:', max_lag)
-    
+  
     in_out ={'corr': correlation, 'max_corr': max_corr, 'lag': max_lag} 
     
     if debug is True:
-        plt.plot(input)
-        plt.plot(output)
-        plt.savefig('test.jpg')
+        time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment']).reset_index(drop=True)-4
+        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'})   
+        ax1.plot(input["posZ"], input["posX"], input["posY"], label='Input')
+        ax1.plot(output["posZ"], output["posX"], output["posY"], label='Output')
+        ax1.legend()
+
+        fig2,ax2 = plt.subplots()
+        ax2.plot(time, input, label='Input')
+        ax2.plot(time, output, label='Ouput')
+        ax2.legend()
+        plt.show()
 
     return in_out
 
@@ -182,18 +238,16 @@ def force(data, p, c, t, debug):
     peaks, _ = signal.find_peaks(force, height=min_peak_height, distance=min_peak_distance)
 
     if debug:
+        time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment']).reset_index(drop=True)-4
         input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])
         input = input.reset_index(drop=True)
-        plt.plot(force)
-        plt.plot(input*30)
 
-        # plot the force data and highlight the peaks
-        plt.plot(force)
-        plt.plot(peaks, force[peaks], "x")
-        checks = -data[p][c][t]['Experiment']["Controlling"][data[p][c][t]['Experiment'].start]
-        peaks, _ = signal.find_peaks(checks)
-        plt.plot(checks.reset_index(drop=True))
-        plt.plot(peaks, force[peaks], "rx")
+        fig, ax = plt.subplots()
+        ax.plot(time, force, label='Euclidean EE-Force [N]')
+        ax.plot(time, input*30, label='Input position')
+        ax.plot(time[peaks], force[peaks], "rx", label='Peak Force [N]')
+        ax.set_xlabel('Time [S]'), ax.set_ylabel('Force [N]')
+        ax.legend()
         plt.show()
 
     return np.mean(force[peaks])
