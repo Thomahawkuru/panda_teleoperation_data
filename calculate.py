@@ -12,6 +12,11 @@ dill.load_session('data_raw.pkl')
 start = time.time()
 
 #%% calculate data   
+# uncomment for debug plotting:
+# Participants = [6]
+# Conditions = ['A','E']
+# Trials = [2]
+
 for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))
     for c in Conditions[1:]:
@@ -28,7 +33,7 @@ for p in Participants:
             if c != 'B': #omit B because there is no HMD data
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=False)
             data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=False)  
-            data[p][c][t]['force'] = calculators.force(data, p, c, t, debug=True)  
+            data[p][c][t]['force'] = calculators.force(data, p, c, t, debug=False)  
 
 #%% calculated blocks count
 print(), print('Calculating blocks count data...')
