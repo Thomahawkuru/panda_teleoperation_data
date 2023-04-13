@@ -86,6 +86,7 @@ def grabs(data, p, c, t, debug):
         ax.plot(time,grab_crop, label='Grab width [m]')
         ax.plot(time[peaks_succes],grab_crop[peaks_succes],'gx', label='Succesful grabs')
         ax.plot(time[peaks_fail],grab_crop[peaks_fail],'rx', label='Failed grabs')
+        ax.set_title(f'Grab identification for participant {p}, condition {c}, trial {t}')
         ax.set_xlabel('time [s]'), ax.set_ylabel('-Width [m]')
         ax.legend()
         plt.show()
