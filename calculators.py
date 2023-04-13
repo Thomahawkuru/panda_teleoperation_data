@@ -135,9 +135,10 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
 
         fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'})
         ax1.plot(input_crop['posZ'], input_crop['posX'], input_crop['posY'], label='Hand input')
-        ax1.scatter(grab_start['posZ'], grab_start['posX'], grab_start['posY'], color='g', label='Startpoints')
-        ax1.scatter(grab_end['posZ'], grab_end['posX'], grab_end['posY'], color='r', label='Endpoints')
-        ax1.scatter(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], color='y', label='Prepoints')
+        ax1.scatter(grab_start['posZ'], grab_start['posX'], grab_start['posY'], color='green', label='Startpoints')
+        ax1.scatter(grab_end['posZ'], grab_end['posX'], grab_end['posY'], color='red', label='Endpoints')
+        ax1.scatter(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], color='yellow', label='Prepoints')
+        ax1.set_title(f'Input path with grabpoints for participant {p}, conditon {c}, trial {t}')
         ax1.legend()
 
         fig2, ax2 = plt.subplots()
@@ -149,43 +150,43 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
         ax2.plot(time[startpoints],input_crop['grab'][startpoints], 'gx', label='Startpoints')
         ax2.plot(time[endpoints],input_crop['grab'][endpoints], 'rx', label='Endpoints')
         ax2.plot(time[prepoints],input_crop['grab'][prepoints], 'yx', label='Preppoints')
+        ax2.set_title(f'Grabpoint detection for participant {p}, conditon {c}, trial {t}')
         ax2.legend()
 
         plt.show()
 
     return avg_v
 
-def input_depth(data, p, c, t):
-    input_z = functions.crop_data(data[p][c][t]['Hand']['posZ'], data[p][c][t]['Experiment'])
-    mean_z, std_z = functions.pdf(input_z)
-
-    depth = std_z*6
-
-    return depth
-
 def head_movement(data, p, c, t, debug):
     HMD = functions.crop_data(data[p][c][t]['HMD'], data[p][c][t]['Experiment'])
     HMD = HMD.reset_index(drop=True)    
+    u = []
+    v = []
+    w = []
+
+    for i in range(len(HMD)):
+        Q = HMD.loc[i, ['rotX', 'rotY', 'rotZ', 'rotw']].to_numpy()
+        R = Rotation.from_quat(Q).as_matrix()
+        direction = R @ np.array([1, 0, 0])
+        u.append(direction[0])
+        v.append(direction[1])
+        w.append(direction[2])
 
     if debug is True:
         fig, ax = plt.subplots(subplot_kw={'projection': '3d'})        
-        ax.scatter(HMD['posZ'], HMD['posX'], HMD['posY'], label='Position')
-        ax.set_title('HMD_movement')
-        for i in range(len(HMD)):
-            Q = HMD.loc[i, ['rotX', 'rotY', 'rotZ', 'rotw']].to_numpy()
-            R = Rotation.from_quat(Q).as_matrix()
-            u = R[2, 1]
-            v = R[0, 2]
-            w = R[1, 0]
-            ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u, v, w, color='red', length=0.02)
-
-        ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u, v, w, color='red', length=0.02, label='Direction')
+        ax.plot(HMD['posZ'], HMD['posX'], HMD['posY'], label='Position')
+        ax.set_title(f'HMD movement for participant {p}, condition {c}, Trial {t}')
+        for i in range(0, len(HMD), 20):
+            ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01)
+        ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01, label='Direction')
         ax.legend()
         plt.show()
 
-    mean, std = functions.pdf(HMD.iloc[:,3:10])
-    pos_std = np.sqrt(sum(std[:3]))
-    rot_std = np.sqrt(sum(std[3:]))
+    mean, pos = functions.pdf(HMD.iloc[:,3:6])
+    pos_std = np.sqrt(sum(pos))
+
+    mean, rot = functions.pdf(pd.DataFrame([u,v,w]).transpose())
+    rot_std = np.sqrt(sum(rot))
 
     HMD_std ={'position': pos_std, 'rotation': rot_std} 
 
