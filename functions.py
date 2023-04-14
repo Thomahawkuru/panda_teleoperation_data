@@ -44,31 +44,30 @@ def read_blocks_count(datapath,Participants):
 
     return Count
 
-def crop_data(data_to_crop, check):
-    
+def crop_data(data_to_crop, check):       
     data_cropped = data_to_crop.loc[check.start]
-
-    track_check = filter_check(check.Tracked[check.start])
+    
+    tracked = check.Tracked[check.start]
+    track_check = filter_check(tracked)
     data_tracked = data_cropped[track_check]
 
-    control_check1 = filter_check(check.Controlling[check.start])
+    controlling = check.Controlling[check.start]
+    control_check1 = filter_check(controlling)
     control_check2 = control_check1[track_check]
     data_controlled = data_tracked[control_check2]
 
     return data_controlled
 
 def filter_check(check): #removes data points just befor and just after a tracking error
-    loc =  []
-
-    for i in range(1,len(check)-1):
-        if check.iloc[i] != check.iloc[i+1]:
-            if check.iloc[i] == True:
-                loc.append(i)
-        if check.iloc[i] != check.iloc[i-1]:
-            if check.iloc[i] == True:
-                loc.append(i)
-
-    check.iloc[loc] = False
+    i = 0
+    while i < len(check)-1:
+        i += 1
+        if check.iloc[i-1] == True and check.iloc[i] == False:
+            check.iloc[i-1] = False
+            i += 1
+        if check.iloc[i-1] == False and check.iloc[i] == True:
+            check.iloc[i:i+60] = False
+            i += 61 
 
     return check
 
