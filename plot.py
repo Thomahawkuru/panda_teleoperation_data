@@ -111,7 +111,7 @@ sns.boxplot(x=velocity['condition'], y=velocity['post'], hue=velocity['measure']
 ax2[4,0].set_title('Average Post-Grab Velocity [m/s]', wrap=True)
 ax2[4,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=hmd_movement['condition'], y=hmd_movement['std'], hue=hmd_movement['measure'], ax=ax2[5,0])
-ax2[5,0].set_title('Rotational SD of HMD movement [rad]', wrap=True)
+ax2[5,0].set_title('Rotational SD of HMD direction unit vector', wrap=True)
 ax2[5,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 sns.boxplot(x=in_out_corr['condition'], y=in_out_corr['corr'], hue=in_out_corr['measure'], ax=ax2[6,0])
 ax2[6,0].set_title('Input-Output Cross-correlation', wrap=True)

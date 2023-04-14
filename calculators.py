@@ -82,13 +82,14 @@ def grabs(data, p, c, t, debug):
 
     if debug is True:
         time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start].reset_index(drop=True)-4
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(7.5, 2.5))
         ax.plot(time,grab_crop, label='Grab width [m]')
         ax.plot(time[peaks_succes],grab_crop[peaks_succes],'gx', label='Succesful grabs')
         ax.plot(time[peaks_fail],grab_crop[peaks_fail],'rx', label='Failed grabs')
-        ax.set_title(f'Grab identification for participant {p}, condition {c}, trial {t}')
+        ax.set_title(f'Grab identification for participant {p}, condition {c}, trial {t}', wrap=True)
         ax.set_xlabel('time [s]'), ax.set_ylabel('-Width [m]')
-        ax.legend()
+        ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig.tight_layout()
         plt.show()
 
     grabs['succes'] = len(peaks_succes)
@@ -133,15 +134,16 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
         grab_start = input_crop.iloc[startpoints,[1,2,3]]
         grab_end = input_crop.iloc[endpoints,[1,2,3]]
 
-        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'})
+        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))
         ax1.plot(input_crop['posZ'], input_crop['posX'], input_crop['posY'], label='Hand input')
-        ax1.scatter(grab_start['posZ'], grab_start['posX'], grab_start['posY'], color='green', label='Startpoints')
-        ax1.scatter(grab_end['posZ'], grab_end['posX'], grab_end['posY'], color='red', label='Endpoints')
-        ax1.scatter(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], color='yellow', label='Prepoints')
+        ax1.plot(grab_start['posZ'], grab_start['posX'], grab_start['posY'], 'go', label='Startpoints')
+        ax1.plot(grab_end['posZ'], grab_end['posX'], grab_end['posY'], 'ro', label='Endpoints')
+        ax1.plot(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], 'yo', label='Prepoints')
         ax1.set_title(f'Input path with grabpoints for participant {p}, conditon {c}, trial {t}')
-        ax1.legend()
+        ax1.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig1.tight_layout()
 
-        fig2, ax2 = plt.subplots()
+        fig2, ax2 = plt.subplots(figsize=(7.5,2.5))
         time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start].reset_index(drop=True)-4
 
         ax2.plot(time, input_crop['grab'], label='Grab input')
@@ -150,8 +152,10 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
         ax2.plot(time[startpoints],input_crop['grab'][startpoints], 'gx', label='Startpoints')
         ax2.plot(time[endpoints],input_crop['grab'][endpoints], 'rx', label='Endpoints')
         ax2.plot(time[prepoints],input_crop['grab'][prepoints], 'yx', label='Preppoints')
+        ax2.set_xlabel('Time [s]'), ax2.set_ylabel('Grabbing strenght [0-1]')
         ax2.set_title(f'Grabpoint detection for participant {p}, conditon {c}, trial {t}')
-        ax2.legend()
+        ax2.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig2.tight_layout()
 
         plt.show()
 
@@ -173,13 +177,14 @@ def head_movement(data, p, c, t, debug):
         w.append(direction[2])
 
     if debug is True:
-        fig, ax = plt.subplots(subplot_kw={'projection': '3d'})        
+        fig, ax = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))        
         ax.plot(HMD['posZ'], HMD['posX'], HMD['posY'], label='Position')
         ax.set_title(f'HMD movement for participant {p}, condition {c}, Trial {t}')
         for i in range(0, len(HMD), 20):
             ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01)
         ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01, label='Direction')
-        ax.legend()
+        ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig.tight_layout()
         plt.show()
 
     mean, pos = functions.pdf(HMD.iloc[:,3:6])
@@ -216,15 +221,20 @@ def in_out_corr(data, p, c, t, debug):
     
     if debug is True:
         time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment']).reset_index(drop=True)-4
-        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'})   
-        ax1.plot(input["posZ"], input["posX"], input["posY"], label='Input')
-        ax1.plot(output["posZ"], output["posX"], output["posY"], label='Output')
-        ax1.legend()
+        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))   
+        ax1.plot(input["posX"], input["posY"], input["posZ"], label='Input')
+        ax1.plot(output["posX"], output["posY"], output["posZ"], label='Output')
+        ax1.set_title(f'Input and output in 3D for participant {p}, condition {c}, trial {t}', wrap=True)
+        ax1.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig1.tight_layout()
 
-        fig2,ax2 = plt.subplots()
-        ax2.plot(time, input, label='Input')
-        ax2.plot(time, output, label='Ouput')
-        ax2.legend()
+        fig2,ax2 = plt.subplots(figsize=(7.5,2.5))
+        ax2.plot(time, input, label=['Input [x]', 'Input [y]', 'Input [z]'])
+        ax2.plot(time, output, label=['Output [x]', 'Output [y]', 'Output [z]'])
+        ax2.set_title(f'Input and output per axis for participant {p}, condition {c}, trial {t}', wrap=True)
+        ax2.set_xlabel('Time [s]'), ax2.set_ylabel('Position [m]')
+        ax2.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        fig2.tight_layout()
         plt.show()
 
     return in_out
@@ -234,7 +244,7 @@ def force(data, p, c, t, debug):
     force = np.linalg.norm(forcexyz, axis=1)
 
     min_peak_height = 10 # [N] set minimum peak height
-    min_peak_distance = 60 # [s] set minimum peak distance
+    min_peak_distance = 60 # [frames] set minimum peak distance
 
     # find peaks in the force data with specified height and minimum distance
     peaks, _ = signal.find_peaks(force, height=min_peak_height, distance=min_peak_distance)
@@ -244,12 +254,14 @@ def force(data, p, c, t, debug):
         input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])
         input = input.reset_index(drop=True)
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(7.5, 2.5))
         ax.plot(time, force, label='Euclidean EE-Force [N]')
-        ax.plot(time, input*30, label='Input position')
+        #ax.plot(time, input*30, label='Input position')
         ax.plot(time[peaks], force[peaks], "rx", label='Peak Force [N]')
         ax.set_xlabel('Time [S]'), ax.set_ylabel('Force [N]')
-        ax.legend()
+        ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        ax.set_title(f'Peak force detection for participant {p}, condition {c}, trial {t}', wrap=True)
+        fig.tight_layout()
         plt.show()
 
     return np.mean(force[peaks])
