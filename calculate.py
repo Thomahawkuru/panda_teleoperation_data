@@ -42,8 +42,9 @@ print(), print('Calculating blocks count data...')
 count_avg = calculators.count_average(Count)
 
 # %%
-print(), print('Dumping calculated data to file...')
-dill.dump_session('data_calculated.pkl')
+if not debug:
+    print(), print('Dumping calculated data to file...')
+    dill.dump_session('data_calculated.pkl')
 
 end =  time.time()
 print("Calculation time: {}".format(end-start))
