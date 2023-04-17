@@ -198,6 +198,7 @@ def head_movement(data, p, c, t, debug):
     return HMD_std
 
 def in_out_corr(data, p, c, t, debug):
+    time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment']).reset_index(drop=True)-4
     input = functions.crop_data(data[p][c][t]['Hand'][["CMDposX", "CMDPosY", "CMDposZ"]], data[p][c][t]['Experiment'])
     output = functions.crop_data(data[p][c][t]['Gripper'][["posX", "posY", "posZ"]], data[p][c][t]['Experiment'])
 
@@ -216,21 +217,23 @@ def in_out_corr(data, p, c, t, debug):
     
     max_corr = max(corr)
     max_lag = lags[np.where(corr==max_corr)[0][0]]
-  
-    in_out ={'corr': correlation, 'max_corr': max_corr, 'lag': max_lag} 
+    time_lag = time[max_lag]-time[0]
+
+    in_out ={'corr': correlation, 'max_corr': max_corr, 'lag': time_lag} 
     
     if debug is True:
-        time = functions.crop_data(data[p][c][t]['Experiment']["t"], data[p][c][t]['Experiment']).reset_index(drop=True)-4
+
         fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))   
         ax1.plot(input["posX"], input["posY"], input["posZ"], label='Input')
         ax1.plot(output["posX"], output["posY"], output["posZ"], label='Output')
         ax1.set_title(f'Input and output in 3D for participant {p}, condition {c}, trial {t}', wrap=True)
         ax1.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
         fig1.tight_layout()
-
+        
         fig2,ax2 = plt.subplots(figsize=(7.5,2.5))
-        ax2.plot(time, input, label=['Input [x]', 'Input [y]', 'Input [z]'])
-        ax2.plot(time, output, label=['Output [x]', 'Output [y]', 'Output [z]'])
+        ax2.plot(time, input, 'b', label=['Input [x]', 'Input [y]', 'Input [z]'])
+        ax2.plot(time, output, 'r', label=['Output [x]', 'Output [y]', 'Output [z]'])
+        ax2.plot(time-time_lag, output, 'g', label=['max_corr [x]', 'max_corr [y]', 'max_corr [z]'])
         ax2.set_title(f'Input and output per axis for participant {p}, condition {c}, trial {t}', wrap=True)
         ax2.set_xlabel('Time [s]'), ax2.set_ylabel('Position [m]')
         ax2.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
@@ -242,6 +245,8 @@ def in_out_corr(data, p, c, t, debug):
 def force(data, p, c, t, debug):
     forcexyz = functions.crop_data(data[p][c][t]['Robot'][["fx", "fy", "fz"]], data[p][c][t]['Experiment'])
     force = np.linalg.norm(forcexyz, axis=1)
+    median = np.median(force)
+    std = np.std(force)
 
     min_peak_height = 10 # [N] set minimum peak height
     min_peak_distance = 60 # [frames] set minimum peak distance
@@ -258,13 +263,15 @@ def force(data, p, c, t, debug):
         ax.plot(time, force, label='Euclidean EE-Force [N]')
         #ax.plot(time, input*30, label='Input position')
         ax.plot(time[peaks], force[peaks], "rx", label='Peak Force [N]')
+        ax.axhline(median, color='y', label='Force median [N]')
+        ax.axhline(median+std, color='g', label='Force median+std [N]')
         ax.set_xlabel('Time [S]'), ax.set_ylabel('Force [N]')
         ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
         ax.set_title(f'Peak force detection for participant {p}, condition {c}, trial {t}', wrap=True)
         fig.tight_layout()
         plt.show()
 
-    return np.mean(force[peaks])
+    return np.mean(force[peaks]), len(peaks)
 
 def count_average(Count):
     count_avg = Count

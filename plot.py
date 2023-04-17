@@ -30,7 +30,7 @@ for p in Participants:
             times.loc[len(times)] = new_row 
             new_row = [np.mean(data[p][c][t]['track_err']), p, c, t]
             track_err.loc[len(track_err)] = new_row
-            new_row = [np.mean(data[p][c][t]['in_out']['lag'])/np.mean(data[p][c][t]['fps']), p, c, t]
+            new_row = [np.mean(data[p][c][t]['in_out']['lag']), p, c, t]
             input_lag.loc[len(track_err)] = new_row 
 
 fig1, ax1 = plt.subplots(2,2,figsize=(7.5,5))

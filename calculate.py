@@ -14,9 +14,9 @@ debug = False
 
 #%% calculate data   
 if debug:
-    Participants = [8]
-    Conditions = ['A','B']
-    Trials = [2]
+    Participants = [15]
+    Conditions = ['A','D']
+    Trials = [1]
 
 
 for p in Participants:
@@ -35,7 +35,7 @@ for p in Participants:
             if c != 'B': #omit B because there is no HMD data
                 data[p][c][t]['HMD'] = calculators.head_movement(data, p, c, t, debug=debug)
             data[p][c][t]['in_out'] = calculators.in_out_corr(data, p, c, t, debug=debug)  
-            data[p][c][t]['force'] = calculators.force(data, p, c, t, debug=debug)  
+            data[p][c][t]['force'], data[p][c][t]['hits'] = calculators.force(data, p, c, t, debug=debug)  
 
 #%% calculated blocks count
 print(), print('Calculating blocks count data...')
