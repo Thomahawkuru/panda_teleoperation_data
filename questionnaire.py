@@ -55,7 +55,7 @@ results['average'] = results[['trial 1', 'trial 2', 'trial 3']].mean(axis=1)
 #%% plot responses
 print('Plotting...')
 difficulty = results.iloc[:,[0,1,2,3,4,9]].melt(['condition','hand'], var_name='trial',value_name='difficulty')
-usefullness = results[['condition', 'requirements', 'frustration', 'easyness', 'correcting']]
+usefullness = results[['condition', 'requirements', 'frustration', 'easiness', 'correcting']]
 usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opinion')
 
 fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
@@ -95,7 +95,7 @@ fig4.savefig("plots/difficulty.jpg", dpi=1000)
 fig4.savefig("plots/difficulty.svg", dpi=1000)
 
 #%% evaluate UMUX responses
-measures = ['requirements', 'frustration', 'easyness', 'correcting']
+measures = ['requirements', 'frustration', 'easiness', 'correcting']
 
 for m in measures: 
     p_usefullness= pd.DataFrame(index = Conditions, columns = Conditions)
