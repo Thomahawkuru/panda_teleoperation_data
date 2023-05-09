@@ -39,7 +39,6 @@ p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
-
         _, p_grab_fails[c1][c2] = functions.p_values(grabs, 'count', 'fails', c1, c2, 'measure')
         _, p_grab_succes[c1][c2] = functions.p_values(grabs, 'count', 'succes', c1, c2, 'measure')
         _, p_grab_attemts[c1][c2] = functions.p_values(grabs, 'count', 'attempts', c1, c2, 'measure')
