@@ -89,7 +89,6 @@ fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 16))
 
 ax_span = plt.subplot(8,1,1)
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span)
-ax_span.set_title('Average grab data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 print('Average only...')
@@ -104,7 +103,7 @@ grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 ax_span.cla()
 hue_order = ['attempts', 'fails', 'succes', 'transfer']
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
-ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
+ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[3,0])
