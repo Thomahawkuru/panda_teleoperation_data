@@ -36,6 +36,7 @@ print(), print('Calculating P-value tables for average data')
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
 
@@ -62,6 +63,7 @@ for m in Measures:
             
             diff_c1 = count_avg[(count_avg['condition']==c1)]['blocks']
             diff_c2 = count_avg[(count_avg['condition']==c2)]['blocks']
+        
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
             p_count_avg[c1][c2] = p_value[1]
 
