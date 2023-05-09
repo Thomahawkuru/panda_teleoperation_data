@@ -62,12 +62,15 @@ force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure
 
 for p in Participants:
     for c in Conditions[1:]:
-        for m in Measures:         
-            new_row = [data[p][c][t]['grabs']['attempts'], p, c, 'attempts']
+        for m in Measures:
+            avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
+            new_row = [avg_attempts, p, c, 'attempts']
             grabs.loc[len(grabs)] = new_row
-            new_row = [data[p][c][t]['grabs']['succes'], p, c, 'succes']
+            avg_succes = np.mean([data[p][c][1]['grabs']['succes'],data[p][c][2]['grabs']['succes'],data[p][c][3]['grabs']['succes']])
+            new_row = [avg_succes, p, c, 'succes']
             grabs.loc[len(grabs)] = new_row
-            new_row = [data[p][c][t]['grabs']['fail'], p, c, 'fails']
+            avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
+            new_row = [avg_fails, p, c, 'fails']
             grabs.loc[len(grabs)] = new_row
 
             new_row = [data[p][c][t]['velocity']['pre'], data[p][c][t]['velocity']['post'], p, c, m]
