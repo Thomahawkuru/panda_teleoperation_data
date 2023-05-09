@@ -89,7 +89,7 @@ fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 16))
 
 ax_span = plt.subplot(8,1,1)
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span)
-ax_span.set_title('Average grab  data over 3 trials {}'.format(len(Participants)))
+ax_span.set_title('Average grab data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 print('Average only...')
