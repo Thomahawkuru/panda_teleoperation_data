@@ -60,8 +60,8 @@ for m in Measures:
             _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', m, c1, c2, 'measure')
             _, p_force[c1][c2] = functions.p_values(force, 'force', m, c1, c2, 'measure')
             
-            diff_c1 = count_avg[(count_avg['condition']==c1)]['blocks']
-            diff_c2 = count_avg[(count_avg['condition']==c2)]['blocks']
+            diff_c1 = grabs['count'][grabs['condition']==c1][grabs['measure']=='transfer']
+            diff_c2 = grabs['count'][grabs['condition']==c2][grabs['measure']=='transfer']
         
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
             p_count_avg[c1][c2] = p_value[1]
