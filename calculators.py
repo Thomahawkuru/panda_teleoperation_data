@@ -134,12 +134,13 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
         grab_start = input_crop.iloc[startpoints,[1,2,3]]
         grab_end = input_crop.iloc[endpoints,[1,2,3]]
 
-        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))
+        fig1, ax1 = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 7.5))
         ax1.plot(input_crop['posZ'], input_crop['posX'], input_crop['posY'], label='Hand input')
         ax1.plot(grab_start['posZ'], grab_start['posX'], grab_start['posY'], 'go', label='Startpoints')
         ax1.plot(grab_end['posZ'], grab_end['posX'], grab_end['posY'], 'ro', label='Endpoints')
         ax1.plot(grab_pre['posZ'], grab_pre['posX'], grab_pre['posY'], 'yo', label='Prepoints')
         ax1.set_title(f'Input path with grabpoints for participant {p}, conditon {c}, trial {t}')
+        ax1.set_xlabel('Postion x [m]'), ax1.set_ylabel('Postion y [m]'), ax1.set_zlabel('Postion z [m]')
         ax1.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
         fig1.tight_layout()
 
@@ -177,13 +178,14 @@ def head_movement(data, p, c, t, debug):
         w.append(direction[2])
 
     if debug is True:
-        fig, ax = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 5))        
+        fig, ax = plt.subplots(subplot_kw={'projection': '3d'}, figsize=(7.5, 7.5))        
         ax.plot(HMD['posZ'], HMD['posX'], HMD['posY'], label='Position')
         ax.set_title(f'HMD movement for participant {p}, condition {c}, Trial {t}')
         for i in range(0, len(HMD), 20):
             ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01)
         ax.quiver(HMD['posZ'][i], HMD['posX'][i], HMD['posY'][i], u[i], v[i], w[i], color='red', length=0.01, label='Direction')
         ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        ax.set_xlabel('Postion x [m]'), ax.set_ylabel('Postion y [m]'), ax.set_zlabel('Postion z [m]')
         fig.tight_layout()
         plt.show()
 
@@ -228,6 +230,7 @@ def in_out_corr(data, p, c, t, debug):
         ax1.plot(output["posX"], output["posY"], output["posZ"], label='Output')
         ax1.set_title(f'Input and output in 3D for participant {p}, condition {c}, trial {t}', wrap=True)
         ax1.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        ax1.set_xlabel('Postion x [m]'), ax1.set_ylabel('Postion y [m]'), ax1.set_zlabel('Postion z [m]')
         fig1.tight_layout()
         
         fig2,ax2 = plt.subplots(figsize=(7.5,2.5))
@@ -237,6 +240,7 @@ def in_out_corr(data, p, c, t, debug):
         ax2.set_title(f'Input and output per axis for participant {p}, condition {c}, trial {t}', wrap=True)
         ax2.set_xlabel('Time [s]'), ax2.set_ylabel('Position [m]')
         ax2.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+        
         fig2.tight_layout()
         plt.show()
 
