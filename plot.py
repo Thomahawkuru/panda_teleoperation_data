@@ -101,8 +101,8 @@ for p in Participants:
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 ax_span.cla()
-hue_order = ['attempts', 'fails', 'success', 'transfer']
-sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
+order = ['attempts', 'fails', 'success', 'transfer']
+sns.boxplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order)
 ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
