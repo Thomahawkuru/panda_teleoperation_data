@@ -77,14 +77,14 @@ def grabs(data, p, c, t, debug):
     grab_data = -data[p][c][t]['Gripper']["grip_pos"]
     grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
 
-    peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
+    peaks_success, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
     peaks_fail, _   = signal.find_peaks(grab_crop, height = -0.02, prominence=0.005,distance=50)
 
     if debug is True:
         time = data[p][c][t]['Experiment']["t"][data[p][c][t]['Experiment'].start].reset_index(drop=True)-4
         fig, ax = plt.subplots(figsize=(7.5, 2.5))
         ax.plot(time,grab_crop, label='Grab width [m]')
-        ax.plot(time[peaks_succes],grab_crop[peaks_succes],'gx', label='Succesful grabs')
+        ax.plot(time[peaks_success],grab_crop[peaks_success],'gx', label='successful grabs')
         ax.plot(time[peaks_fail],grab_crop[peaks_fail],'rx', label='Failed grabs')
         ax.set_title(f'Grab identification for participant {p}, condition {c}, trial {t}', wrap=True)
         ax.set_xlabel('time [s]'), ax.set_ylabel('-Width [m]')
@@ -92,9 +92,9 @@ def grabs(data, p, c, t, debug):
         fig.tight_layout()
         plt.show()
 
-    grabs['succes'] = len(peaks_succes)
+    grabs['success'] = len(peaks_success)
     grabs['fail'] = len(peaks_fail)
-    grabs['attempts'] = grabs['succes'] + grabs['fail']
+    grabs['attempts'] = grabs['success'] + grabs['fail']
 
     return grabs
 
@@ -107,8 +107,8 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
     grab_crop = grab_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
     input_crop = input_data.loc[data[p][c][t]['Experiment'].start].reset_index(drop = True)
 
-    peaks_succes, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
-    startpoints, endpoints = functions.grab_start_end(input_crop['grab'], peaks_succes)   
+    peaks_success, _ = signal.find_peaks(grab_crop, height = [-0.035, -0.02], prominence=0.005, distance=50)
+    startpoints, endpoints = functions.grab_start_end(input_crop['grab'], peaks_success)   
     prepoints = functions.pre_grap_location(input_data, startpoints, pre_time)   
  
     post_grab_v = []
@@ -148,7 +148,7 @@ def grab_velocity(data, p, c, t, file, pre_time, debug):
 
         ax2.plot(time, input_crop['grab'], label='Grab input')
         ax2.plot(time, grab_crop, label='Gripper width [m]')
-        ax2.plot(time[peaks_succes],grab_crop[peaks_succes], 'bx', label='Succesfull grabs')
+        ax2.plot(time[peaks_success],grab_crop[peaks_success], 'bx', label='successfull grabs')
         ax2.plot(time[startpoints],input_crop['grab'][startpoints], 'gx', label='Startpoints')
         ax2.plot(time[endpoints],input_crop['grab'][endpoints], 'rx', label='Endpoints')
         ax2.plot(time[prepoints],input_crop['grab'][prepoints], 'yx', label='Preppoints')
@@ -265,7 +265,7 @@ def force(data, p, c, t, debug):
         ax.plot(time[peaks], force[peaks], "rx", label='Peak Force [N]')
         ax.axhline(median, color='y', label='Force median [N]')
         ax.axhline(median+std, color='g', label='Force median+std [N]')
-        ax.set_xlabel('Time [S]'), ax.set_ylabel('Force [N]')
+        ax.set_xlabel('Time [s]'), ax.set_ylabel('Force [N]')
         ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
         ax.set_title(f'Peak force detection for participant {p}, condition {c}, trial {t}', wrap=True)
         fig.tight_layout()

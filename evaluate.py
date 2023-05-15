@@ -34,13 +34,13 @@ print(), print('Calculating P-value tables for average data')
 # fig4, ax4 = plt.subplots(7, 4, figsize=(12, 14))
 # fig4.patch.set_visible(False)
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_grab_success = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
         _, p_grab_fails[c1][c2] = functions.p_values(grabs, 'count', 'fails', c1, c2, 'measure')
-        _, p_grab_succes[c1][c2] = functions.p_values(grabs, 'count', 'succes', c1, c2, 'measure')
+        _, p_grab_success[c1][c2] = functions.p_values(grabs, 'count', 'success', c1, c2, 'measure')
         _, p_grab_attemts[c1][c2] = functions.p_values(grabs, 'count', 'attempts', c1, c2, 'measure')
 
 for m in Measures:  
@@ -69,7 +69,7 @@ for m in Measures:
     # plotting p-value tables
     functions.tablesubplot(ax2[1,0], p_grab_attemts, 'Grab attempts paired T-test p-values')
     functions.tablesubplot(ax2[1,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
-    functions.tablesubplot(ax2[2,0], p_grab_succes, 'Succesful grabs paired T-test p-values')
+    functions.tablesubplot(ax2[2,0], p_grab_success, 'successful grabs paired T-test p-values')
     functions.tablesubplot(ax2[2,1], p_count_avg, 'Blocks transferred paired T-test p-values')
     functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
     functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')

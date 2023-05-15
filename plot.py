@@ -66,8 +66,8 @@ for p in Participants:
             avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
             new_row = [avg_attempts, p, c, 'attempts']
             grabs.loc[len(grabs)] = new_row
-            avg_succes = np.mean([data[p][c][1]['grabs']['succes'],data[p][c][2]['grabs']['succes'],data[p][c][3]['grabs']['succes']])
-            new_row = [avg_succes, p, c, 'succes']
+            avg_success = np.mean([data[p][c][1]['grabs']['success'],data[p][c][2]['grabs']['success'],data[p][c][3]['grabs']['success']])
+            new_row = [avg_success, p, c, 'success']
             grabs.loc[len(grabs)] = new_row
             avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
             new_row = [avg_fails, p, c, 'fails']
@@ -101,7 +101,7 @@ for p in Participants:
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 ax_span.cla()
-hue_order = ['attempts', 'fails', 'succes', 'transfer']
+hue_order = ['attempts', 'fails', 'success', 'transfer']
 sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
 ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
