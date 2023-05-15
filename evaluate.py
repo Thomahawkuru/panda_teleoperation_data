@@ -11,22 +11,13 @@ evaluate_start = time.time()
 dill.load_session('data_plotted.pkl')
 
 #%% determine unvalid participant trials
-unvalid = pd.DataFrame([] , columns=['fps 1', 'fps 2', 'fps 3', 'duration 1', 'duration 2', 'duration 3', 'track_err 1', 'track_err 2', 'track_err 3'])
+unvalid = pd.DataFrame([] , columns=['fps', 'duration', 'track_err'])
 
-for p in Participants:
-    unvalid.loc[p] = ['', '', '','', '', '','', '', '']
+fpss        = fpss.groupby(['condition', 'participant']).mean()
+times       = times.groupby(['condition', 'participant']).mean()
+track_err   = track_err.groupby(['condition', 'participant']).mean()
+input_lag   = input_lag.groupby(['condition', 'participant']).mean()
 
-    for c in Conditions[1:]:
-        for t in Trials:
-            if data[p][c][t]['fps'] < 55:
-                unvalid[f'fps {t}'][p] = np.round(data[p][c][t]['fps'],1)
-            if data[p][c][t]['duration'] < 59.9:
-                unvalid[f'duration {t}'][p] = np.round(data[p][c][t]['duration'],1)
-            if data[p][c][t]['track_err'] > 0:
-                unvalid[f'track_err {t}'][p] = data[p][c][t]['track_err']
-
-print(), print('Validation data for participant: ') 
-print(unvalid)
 
 #%% calculating p_values for avg measures
 print(), print('Calculating P-value tables for average data')
