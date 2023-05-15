@@ -10,13 +10,13 @@ import pandas as pd
 
 dill.load_session('data_raw.pkl')
 start = time.time()
-debug = False
+debug = True
 
 #%% calculate data   
 if debug:
-    Participants = [15]
-    Conditions = ['A','D']
-    Trials = [1]
+    Participants = [17]
+    Conditions = ['A','B']
+    Trials = [2]
 
 
 for p in Participants:
@@ -26,10 +26,10 @@ for p in Participants:
         for t in Trials:
             print('Trial {}'.format(t))
             
-            data[p][c][t]['fps'] = calculators.fps(data, p, c, t, debug=debug)
-            data[p][c][t]['duration'] = calculators.duration(data, p, c, t, debug=debug)
-            data[p][c][t]['time'] = calculators.time(data, p, c, t, debug=debug)
-            data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t, debug=debug)       
+            # data[p][c][t]['fps'] = calculators.fps(data, p, c, t, debug=debug)
+            # data[p][c][t]['duration'] = calculators.duration(data, p, c, t, debug=debug)
+            # data[p][c][t]['time'] = calculators.time(data, p, c, t, debug=debug)
+            # data[p][c][t]['track_err'] = calculators.track_error(data, p, c, t, debug=debug)       
             data[p][c][t]['grabs'] = calculators.grabs(data, p, c, t, debug=debug)
             data[p][c][t]['velocity'] = calculators.grab_velocity(data, p, c, t, 'Hand', pre_time=2, debug=debug)
             if c != 'B': #omit B because there is no HMD data

@@ -27,7 +27,7 @@ def fps(data, p, c, t, debug):
         ax.plot(time, fps, label='raw FPS')
         ax.axhline(avg_fps, color='r', label='Average FPS')
         ax.set_title(f'FPS for participant {p}, condition {c}, trial {t}')
-        ax.set_xlabel('time [s]'), ax.set_ylabel('FPS')
+        ax.set_xlabel('Time [s]'), ax.set_ylabel('FPS')
         ax.legend()
         plt.show()
 
@@ -66,7 +66,7 @@ def track_error(data, p, c, t, debug):
         ax.plot(time, checks, label='Tracking checks')
         ax.plot(time[peaks], checks[peaks],'rx', label='Detected tracking loss')
         ax.set_title(f'Tracking loss for participant {p}, condition {c}, trial {t}')
-        ax.set_xlabel('time [s]'), ax.set_ylabel('Tracking loss check [True/False]')
+        ax.set_xlabel('Time [s]'), ax.set_ylabel('Tracking loss check [True/False]')
         ax.legend()
         plt.show()
 
@@ -87,7 +87,7 @@ def grabs(data, p, c, t, debug):
         ax.plot(time[peaks_success],grab_crop[peaks_success],'gx', label='successful grabs')
         ax.plot(time[peaks_fail],grab_crop[peaks_fail],'rx', label='Failed grabs')
         ax.set_title(f'Grab identification for participant {p}, condition {c}, trial {t}', wrap=True)
-        ax.set_xlabel('time [s]'), ax.set_ylabel('-Width [m]')
+        ax.set_xlabel('Time [s]'), ax.set_ylabel('-Width [m]')
         ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
         fig.tight_layout()
         plt.show()
