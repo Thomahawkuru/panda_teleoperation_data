@@ -78,21 +78,25 @@ def pdf(x):
     return mean, std
 
 def tablesubplot(ax, df, title):
+    nrows, ncols = df.shape
     colors = []
-    
-    for _ , row in df.iterrows():
-        colors_in_column = ["w"]*len(df)
-        for idx in row.index:    
-            if row[idx] <= 0.05:                    
-                colors_in_column[row.index.get_loc(idx)] = "g"
+    cell_text = []
 
-            # elif 0.05 <= row[idx] < 0.1:
-            #     colors_in_column[row.index.get_loc(idx)] = "y"
-
-        
+    for i in range(nrows):
+        colors_in_column = ["w"] * ncols
+        row_text = []
+        for j in range(ncols):
+            if j > i:
+                colors_in_column[j] = "w"  # Set cell color to white if above diagonal
+                row_text.append("")  # Set empty string for cells above the diagonal
+            else:
+                value = df.iloc[i, j]
+                if value <= 0.05:
+                    colors_in_column[j] = "g"  # Set cell color to green if value is <= 0.05
+                row_text.append("{:.3f}".format(value))  # Set cell text for cells on or below the diagonal
         colors.append(colors_in_column)
+        cell_text.append(row_text)
 
-    cell_text = [['{:.3f}'.format(val) for val in row] for _, row in df.iterrows()]
     ax.table(cellText=cell_text, colLabels=df.columns, rowLabels=df.index, loc='center', cellColours=colors)
     ax.set_title(title, wrap=True)
     ax.axis('off')
