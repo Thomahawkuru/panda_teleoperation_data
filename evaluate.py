@@ -10,20 +10,33 @@ import functions
 evaluate_start = time.time()
 dill.load_session('data_plotted.pkl')
 
-#%% determine unvalid participant trials
+#%% Evaluation sanity check data
 unvalid = pd.DataFrame([] , columns=['fps', 'duration', 'track_err'])
+print(), print('Calculating P-value tables for sanity check data')
 
-fpss        = fpss.groupby(['condition', 'participant']).mean()
-times       = times.groupby(['condition', 'participant']).mean()
-track_err   = track_err.groupby(['condition', 'participant']).mean()
-input_lag   = input_lag.groupby(['condition', 'participant']).mean()
+p_fps = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_duration = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_tracking_err = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_input_lag = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
+for c1 in Conditions[1:]:
+    for c2 in Conditions[1:]:
+        _, p_fps[c1][c2] = functions.p_values(fpss, 'fps', None, c1, c2, None)
+        _, p_duration[c1][c2] = functions.p_values(times, 'duration [s]', None, c1, c2, None)
+        _, p_tracking_err[c1][c2] = functions.p_values(track_err, 'track_err', None, c1, c2, None)
+        _, p_input_lag[c1][c2] = functions.p_values(input_lag, 'lag [s]', None, c1, c2, None)
+
+functions.tablesubplot(ax1[0,1], p_fps, 'Grab attempts paired T-test p-values')
+functions.tablesubplot(ax1[1,1], p_duration, 'Failed Grabs paired T-test p-values')
+functions.tablesubplot(ax1[2,1], p_tracking_err, 'successful grabs paired T-test p-values')
+functions.tablesubplot(ax1[3,1], p_input_lag, 'Blocks transferred paired T-test p-values')
+
+fig1.tight_layout()
+fig1.savefig("plots/sanity_check.jpg", dpi=1000)
+fig1.savefig("plots/sanity_check.svg", dpi=1000)
 
 #%% calculating p_values for avg measures
 print(), print('Calculating P-value tables for average data')
-
-# fig4, ax4 = plt.subplots(7, 4, figsize=(12, 14))
-# fig4.patch.set_visible(False)
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_success = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])

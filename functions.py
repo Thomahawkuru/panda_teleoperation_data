@@ -123,8 +123,11 @@ def minmax(data, key, type, p, c, m, T, M):
     return row
 
 def p_values(data, key, m, c1, c2, type):
+    if type is not None:
+        measure_data = data[data[type] == m]
+    else:
+        measure_data=data
 
-    measure_data = data[data[type] == m]
     p_value = np.around(
         stats.ttest_rel(
             measure_data[measure_data['condition']==c1][key], 
