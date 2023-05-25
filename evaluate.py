@@ -10,37 +10,41 @@ import functions
 evaluate_start = time.time()
 dill.load_session('data_plotted.pkl')
 
-#%% determine unvalid participant trials
-unvalid = pd.DataFrame([] , columns=['fps 1', 'fps 2', 'fps 3', 'duration 1', 'duration 2', 'duration 3', 'track_err 1', 'track_err 2', 'track_err 3'])
+#%% Evaluation sanity check data
+unvalid = pd.DataFrame([] , columns=['fps', 'duration', 'track_err'])
+print(), print('Calculating P-value tables for sanity check data')
 
-for p in Participants:
-    unvalid.loc[p] = ['', '', '','', '', '','', '', '']
+p_fps = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_duration = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_tracking_err = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_input_lag = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
-    for c in Conditions[1:]:
-        for t in Trials:
-            if data[p][c][t]['fps'] < 55:
-                unvalid[f'fps {t}'][p] = np.round(data[p][c][t]['fps'],1)
-            if data[p][c][t]['duration'] < 59.9:
-                unvalid[f'duration {t}'][p] = np.round(data[p][c][t]['duration'],1)
-            if data[p][c][t]['track_err'] > 0:
-                unvalid[f'track_err {t}'][p] = data[p][c][t]['track_err']
+for c1 in Conditions[1:]:
+    for c2 in Conditions[1:]:
+        _, p_fps[c1][c2] = functions.p_values(fpss, 'fps', None, c1, c2, None)
+        _, p_duration[c1][c2] = functions.p_values(times, 'duration [s]', None, c1, c2, None)
+        _, p_tracking_err[c1][c2] = functions.p_values(track_err, 'track_err', None, c1, c2, None)
+        _, p_input_lag[c1][c2] = functions.p_values(input_lag, 'lag [s]', None, c1, c2, None)
 
-print(), print('Validation data for participant: ') 
-print(unvalid)
+functions.tablesubplot(ax1[0,1], p_fps, 'Grab attempts paired T-test p-values')
+functions.tablesubplot(ax1[1,1], p_duration, 'Failed Grabs paired T-test p-values')
+functions.tablesubplot(ax1[2,1], p_tracking_err, 'successful grabs paired T-test p-values')
+functions.tablesubplot(ax1[3,1], p_input_lag, 'Blocks transferred paired T-test p-values')
+
+fig1.tight_layout()
+fig1.savefig("plots/sanity_check.jpg", dpi=1000)
+fig1.savefig("plots/sanity_check.svg", dpi=1000)
 
 #%% calculating p_values for avg measures
 print(), print('Calculating P-value tables for average data')
-
-# fig4, ax4 = plt.subplots(7, 4, figsize=(12, 14))
-# fig4.patch.set_visible(False)
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-p_grab_succes = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_grab_success = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
         _, p_grab_fails[c1][c2] = functions.p_values(grabs, 'count', 'fails', c1, c2, 'measure')
-        _, p_grab_succes[c1][c2] = functions.p_values(grabs, 'count', 'succes', c1, c2, 'measure')
+        _, p_grab_success[c1][c2] = functions.p_values(grabs, 'count', 'success', c1, c2, 'measure')
         _, p_grab_attemts[c1][c2] = functions.p_values(grabs, 'count', 'attempts', c1, c2, 'measure')
 
 for m in Measures:  
@@ -60,8 +64,8 @@ for m in Measures:
             _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', m, c1, c2, 'measure')
             _, p_force[c1][c2] = functions.p_values(force, 'force', m, c1, c2, 'measure')
             
-            diff_c1 = count_avg[(count_avg['condition']==c1)]['blocks']
-            diff_c2 = count_avg[(count_avg['condition']==c2)]['blocks']
+            diff_c1 = grabs['count'][grabs['condition']==c1][grabs['measure']=='transfer']
+            diff_c2 = grabs['count'][grabs['condition']==c2][grabs['measure']=='transfer']
         
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
             p_count_avg[c1][c2] = p_value[1]
@@ -69,7 +73,7 @@ for m in Measures:
     # plotting p-value tables
     functions.tablesubplot(ax2[1,0], p_grab_attemts, 'Grab attempts paired T-test p-values')
     functions.tablesubplot(ax2[1,1], p_grab_fails, 'Failed Grabs paired T-test p-values')
-    functions.tablesubplot(ax2[2,0], p_grab_succes, 'Succesful grabs paired T-test p-values')
+    functions.tablesubplot(ax2[2,0], p_grab_success, 'successful grabs paired T-test p-values')
     functions.tablesubplot(ax2[2,1], p_count_avg, 'Blocks transferred paired T-test p-values')
     functions.tablesubplot(ax2[3,1], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
     functions.tablesubplot(ax2[4,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')

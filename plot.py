@@ -32,20 +32,25 @@ for p in Participants:
             track_err.loc[len(track_err)] = new_row
             new_row = [np.mean(data[p][c][t]['in_out']['lag']), p, c, t]
             input_lag.loc[len(track_err)] = new_row 
+#%%
+fpss = fpss.groupby(['participant', 'condition'])['fps'].mean().reset_index()
+times = times.groupby(['participant', 'condition'])['duration [s]'].mean().reset_index()
+track_err = track_err.groupby(['participant', 'condition'])['track_err'].mean().reset_index()
+input_lag = input_lag.groupby(['participant', 'condition'])['lag [s]'].mean().reset_index()
 
-fig1, ax1 = plt.subplots(2,2,figsize=(7.5,5))
-sns.boxplot(x=fpss['condition'], y=fpss['fps'], hue=fpss['trial'], ax=ax1[0,0])
+fig1, ax1 = plt.subplots(4,2,figsize=(7.5,10))
+sns.boxplot(x=fpss['condition'], y=fpss['fps'], ax=ax1[0,0])
 ax1[0,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-ax1[0,0].set_title(f'Average FPS per trial n = [{len(Participants)}]')
-sns.boxplot(x=times['condition'], y=times['duration [s]'], hue=times['trial'], ax=ax1[0,1])
-ax1[0,1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-ax1[0,1].set_title(f'Average duration per trial n = [{len(Participants)}]')
-sns.boxplot(x=track_err['condition'], y=track_err['track_err'], hue=track_err['trial'], ax=ax1[1,0])
+ax1[0,0].set_title(f'Average FPS per condition [n=3]')
+sns.boxplot(x=times['condition'], y=times['duration [s]'], ax=ax1[1,0])
 ax1[1,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-ax1[1,0].set_title(f'Tracking losses per trial n = [{len(Participants)}]')
-sns.boxplot(x=input_lag['condition'], y=input_lag['lag [s]'], hue=input_lag['trial'], ax=ax1[1,1])
-ax1[1,1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-ax1[1,1].set_title(f'Average input Lag per trial n = [{len(Participants)}]')
+ax1[1,0].set_title(f'Average duration per condition [n=3]')
+sns.boxplot(x=track_err['condition'], y=track_err['track_err'], ax=ax1[2,0])
+ax1[2,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax1[2,0].set_title(f'Tracking losses per condition [n=3]')
+sns.boxplot(x=input_lag['condition'], y=input_lag['lag [s]'], ax=ax1[3,0])
+ax1[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax1[3,0].set_title(f'Average input Lag per condition [n=3]')
 
 fig1.tight_layout()
 fig1.savefig("plots/sanity_check.jpg", dpi=1000)
@@ -62,17 +67,17 @@ force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure
 
 for p in Participants:
     for c in Conditions[1:]:
-        for m in Measures:
-            avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
-            new_row = [avg_attempts, p, c, 'attempts']
-            grabs.loc[len(grabs)] = new_row
-            avg_succes = np.mean([data[p][c][1]['grabs']['succes'],data[p][c][2]['grabs']['succes'],data[p][c][3]['grabs']['succes']])
-            new_row = [avg_succes, p, c, 'succes']
-            grabs.loc[len(grabs)] = new_row
-            avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
-            new_row = [avg_fails, p, c, 'fails']
-            grabs.loc[len(grabs)] = new_row
+        avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
+        new_row = [avg_attempts, p, c, 'attempts']
+        grabs.loc[len(grabs)] = new_row
+        avg_success = np.mean([data[p][c][1]['grabs']['success'],data[p][c][2]['grabs']['success'],data[p][c][3]['grabs']['success']])
+        new_row = [avg_success, p, c, 'success']
+        grabs.loc[len(grabs)] = new_row
+        avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
+        new_row = [avg_fails, p, c, 'fails']
+        grabs.loc[len(grabs)] = new_row
 
+        for m in Measures:
             new_row = [data[p][c][t]['velocity']['pre'], data[p][c][t]['velocity']['post'], p, c, m]
             velocity.loc[len(velocity)] = new_row
             if c == 'B':
@@ -101,8 +106,8 @@ for p in Participants:
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 ax_span.cla()
-hue_order = ['attempts', 'fails', 'succes', 'transfer']
-sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span, hue_order=hue_order)
+order = ['attempts', 'fails', 'success', 'transfer']
+sns.boxplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order)
 ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
