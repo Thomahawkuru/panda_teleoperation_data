@@ -19,6 +19,8 @@ __pycache__/
 *.svg
 *.emf
 
+# participant data
+/data/Experiment
 # Distribution / packaging
 .Python
 build/
