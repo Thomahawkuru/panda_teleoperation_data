@@ -1,9 +1,9 @@
 # panda_teleoperation_data
-TO analyse run in order:
+Expects participant data to be put into /data/Experiment
+
+TO analyse and plot, run following scripts in order:
 - read.py
 - calculate.py
 - plot.py
 - evaluate.py
 - questionnaire.py
-
-Assumes al data is located in /data
