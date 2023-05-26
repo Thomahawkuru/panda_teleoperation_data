@@ -60,8 +60,8 @@ usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opi
 
 fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
 avg_difficulty = difficulty[difficulty['trial']=='average']
-sns.barplot(x=avg_difficulty['trial'], y=avg_difficulty['difficulty'], hue=avg_difficulty['condition'], ax=ax4[0], errorbar='sd')
-ax4[0].set_title('Average perceived Easiness [errorbar = SD]'.format(len(Participants)))
+sns.barplot(x=avg_difficulty['trial'], y=avg_difficulty['difficulty'], hue=avg_difficulty['condition'], ax=ax4[0], errorbar=('ci',95), capsize = 0.05, errwidth=1)
+ax4[0].set_title('Average perceived Easiness [errorbar = CI 95]'.format(len(Participants)))
 ax4[0].set_xticks([], [])
 ax4[0].set_xlabel('Conditions'), ax4[0].set_ylabel('Average Easiness')
 ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
@@ -69,8 +69,8 @@ ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 fig5, ax5 = plt.subplots(3, 2, figsize=(7.5, 7.5))
 fig5.patch.set_visible(False)
 ax = plt.subplot(3, 1, 1)
-sns.barplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax, errorbar='sd')
-ax.set_title('UMUX results per condition [errorbar = SD]'.format(len(Participants)))
+sns.barplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax, errorbar=('ci',95), capsize = 0.05, errwidth=1)
+ax.set_title('UMUX results per condition [errorbar = CI 95]'.format(len(Participants)))
 ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 #%% evaluate SEQ responses

@@ -93,8 +93,8 @@ for p in Participants:
 fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 16))
 
 ax_span = plt.subplot(8,1,1)
-sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span)
-ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+# sns.boxplot(x=grabs['condition'], y=grabs['count'], hue=grabs['measure'], ax=ax_span)
+# ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
 
 print('Average only...')
 for p in Participants:
@@ -107,10 +107,10 @@ for p in Participants:
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 ax_span.cla()
 order = ['attempts', 'fails', 'success', 'transfer']
-sns.boxplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order)
+sns.barplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order, errorbar=('ci', 95), capsize = 0.05, errwidth=1)
 ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-
+#%%
 sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[3,0])
 ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]', wrap=True)
 ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
