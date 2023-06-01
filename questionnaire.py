@@ -16,6 +16,11 @@ import functions
 questionaire_start = time.time()
 dill.load_session('data_raw.pkl')
 
+Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26] # Array of participants
+opnion_header   = ['condition', 'hand', 'trial 1', 'comment 1','trial 2', 'comment 2', 'trial 3', 'comment 3', 'requirements', 'frustration', 'easiness', 'correcting']
+measures        = opnion_header[-4:]
+trials          = ['trial 1', 'trial 2', 'trial 3', 'average']
+
 #%% Decode questionaire responses ---------------------------------------------------------------
 print('Decoding...')
 Questionnaire = Questionnaire.replace([1,2,3,4,5,6,7], [-3,-2,-1,0,1,2,3])
@@ -48,54 +53,54 @@ for c in Conditions:
         
     results = pd.concat([results, Opinions[c]])
 
-# add average over trials
+# remove outliers
+results = results[results.index.isin(Participants)]
+results = results.reset_index().rename(columns={'Participant number:': 'participant'})
 
+# add average over trials
 results['average'] = results[['trial 1', 'trial 2', 'trial 3']].mean(axis=1)
 
 #%% plot responses
 print('Plotting...')
-difficulty = results.iloc[:,[0,1,2,3,4,9]].melt(['condition','hand'], var_name='trial',value_name='difficulty')
-usefullness = results[['condition', 'requirements', 'frustration', 'easiness', 'correcting']]
-usefullness = usefullness.melt(['condition'], var_name='measure',value_name='opinion')
 
-fig4, ax4 = plt.subplots(1, 2, figsize=(7.5, 2.5))
-avg_difficulty = difficulty[difficulty['trial']=='average']
-sns.barplot(x=avg_difficulty['trial'], y=avg_difficulty['difficulty'], hue=avg_difficulty['condition'], ax=ax4[0], errorbar=('ci',95), capsize = 0.05, errwidth=1)
-ax4[0].set_title('Average perceived Easiness [errorbar = CI 95]'.format(len(Participants)))
-ax4[0].set_xticks([], [])
-ax4[0].set_xlabel('Conditions'), ax4[0].set_ylabel('Average Easiness')
-ax4[0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+difficulty = results.iloc[:,[0,1,2,3,4,5,10]].melt(['participant','condition','hand'], var_name='measure',value_name='difficulty')
+avg_difficulty = difficulty[difficulty['measure']=='average']
+usefullness = results[['participant','condition', 'requirements', 'frustration', 'easiness', 'correcting']]
+usefullness = usefullness.melt(['participant','condition'], var_name='measure',value_name='opinion')
 
-fig5, ax5 = plt.subplots(3, 2, figsize=(7.5, 7.5))
-fig5.patch.set_visible(False)
-ax = plt.subplot(3, 1, 1)
-sns.barplot(x=usefullness['measure'], y=usefullness['opinion'], hue=usefullness['condition'], ax=ax, errorbar=('ci',95), capsize = 0.05, errwidth=1)
-ax.set_title('UMUX results per condition [errorbar = CI 95]'.format(len(Participants)))
-ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+fig4, ax4 = plt.subplots(4, 2, figsize=(7.5, 8))
+CI = functions.error_bar_plot(difficulty, 'difficulty', trials, plt.subplot(2,1,1), 'SEQ results per trial', Participants, Conditions)
+
+fig5, ax5 = plt.subplots(4, 2, figsize=(7.5, 8))
+CI = CI.append(functions.error_bar_plot(usefullness, 'opinion', measures, plt.subplot(2, 1, 1), 'UMUX results per condition', Participants, Conditions))
+
+print('Questionnaire CI:')
+print(CI)
 
 #%% evaluate SEQ responses
 print('Evaluating...')
-trials = ['average']
 
-for t in trials: 
-    p_difficulty = pd.DataFrame(index = Conditions, columns = Conditions)
+p_difficulty = pd.DataFrame(index = Conditions, columns = Conditions)
 
+for t in trials:
     for c1 in Conditions:
         for c2 in Conditions:
-            diff_c1 = difficulty[(difficulty['condition']==c1) & (difficulty['trial']==t)]['difficulty']
-            diff_c2 = difficulty[(difficulty['condition']==c2) & (difficulty['trial']==t)]['difficulty']
+            diff_c1 = difficulty[(difficulty['condition']==c1) & (difficulty['measure']==t)]['difficulty']
+            diff_c2 = difficulty[(difficulty['condition']==c2) & (difficulty['measure']==t)]['difficulty']
             p_value = np.round(stats.ttest_rel(diff_c1, diff_c2, nan_policy='omit') , 3)
             p_difficulty[c1][c2] = p_value[1]
 
     # plotting p-value tables
-    functions.tablesubplot(ax4[1], p_difficulty, f'{t} Easiness paired T-test p-values')
+    if trials.index(t) < 2:
+        functions.tablesubplot(ax4[2][trials.index(t)], p_difficulty, f'{t} SEQ paired T-test p-values')
+    else:
+        functions.tablesubplot(ax4[3][trials.index(t)-2], p_difficulty, f'{t} SEQ paired T-test p-values')
 
 fig4.tight_layout()
 fig4.savefig("plots/difficulty.jpg", dpi=1000)
 fig4.savefig("plots/difficulty.svg", dpi=1000)
 
 #%% evaluate UMUX responses
-measures = ['requirements', 'frustration', 'easiness', 'correcting']
 
 for m in measures: 
     p_usefullness= pd.DataFrame(index = Conditions, columns = Conditions)
@@ -109,9 +114,9 @@ for m in measures:
 
     # plotting p-value tables
     if measures.index(m) < 2:
-        functions.tablesubplot(ax5[1][measures.index(m)], p_usefullness, f'{m} paired T-test p-values')
+        functions.tablesubplot(ax5[2][measures.index(m)], p_usefullness, f'{m} paired T-test p-values')
     else:
-        functions.tablesubplot(ax5[2][measures.index(m)-2], p_usefullness, f'{m} paired T-test p-values')
+        functions.tablesubplot(ax5[3][measures.index(m)-2], p_usefullness, f'{m} paired T-test p-values')
     
 fig5.tight_layout()
 fig5.savefig("plots/usefullness.jpg", dpi=1000)
