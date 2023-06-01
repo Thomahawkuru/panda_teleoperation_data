@@ -14,7 +14,7 @@ plot_start = time.time()
 dill.load_session('data_calculated.pkl')
 Participants    = [1,2,3,4,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26] # Array of participants
 
-#%% plot ming sanity check data
+#%% plotting sanity check data
 print(), print('Plotting sanity check') 
 fpss =  pd.DataFrame([] , columns=['fps', 'participant', 'condition', 'trial'])
 times =  pd.DataFrame([] , columns=['duration [s]', 'participant', 'condition', 'trial'])
@@ -32,7 +32,7 @@ for p in Participants:
             track_err.loc[len(track_err)] = new_row
             new_row = [np.nanmean(data[p][c][t]['in_out']['lag']), p, c, t]
             input_lag.loc[len(track_err)] = new_row 
-#%%
+
 fpss = fpss.groupby(['participant', 'condition'])['fps'].mean().reset_index()
 times = times.groupby(['participant', 'condition'])['duration [s]'].mean().reset_index()
 track_err = track_err.groupby(['participant', 'condition'])['track_err'].mean().reset_index()
