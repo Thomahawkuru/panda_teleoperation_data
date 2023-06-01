@@ -65,13 +65,13 @@ for p in Participants:
     count_p = count_avg[count_avg['Participant Number']==p]
     for c in Conditions[1:]:
         # grab data
-        avg_attempts = np.nanmean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
+        avg_attempts = functions.trial_average(data, 'grabs', 'attempts', p, c, Trials)          
         new_row = [avg_attempts, p, c, 'attempts']
         grabs.loc[len(grabs)] = new_row
-        avg_success = np.nanmean([data[p][c][1]['grabs']['success'],data[p][c][2]['grabs']['success'],data[p][c][3]['grabs']['success']])
+        avg_success = functions.trial_average(data, 'grabs', 'success', p, c, Trials)  
         new_row = [avg_success, p, c, 'success']
         grabs.loc[len(grabs)] = new_row
-        avg_fails = np.nanmean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
+        avg_fails = functions.trial_average(data, 'grabs', 'fail', p, c, Trials)  
         new_row = [avg_fails, p, c, 'fails']
         grabs.loc[len(grabs)] = new_row
         count_c = count_p[count_p['condition']==c]     
@@ -79,10 +79,10 @@ for p in Participants:
         grabs.loc[len(grabs)] = new_row
 
         # velocity data
-        avg_pre_vel = np.nanmean([data[p][c][1]['velocity']['pre'], data[p][c][2]['velocity']['pre'], data[p][c][3]['velocity']['pre']])
+        avg_pre_vel = functions.trial_average(data, 'velocity', 'pre', p, c, Trials)  
         new_row = [avg_pre_vel, p, c, 'pre']
         velocity.loc[len(velocity)] = new_row
-        avg_post_vel = np.nanmean([data[p][c][1]['velocity']['post'], data[p][c][2]['velocity']['post'], data[p][c][3]['velocity']['post']])
+        avg_post_vel = functions.trial_average(data, 'velocity', 'post', p, c, Trials)  
         new_row = [avg_post_vel, p, c, 'post']
         velocity.loc[len(velocity)] = new_row
         
@@ -90,12 +90,14 @@ for p in Participants:
         if c == 'B':
             new_row = [0, p, c, 'Mean [n=3]']
         else: 
-            new_row = functions.minmax(data, 'HMD', 'rotation', p, c, 'Mean [n=3]', Trials, ['Mean [n=3]'])            
+            new_row = functions.trial_average(data, 'HMD', 'rotation', p, c, Trials)            
         hmd_movement.loc[len(hmd_movement)] = new_row  
-        new_row = functions.minmax(data, 'in_out', 'max_corr', p, c, 'Mean [n=3]', Trials, ['Mean [n=3]'])
-        in_out_corr.loc[len(in_out_corr)] = new_row
-        new_row = functions.minmax(data, 'force', None, p, c, 'Mean [n=3]', Trials, ['Mean [n=3]'])
+        avg_hmd_movement = functions.mintrial_averagemax(data, 'force', None, p, c, Trials)
+        new_row = [avg_hmd_movement, p, c, 'Mean [N=3]']
         force.loc[len(force)] = new_row  
+        avg_force = functions.trial_average(data, 'in_out', 'max_corr', p, c, Trials)
+        new_row = [avg_force, p, c, 'Mean [N=3]']
+        in_out_corr.loc[len(in_out_corr)] = new_row
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
 
@@ -104,20 +106,18 @@ print(), print('Plotting barplots')
 fig2, ax2 = plt.subplots(4, 2, figsize=(7.5, 16))
 
 # grab data
-ax_grabs = plt.subplot(4,1,1)
 order = ['attempts', 'fails', 'success', 'transfer']
-functions.error_bar_plot(grabs, 'count', order, ax_grabs, 'Average grab data [n=3]', Participants, Conditions[1:])
+functions.error_bar_plot(grabs, 'count', order, plt.subplot(4,1,1), 'Average grab data [n=3]', Participants, Conditions[1:])
 
 # velocities
-ax_vel = plt.subplot(4,1,2)
 order = ['pre', 'post']
-functions.error_bar_plot(velocity, 'velocity', order, ax_vel, 'Average Pre- and Post-Grab Velocity [m/s]', Participants, Conditions[1:])
+functions.error_bar_plot(velocity, 'velocity', order, plt.subplot(4,1,2), 'Average Pre- and Post-Grab Velocity [m/s]', Participants, Conditions[1:])
 
 # other measures
-# order = ['Mean [n=3]']
-# functions.error_bar_plot(hmd_movement, 'std',   order, ax2[2,0], 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:])
-# functions.error_bar_plot(force,        'force', order, ax2[2,1], 'Average peak force [N]', Participants, Conditions[1:])
-# functions.error_bar_plot(in_out_corr,  'corr',  order, ax2[3,0], 'Input-Output Cross-correlation', Participants, Conditions[1:])
+order = ['Mean [n=3]']
+functions.error_bar_plot(hmd_movement, 'std',   order, ax2[2,0], 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:])
+functions.error_bar_plot(force,        'force', order, ax2[2,1], 'Average peak force [N]', Participants, Conditions[1:])
+functions.error_bar_plot(in_out_corr,  'corr',  order, ax2[3,0], 'Input-Output Cross-correlation', Participants, Conditions[1:])
 
 fig2.tight_layout()
 fig2.savefig("plots/average_results.jpg", dpi=1000)

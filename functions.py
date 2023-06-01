@@ -104,25 +104,14 @@ def tablesubplot(ax, df, title):
     ax.axis('off')
     ax.axis('tight')
 
-def minmax(data, key, type, p, c, m, T, M):
-    values = []
-    if type == None:
-        for t in T:
-            values.append(np.mean(data[p][c][t][key]))
-    else:
-        for t in T:
-            values.append(np.mean(data[p][c][t][key][type]))
+def trial_average(data, key, type, p, c, T):
+    value = []
+    for t in T:
+        value.append(data[p][c][t])
+    
+    average = np.nanmean(data[p])
 
-    if m == M[0]:
-        row = [np.max(values), p, c, m]
-    elif m == M[1]:
-        row = [np.median(values), p, c, m]
-    elif m == M[2]:
-        row = [np.min(values), p, c, m]
-    elif m == M[3]:
-        row = [np.average(values), p, c, m]
-
-    return row
+    return average
 
 def p_values(data, key, m, c1, c2, type):
     if type is not None:
