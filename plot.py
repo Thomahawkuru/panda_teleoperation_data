@@ -33,19 +33,19 @@ for p in Participants:
             new_row = [np.nanmean(data[p][c][t]['in_out']['lag']), p, c, t]
             input_lag.loc[len(track_err)] = new_row 
 
-fpss = fpss.groupby(['participant', 'condition'])['fps'].mean().reset_index()
-times = times.groupby(['participant', 'condition'])['duration [s]'].mean().reset_index()
-track_err = track_err.groupby(['participant', 'condition'])['track_err'].mean().reset_index()
-input_lag = input_lag.groupby(['participant', 'condition'])['lag [s]'].mean().reset_index()
+avg_fpss = fpss.groupby(['participant', 'condition'])['fps'].mean().reset_index()
+avg_times = times.groupby(['participant', 'condition'])['duration [s]'].mean().reset_index()
+avg_track_err = track_err.groupby(['participant', 'condition'])['track_err'].mean().reset_index()
+avg_input_lag = input_lag.groupby(['participant', 'condition'])['lag [s]'].mean().reset_index()
 
 fig1, ax1 = plt.subplots(4,2,figsize=(7.5,10))
-sns.boxplot(x=fpss['condition'], y=fpss['fps'], ax=ax1[0,0])
+sns.boxplot(x=avg_fpss['condition'], y=fpss['fps'], ax=ax1[0,0])
 ax1[0,0].set_title(f'Average FPS per condition [n=3]')
-sns.boxplot(x=times['condition'], y=times['duration [s]'], ax=ax1[1,0])
+sns.boxplot(x=avg_times['condition'], y=times['duration [s]'], ax=ax1[1,0])
 ax1[1,0].set_title(f'Average duration per condition [n=3]')
-sns.boxplot(x=track_err['condition'], y=track_err['track_err'], ax=ax1[2,0])
+sns.boxplot(x=avg_track_err['condition'], y=track_err['track_err'], ax=ax1[2,0])
 ax1[2,0].set_title(f'Tracking losses per condition [n=3]')
-sns.boxplot(x=input_lag['condition'], y=input_lag['lag [s]'], ax=ax1[3,0])
+sns.boxplot(x=avg_input_lag['condition'], y=input_lag['lag [s]'], ax=ax1[3,0])
 ax1[3,0].set_title(f'Average input Lag per condition [n=3]')
 
 fig1.tight_layout()

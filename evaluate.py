@@ -21,10 +21,10 @@ p_input_lag = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
-        _, p_fps[c1][c2] = functions.p_values(fpss, 'fps', None, c1, c2, None)
-        _, p_duration[c1][c2] = functions.p_values(times, 'duration [s]', None, c1, c2, None)
-        _, p_tracking_err[c1][c2] = functions.p_values(track_err, 'track_err', None, c1, c2, None)
-        _, p_input_lag[c1][c2] = functions.p_values(input_lag, 'lag [s]', None, c1, c2, None)
+        _, p_fps[c1][c2] = functions.p_values(avg_fpss, 'fps', None, c1, c2, None)
+        _, p_duration[c1][c2] = functions.p_values(avg_times, 'duration [s]', None, c1, c2, None)
+        _, p_tracking_err[c1][c2] = functions.p_values(avg_track_err, 'track_err', None, c1, c2, None)
+        _, p_input_lag[c1][c2] = functions.p_values(avg_input_lag, 'lag [s]', None, c1, c2, None)
 
 functions.tablesubplot(ax1[0,1], p_fps, 'Grab attempts paired T-test p-values')
 functions.tablesubplot(ax1[1,1], p_duration, 'Failed Grabs paired T-test p-values')
