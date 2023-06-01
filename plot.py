@@ -8,6 +8,7 @@ import plotly.express as px
 import dill
 import seaborn as sns
 import functions
+import math
 
 plot_start = time.time()
 dill.load_session('data_calculated.pkl')
@@ -52,7 +53,7 @@ fig1.savefig("plots/sanity_check.jpg", dpi=1000)
 fig1.savefig("plots/sanity_check.svg", dpi=1000)
 
 #%% Calculated average data over 3 trials
-print(), print('Plotting avg barplots') 
+print(), print('Calculating averages') 
 
 grabs = pd.DataFrame([] , columns=['count', 'participant', 'condition', 'measure'])
 velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
@@ -61,7 +62,9 @@ in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'me
 force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure'])
 
 for p in Participants:
+    count_p = count_avg[count_avg['Participant Number']==p]
     for c in Conditions[1:]:
+        # grab data
         avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
         new_row = [avg_attempts, p, c, 'attempts']
         grabs.loc[len(grabs)] = new_row
@@ -71,7 +74,11 @@ for p in Participants:
         avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
         new_row = [avg_fails, p, c, 'fails']
         grabs.loc[len(grabs)] = new_row
+        count_c = count_p[count_p['condition']==c]     
+        new_row = [count_c['blocks'].mean(), p, c, 'transfer']
+        grabs.loc[len(grabs)] = new_row
 
+        # velocity data
         avg_pre_vel = np.mean([data[p][c][1]['velocity']['pre'], data[p][c][2]['velocity']['pre'], data[p][c][3]['velocity']['pre']])
         new_row = [avg_pre_vel, p, c, 'pre']
         velocity.loc[len(velocity)] = new_row
@@ -79,6 +86,7 @@ for p in Participants:
         new_row = [avg_post_vel, p, c, 'post']
         velocity.loc[len(velocity)] = new_row
         
+        # other data
         if c == 'B':
             new_row = [0, p, c, 'Mean [n=3]']
         else: 
@@ -89,69 +97,39 @@ for p in Participants:
         new_row = functions.minmax(data, 'force', None, p, c, 'Mean [n=3]', Trials, ['Mean [n=3]'])
         force.loc[len(force)] = new_row  
 
+grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
+
 #%% plotting
+print(), print('Plotting barplots') 
 fig2, ax2 = plt.subplots(4, 2, figsize=(7.5, 16))
 
 # grab data
-print('Average only...')
-for p in Participants:
-    count_p = count_avg[count_avg['Participant Number']==p]
-    for c in Conditions[1:]:
-        count_c = count_p[count_p['condition']==c]     
-        new_row = [count_c['blocks'].mean(), p, c, 'transfer']
-        grabs.loc[len(grabs)] = new_row
-
-grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
+ax_grabs = plt.subplot(4,1,1)
 order = ['attempts', 'fails', 'success', 'transfer']
-
-CI = []
-for m in order:
-    participant_mean = []
-    for p in Participants:
-        participant_mean.extend([np.mean(grabs[grabs['participant']==p][grabs['measure']==m]['count'])])
-
-    for c in Conditions[1:]:
-        X = grabs[grabs['condition']==c][grabs['measure']==m]['count']
-        ci = functions.within_subject_ci(X,participant_mean,len(Conditions[1:]))
-        CI.append(float(ci))
-
-ax_span = plt.subplot(4,1,1)
-ax_span.cla()
-sns.barplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order, errorbar=None)
-x_coords = [p.get_x() + 0.5*p.get_width() for p in ax_span.patches]
-y_coords = [p.get_height() for p in ax_span.patches]
-plt.errorbar(x=x_coords, y=y_coords, yerr=CI, c= "k", fmt='None', capsize = 3, elinewidth=1)
-
-ax_span.set_title('Average grab  data over 3 trials')
-ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+functions.error_bar_plot(grabs, 'count', order, ax_grabs, 'Average grab data [n=3]', Participants, Conditions[1:])
 
 # velocities
-ax_span = plt.subplot(4,1,2)
-ax_span.cla()
-sns.barplot(x=velocity['measure'], y=velocity['velocity'], hue=velocity['condition'], ax=ax_span)
-ax_span.set_title('Average Pre- and Post-Grab Velocity [m/s]', wrap=True)
-ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+ax_vel = plt.subplot(4,1,2)
+order = ['pre', 'post']
+functions.error_bar_plot(velocity, 'velocity', order, ax_vel, 'Average Pre- and Post-Grab Velocity [m/s]', Participants, Conditions[1:])
 
 # other measures
-sns.barplot(x=hmd_movement['measure'], y=hmd_movement['std'], hue=hmd_movement['condition'], ax=ax2[2,0])
-ax2[2,0].set_title('Rotational SD of HMD direction unit vector', wrap=True)
-ax2[2,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.barplot(x=in_out_corr['measure'], y=in_out_corr['corr'], hue=in_out_corr['condition'], ax=ax2[3,0])
-ax2[3,0].set_title('Input-Output Cross-correlation', wrap=True)
-ax2[3,0].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-sns.barplot(x=force['measure'], y=force['force'], hue=force['condition'], ax=ax2[2,1])
-ax2[2,1].set_title('Average peak force [N]', wrap=True)
-ax2[2,1].legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
-
-meanA = np.mean(count_avg[count_avg['condition'] == 'A']['blocks'])
-stdA = np.std(count_avg[count_avg['condition'] == 'A']['blocks'])
-print(f'Mean blocks transfered in Condition A: {meanA}')
-print(f'SD of blocks transfered in Condition A: {stdA}')
+# order = ['Mean [n=3]']
+# functions.error_bar_plot(hmd_movement, 'std',   order, ax2[2,0], 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:])
+# functions.error_bar_plot(force,        'force', order, ax2[2,1], 'Average peak force [N]', Participants, Conditions[1:])
+# functions.error_bar_plot(in_out_corr,  'corr',  order, ax2[3,0], 'Input-Output Cross-correlation', Participants, Conditions[1:])
 
 fig2.tight_layout()
 fig2.savefig("plots/average_results.jpg", dpi=1000)
 fig2.savefig("plots/average_results.svg", dpi=1000)
 
+# Data for condition A
+meanA = np.mean(count_avg[count_avg['condition'] == 'A']['blocks'])
+stdA = np.std(count_avg[count_avg['condition'] == 'A']['blocks'])
+print(f'Mean blocks transfered in Condition A: {meanA}')
+print(f'SD of blocks transfered in Condition A: {stdA}')
+
+# saving data
 print(), print('Dumping plotted data to file...')
 dill.dump_session('data_plotted.pkl')
 end =  time.time()

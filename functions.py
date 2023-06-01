@@ -9,6 +9,8 @@ import os
 import pandas
 import numpy as np
 from scipy import stats
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def read_csv(path, participant, condition, trial, filename, header):
     # read data file
@@ -219,3 +221,24 @@ def within_subject_ci(X, mean, len):
     # Morey, R. D. (2008). Confidence intervals from normalized data: A correction to Cousineau (2005). Reason, 4, 61-64.
     return CI
 
+def error_bar_plot(data, name, order, ax, title, P, C):
+    CI = []
+    for m in order:
+        participant_mean = []
+        for p in P:
+            participant_mean.extend([np.mean(data[data['participant']==p][data['measure']==m][name])])
+
+        for c in C:
+            X = data[data['condition']==c][data['measure']==m][name]
+            ci = within_subject_ci(X,participant_mean,len(C))
+            print(ci,c,m)
+            CI.append(float(ci))
+
+    sns.barplot(x=data['measure'], y=data[name], hue=data['condition'], ax=ax, order=order, errorbar=None)
+    
+    x_coords = [p.get_x() + 0.5*p.get_width() for p in ax.patches]
+    y_coords = [p.get_height() for p in ax.patches]
+    plt.errorbar(x=x_coords, y=y_coords, yerr=CI, c= "k", fmt='None', capsize = 3, elinewidth=1)
+
+    ax.set_title(title, wrap=True)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
