@@ -40,6 +40,7 @@ print(), print('Calculating P-value tables for average data')
 p_grab_fails = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_success = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_grab_attemts = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_count_avg = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
@@ -50,18 +51,19 @@ for c1 in Conditions[1:]:
 p_pre_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_post_velocity = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_hmd_movement = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-p_correlation = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 p_force = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
-p_count_avg = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
+p_hits = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:]) 
+p_correlation = pd.DataFrame(index = Conditions[1:], columns = Conditions[1:])
 
 for c1 in Conditions[1:]:
     for c2 in Conditions[1:]:
         _, p_pre_velocity[c1][c2] = functions.p_values(velocity, 'velocity', 'pre', c1, c2, 'measure')
         _, p_post_velocity[c1][c2] = functions.p_values(velocity, 'velocity', 'post', c1, c2, 'measure')
         if c1 != 'B' and c2 != 'B':
-            _, p_hmd_movement[c1][c2] = functions.p_values(hmd_movement, 'std', 'Mean [n=3]', c1, c2, 'measure')
-        _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', 'Mean [n=3]', c1, c2, 'measure')
-        _, p_force[c1][c2] = functions.p_values(force, 'force', 'Mean [n=3]', c1, c2, 'measure')
+            _, p_hmd_movement[c1][c2] = functions.p_values(hmd_movement, 'std', 'Head Movement', c1, c2, 'measure')
+        _, p_force[c1][c2] = functions.p_values(force, 'force', 'Peak Force', c1, c2, 'measure')
+        _, p_hits[c1][c2] = functions.p_values(hits, 'hits', 'Hits', c1, c2, 'measure')
+        _, p_correlation[c1][c2] = functions.p_values(in_out_corr, 'corr', 'In-out Correlation', c1, c2, 'measure')
         
         diff_c1 = grabs['count'][grabs['condition']==c1][grabs['measure']=='transfer']
         diff_c2 = grabs['count'][grabs['condition']==c2][grabs['measure']=='transfer']
@@ -77,8 +79,10 @@ functions.tablesubplot(ax3[1,0], p_grab_success, 'successful grabs paired T-test
 functions.tablesubplot(ax3[1,1], p_count_avg, 'Blocks transferred paired T-test p-values')
 functions.tablesubplot(ax3[2,0], p_pre_velocity, 'Pre-Grab Velocity paired T-test p-values')
 functions.tablesubplot(ax3[2,1], p_post_velocity, 'Post-Grab Velocity paired T-test p-values')
-functions.tablesubplot(ax3[3,0], p_correlation, 'Input-Output Correlation paired T-test p-values')
+functions.tablesubplot(ax3[3,0], p_hmd_movement, 'HMD Rotational SD paired T-test p-values')
 functions.tablesubplot(ax3[3,1], p_force, 'Average peak force paired T-test p-values')
+functions.tablesubplot(ax3[4,0], p_hits, 'number of hits paired T-test p-values')
+functions.tablesubplot(ax3[4,1], p_correlation, 'Input-Output Correlation paired T-test p-values')
     
 fig3.tight_layout()
 fig3.savefig("plots/p_values_measures.jpg", dpi=1000)
