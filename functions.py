@@ -6,7 +6,7 @@ Created on Thu Jan 20 11:14:53 2022
 """
 
 import os
-import pandas
+import pandas as pd
 import numpy as np
 from scipy import stats
 import seaborn as sns
@@ -22,12 +22,12 @@ def read_csv(path, participant, condition, trial, filename, header):
     
     file = [i for i in os.listdir(trial_path) if os.path.isfile(os.path.join(trial_path, i)) and filename in i]
     
-    csvdata = pandas.read_csv(trial_path + file[0], delimiter=",", header=0, names=header, skipfooter=1, engine='python')
+    csvdata = pd.read_csv(trial_path + file[0], delimiter=",", header=0, names=header, skipfooter=1, engine='python')
 
     return csvdata
 
 def read_blocks_count(datapath,Participants):
-    Count   = pandas.read_csv(datapath + "blocks_count.csv", delimiter=",", header=0).set_index('Participant Number')
+    Count   = pd.read_csv(datapath + "blocks_count.csv", delimiter=",", header=0).set_index('Participant Number')
     # remove invalid participants:
     for index, rows in Count.iterrows():
         if index not in Participants:
@@ -38,7 +38,7 @@ def read_blocks_count(datapath,Participants):
     # Decode questionaire responses
     print('Decoding...')
     # melt the dataframe
-    Count = pandas.melt(Count, id_vars=['Participant Number'], value_name='blocks')
+    Count = pd.melt(Count, id_vars=['Participant Number'], value_name='blocks')
     # split the variable column into separate columns for the letter and number
     Count[['condition', 'trial']] = Count['variable'].str.extract('(\D)(\d)')
     # drop the original variable column
@@ -211,23 +211,29 @@ def within_subject_ci(X, mean, len):
     return CI
 
 def error_bar_plot(data, name, order, ax, title, P, C):
-    CI = []
+    CI = pd.DataFrame([], columns=['ci', 'condition', 'measure'])
     for m in order:
         participant_mean = []
         for p in P:
-            participant_mean.extend([np.nanmean(data[data['participant']==p][data['measure']==m][name])])
+            participant_mean.extend([np.nanmean(data.loc[(data['participant'] == p) & (data['measure'] == m), name])])
 
         for c in C:
-            X = data[data['condition']==c][data['measure']==m][name]
+            X = data.loc[(data['condition'] == c) & (data['measure'] == m), name]
             ci = within_subject_ci(X,participant_mean,len(C))
-            print(ci,c,m)
-            CI.append(float(ci))
+            CI.loc[len(CI)] = [float(ci), c, m]
 
     sns.barplot(x=data['measure'], y=data[name], hue=data['condition'], ax=ax, order=order, errorbar=None)
     
-    x_coords = [p.get_x() + 0.5*p.get_width() for p in ax.patches]
-    y_coords = [p.get_height() for p in ax.patches]
-    plt.errorbar(x=x_coords, y=y_coords, yerr=CI, c= "k", fmt='None', capsize = 3, elinewidth=1)
+    x_coords = np.array([p.get_x() + 0.5*p.get_width() for p in ax.patches])
+    y_coords = np.array([p.get_height() for p in ax.patches])
+    
+    sorted_indices = np.argsort(x_coords)
+    x_sort = x_coords[sorted_indices]
+    y_sort = y_coords[sorted_indices]
+
+    plt.errorbar(x=x_sort, y=y_sort, yerr=list(CI['ci']), c= "k", fmt='None', capsize = 3, elinewidth=1)
 
     ax.set_title(title, wrap=True)
     ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+    return CI

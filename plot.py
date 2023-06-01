@@ -89,19 +89,19 @@ for p in Participants:
         
         # other data
         if c == 'B':
-            avg_hmd_movement = 0  # no hmd data for condition B
+            avg_hmd_movement = np.nan  # no hmd data for condition B
         else: 
             avg_hmd_movement = functions.trial_average(data, 'HMD', 'rotation', p, c, Trials)            
-        new_row = [avg_hmd_movement, p, c, 'Conditions']
+        new_row = [avg_hmd_movement, p, c, 'Head Movement']
         hmd_movement.loc[len(hmd_movement)] = new_row  
         avg_force = functions.trial_average(data, 'force', None, p, c, Trials)
-        new_row = [avg_force, p, c, 'Conditions']
+        new_row = [avg_force, p, c, 'Peak Force']
         force.loc[len(force)] = new_row  
         avg_hits = functions.trial_average(data, 'hits', None, p, c, Trials)
-        new_row = [avg_hits, p, c, 'Conditions']
+        new_row = [avg_hits, p, c, 'Hits']
         hits.loc[len(force)] = new_row  
         avg_corr = functions.trial_average(data, 'in_out', 'max_corr', p, c, Trials)
-        new_row = [avg_corr, p, c, 'Conditions']
+        new_row = [avg_corr, p, c, 'In-out Correlation']
         in_out_corr.loc[len(in_out_corr)] = new_row
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
@@ -112,18 +112,22 @@ fig2, ax2 = plt.subplots(4, 2, figsize=(7.5, 16))
 
 # grab data
 order = ['attempts', 'fails', 'success', 'transfer']
-functions.error_bar_plot(grabs, 'count', order, plt.subplot(4,1,1), 'Average grab data [n=3]', Participants, Conditions[1:])
+CI = functions.error_bar_plot(grabs, 'count', order, plt.subplot(4,1,1), 'Average grab data [n=3]', Participants, Conditions[1:])
 
 # velocities
 order = ['pre', 'post']
-functions.error_bar_plot(velocity, 'velocity', order, plt.subplot(4,1,2), 'Average Pre- and Post-Grab Velocity [m/s]', Participants, Conditions[1:])
+CI = CI.append(functions.error_bar_plot(velocity, 'velocity', order, plt.subplot(4,1,2), 'Average Pre- and Post-Grab Velocity [m/s]', Participants, Conditions[1:]), ignore_index=True)
 
 # other measures
-order = ['Conditions']
-functions.error_bar_plot(hmd_movement, 'std',   order, plt.subplot(4,2,5), 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:])
-functions.error_bar_plot(force,        'force', order, plt.subplot(4,2,6), 'Average peak force [N]', Participants, Conditions[1:])
-functions.error_bar_plot(hits,         'hits',  order, plt.subplot(4,2,7), 'Averag number of hits', Participants, Conditions[1:])
-functions.error_bar_plot(in_out_corr,  'corr',  order, plt.subplot(4,2,8), 'Input-Output Cross-correlation', Participants, Conditions[1:])
+CI = CI.append(functions.error_bar_plot(hmd_movement, 'std',   ['Head Movement'],     plt.subplot(4,2,5), 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:]), ignore_index=True)
+CI = CI.append(functions.error_bar_plot(force,        'force', ['Peak Force'],        plt.subplot(4,2,6), 'Average peak force [N]', Participants, Conditions[1:]), ignore_index=True)
+CI = CI.append(functions.error_bar_plot(hits,         'hits',  ['Hits'],              plt.subplot(4,2,7), 'Averag number of hits', Participants, Conditions[1:]), ignore_index=True)
+CI = CI.append(functions.error_bar_plot(in_out_corr,  'corr',  ['In-out Correlation'], plt.subplot(4,2,8), 'Input-Output Cross-correlation', Participants, Conditions[1:]), ignore_index=True)
+
+# reshape CI
+order = pd.Categorical(CI['measure'].unique(), categories=CI['measure'].unique(), ordered=True)
+CI = CI.pivot(index='condition', columns='measure', values='ci')[order]
+print(CI[order])
 
 fig2.tight_layout()
 fig2.savefig("plots/average_results.jpg", dpi=1000)
