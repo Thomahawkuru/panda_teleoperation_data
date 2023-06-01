@@ -209,24 +209,13 @@ def avg_velocity(data_3D):
 
     return avg_v
 
-def mean_confidence_interval(data, confidence=0.95):
-    a = 1.0 * np.array(data)
-    n = len(a)
-    m, se = np.mean(a), stats.sem(a)
-    h = se * stats.t.ppf((1 + confidence) / 2., n-1)
-    return m, m-h, m+h
+def within_subject_ci(X, mean, len):
+    X = X - mean
+    ttest = stats.ttest_1samp(X, np.mean(X))
+    ci = np.diff(ttest.confidence_interval(confidence_level=0.95)) / 2 # Calculate 95% confidence interval
+    CI = ci * np.sqrt(len / (len - 1))  # Correction factor as described in Morey (2008)
 
-def within_subject_ci(y):
-    # Calculate the confidence interval (95% confidence level)
-    ci1 = np.diff(stats.t.interval(0.95, len(y) - 1, loc=np.mean(y), scale=stats.sem(y)))/2
-    ci2 = ci1*np.sqrt(len(y)/(len(y)-1))
-    # # Plot the bar plot
-    # sns.barplot(x=x, y=y)
+    # CI is half of the confidence interval; so it should e plotted from mean-CI to mean+CI 
+    # Morey, R. D. (2008). Confidence intervals from normalized data: A correction to Cousineau (2005). Reason, 4, 61-64.
+    return ci, CI
 
-    # # Add error bars
-    # plt.errorbar(x=x, y=y, yerr=np.abs(np.subtract(ci, np.mean(y))).tolist(), fmt='none', color='black')
-
-    # # Show the plot
-    # plt.show()
-
-    return ci1[0], ci2[0]

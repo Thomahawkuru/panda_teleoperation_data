@@ -90,6 +90,7 @@ for p in Participants:
             new_row = functions.minmax(data, 'force', None, p, c, m, Trials, Measures)
             force.loc[len(force)] = new_row  
 
+#%%
 fig2, ax2 = plt.subplots(8, 2, figsize=(7.5, 16))
 
 ax_span = plt.subplot(8,1,1)
@@ -110,6 +111,20 @@ order = ['attempts', 'fails', 'success', 'transfer']
 sns.barplot(x=grabs['measure'], y=grabs['count'], hue=grabs['condition'], ax=ax_span, order=order, errorbar=('ci', 95), capsize = 0.05, errwidth=1)
 ax_span.set_title('Average grab  data over 3 trials')
 ax_span.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0)
+
+#%% within subject CI
+order = ['attempts', 'fails', 'success', 'transfer']
+
+for m in order:
+    participant_mean = []
+    for p in Participants:
+        participant_mean.extend([np.mean(grabs[grabs['participant']==p][grabs['measure']==m]['count'])])
+
+    for c in Conditions[1:]:
+        X = grabs[grabs['condition']==c][grabs['measure']==m]['count']
+        ci, CI = functions.within_subject_ci(X,participant_mean,len(Conditions[1:]))
+        print(f"Confidence Interval {m}, {c}:", (ci), (CI))
+
 #%%
 sns.boxplot(x=velocity['condition'], y=velocity['pre'], hue=velocity['measure'], ax=ax2[3,0])
 ax2[3,0].set_title('Average Pre-Grab Velocity [m/s]', wrap=True)
