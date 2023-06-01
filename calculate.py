@@ -8,8 +8,8 @@ import calculators
 import warnings
 import pandas as pd 
 
-dill.load_session('data_raw.pkl')
 start = time.time()
+dill.load_session('data_raw.pkl')
 debug = False
 
 #%% calculate data   
