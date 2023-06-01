@@ -215,7 +215,7 @@ def error_bar_plot(data, name, order, ax, title, P, C):
     for m in order:
         participant_mean = []
         for p in P:
-            participant_mean.extend([np.mean(data[data['participant']==p][data['measure']==m][name])])
+            participant_mean.extend([np.nanmean(data[data['participant']==p][data['measure']==m][name])])
 
         for c in C:
             X = data[data['condition']==c][data['measure']==m][name]
