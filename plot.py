@@ -127,6 +127,7 @@ CI = CI.append(functions.error_bar_plot(in_out_corr,  'corr',  ['In-out Correlat
 # reshape CI
 order = pd.Categorical(CI['measure'].unique(), categories=CI['measure'].unique(), ordered=True)
 CI = CI.pivot(index='condition', columns='measure', values='ci')[order]
+print('Measures CI:')
 print(CI[order])
 
 fig2.tight_layout()
