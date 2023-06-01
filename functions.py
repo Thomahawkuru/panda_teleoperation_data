@@ -107,9 +107,9 @@ def tablesubplot(ax, df, title):
 def trial_average(data, key, type, p, c, T):
     value = []
     for t in T:
-        value.append(data[p][c][t])
+        value.append(data[p][c][t][key][type])
     
-    average = np.nanmean(data[p])
+    average = np.nanmean(value)
 
     return average
 
