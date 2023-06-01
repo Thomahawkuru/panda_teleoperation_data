@@ -90,7 +90,7 @@ for p in Participants:
         force.loc[len(force)] = new_row  
 
 #%% plotting
-fig2, ax2 = plt.subplots(4, 2, figsize=(7.5, 12))
+fig2, ax2 = plt.subplots(4, 2, figsize=(7.5, 16))
 
 # grab data
 print('Average only...')
