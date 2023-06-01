@@ -14,10 +14,9 @@ debug = False
 
 #%% calculate data   
 if debug:
-    Participants = [15]
-    Conditions = ['A','D']
-    Trials = [1]
-
+    Participants = [10]
+    Conditions = ['A','C']
+    Trials = [3]
 
 for p in Participants:
     print(), print(), print('Calculating data for participant {}'.format(p))

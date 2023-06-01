@@ -24,13 +24,13 @@ input_lag = pd.DataFrame([] , columns=['lag [s]', 'participant', 'condition', 't
 for p in Participants:
     for c in Conditions[1:]:
         for t in Trials:
-            new_row = [np.mean(data[p][c][t]['fps']), p, c, t]
+            new_row = [np.nanmean(data[p][c][t]['fps']), p, c, t]
             fpss.loc[len(fpss)] = new_row 
-            new_row = [np.mean(data[p][c][t]['duration']), p, c, t]
+            new_row = [np.nanmean(data[p][c][t]['duration']), p, c, t]
             times.loc[len(times)] = new_row 
-            new_row = [np.mean(data[p][c][t]['track_err']), p, c, t]
+            new_row = [np.nanmean(data[p][c][t]['track_err']), p, c, t]
             track_err.loc[len(track_err)] = new_row
-            new_row = [np.mean(data[p][c][t]['in_out']['lag']), p, c, t]
+            new_row = [np.nanmean(data[p][c][t]['in_out']['lag']), p, c, t]
             input_lag.loc[len(track_err)] = new_row 
 #%%
 fpss = fpss.groupby(['participant', 'condition'])['fps'].mean().reset_index()
@@ -65,13 +65,13 @@ for p in Participants:
     count_p = count_avg[count_avg['Participant Number']==p]
     for c in Conditions[1:]:
         # grab data
-        avg_attempts = np.mean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
+        avg_attempts = np.nanmean([data[p][c][1]['grabs']['attempts'],data[p][c][2]['grabs']['attempts'],data[p][c][3]['grabs']['attempts']])          
         new_row = [avg_attempts, p, c, 'attempts']
         grabs.loc[len(grabs)] = new_row
-        avg_success = np.mean([data[p][c][1]['grabs']['success'],data[p][c][2]['grabs']['success'],data[p][c][3]['grabs']['success']])
+        avg_success = np.nanmean([data[p][c][1]['grabs']['success'],data[p][c][2]['grabs']['success'],data[p][c][3]['grabs']['success']])
         new_row = [avg_success, p, c, 'success']
         grabs.loc[len(grabs)] = new_row
-        avg_fails = np.mean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
+        avg_fails = np.nanmean([data[p][c][1]['grabs']['fail'],data[p][c][2]['grabs']['fail'],data[p][c][3]['grabs']['fail']])
         new_row = [avg_fails, p, c, 'fails']
         grabs.loc[len(grabs)] = new_row
         count_c = count_p[count_p['condition']==c]     
@@ -79,10 +79,10 @@ for p in Participants:
         grabs.loc[len(grabs)] = new_row
 
         # velocity data
-        avg_pre_vel = np.mean([data[p][c][1]['velocity']['pre'], data[p][c][2]['velocity']['pre'], data[p][c][3]['velocity']['pre']])
+        avg_pre_vel = np.nanmean([data[p][c][1]['velocity']['pre'], data[p][c][2]['velocity']['pre'], data[p][c][3]['velocity']['pre']])
         new_row = [avg_pre_vel, p, c, 'pre']
         velocity.loc[len(velocity)] = new_row
-        avg_post_vel = np.mean([data[p][c][1]['velocity']['post'], data[p][c][2]['velocity']['post'], data[p][c][3]['velocity']['post']])
+        avg_post_vel = np.nanmean([data[p][c][1]['velocity']['post'], data[p][c][2]['velocity']['post'], data[p][c][3]['velocity']['post']])
         new_row = [avg_post_vel, p, c, 'post']
         velocity.loc[len(velocity)] = new_row
         
