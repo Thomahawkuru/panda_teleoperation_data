@@ -217,5 +217,5 @@ def within_subject_ci(X, mean, len):
 
     # CI is half of the confidence interval; so it should e plotted from mean-CI to mean+CI 
     # Morey, R. D. (2008). Confidence intervals from normalized data: A correction to Cousineau (2005). Reason, 4, 61-64.
-    return ci, CI
+    return CI
 
