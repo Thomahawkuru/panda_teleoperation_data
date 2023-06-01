@@ -276,7 +276,7 @@ def force(data, p, c, t, debug):
         fig.tight_layout()
         plt.show()
 
-    return np.mean(force[peaks]), len(peaks)
+    return np.mean(force[peaks]), np.array(len(peaks))
 
 def count_average(Count):
     count_avg = Count

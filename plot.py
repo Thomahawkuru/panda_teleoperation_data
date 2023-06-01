@@ -58,8 +58,9 @@ print(), print('Calculating averages')
 grabs = pd.DataFrame([] , columns=['count', 'participant', 'condition', 'measure'])
 velocity = pd.DataFrame([] , columns=['velocity', 'participant', 'condition', 'measure'])
 hmd_movement = pd.DataFrame([] , columns=['std', 'participant', 'condition', 'measure'])
-in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 force = pd.DataFrame([] , columns=['force', 'participant', 'condition', 'measure'])
+hits = pd.DataFrame([] , columns=['hits', 'participant', 'condition', 'measure'])
+in_out_corr = pd.DataFrame([] , columns=['corr', 'participant', 'condition', 'measure'])
 
 for p in Participants:
     count_p = count_avg[count_avg['Participant Number']==p]
@@ -92,11 +93,15 @@ for p in Participants:
         else: 
             new_row = functions.trial_average(data, 'HMD', 'rotation', p, c, Trials)            
         hmd_movement.loc[len(hmd_movement)] = new_row  
-        avg_hmd_movement = functions.mintrial_averagemax(data, 'force', None, p, c, Trials)
-        new_row = [avg_hmd_movement, p, c, 'Mean [N=3]']
-        force.loc[len(force)] = new_row  
-        avg_force = functions.trial_average(data, 'in_out', 'max_corr', p, c, Trials)
+        
+        avg_force = functions.trial_average(data, 'force', None, p, c, Trials)
         new_row = [avg_force, p, c, 'Mean [N=3]']
+        force.loc[len(force)] = new_row  
+        avg_hits = functions.trial_average(data, 'hits', None, p, c, Trials)
+        new_row = [avg_hits, p, c, 'Mean [N=3]']
+        hits.loc[len(force)] = new_row  
+        avg_corr = functions.trial_average(data, 'in_out', 'max_corr', p, c, Trials)
+        new_row = [avg_corr, p, c, 'Mean [N=3]']
         in_out_corr.loc[len(in_out_corr)] = new_row
 
 grabs['count'] = pd.to_numeric(grabs['count'], errors='coerce')
@@ -117,7 +122,8 @@ functions.error_bar_plot(velocity, 'velocity', order, plt.subplot(4,1,2), 'Avera
 order = ['Mean [n=3]']
 functions.error_bar_plot(hmd_movement, 'std',   order, ax2[2,0], 'Rotational SD of HMD direction unit vector', Participants, Conditions[1:])
 functions.error_bar_plot(force,        'force', order, ax2[2,1], 'Average peak force [N]', Participants, Conditions[1:])
-functions.error_bar_plot(in_out_corr,  'corr',  order, ax2[3,0], 'Input-Output Cross-correlation', Participants, Conditions[1:])
+functions.error_bar_plot(hits,         'hits',  order, ax2[3,0], 'Averag number of hits', Participants, Conditions[1:])
+functions.error_bar_plot(in_out_corr,  'corr',  order, ax2[3,1], 'Input-Output Cross-correlation', Participants, Conditions[1:])
 
 fig2.tight_layout()
 fig2.savefig("plots/average_results.jpg", dpi=1000)
